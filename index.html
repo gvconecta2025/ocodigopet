@@ -12,7 +12,7 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js').then((reg) => console.log('✅ PWA ON')).catch((err) => console.log('❌ PWA OFF', err));
+                navigator.serviceWorker.register('/sw.js').catch(() => {});
             });
         }
     </script>
@@ -88,68 +88,16 @@
         <main id="main-content" class="flex-1 pb-10 bg-white">
             </main>
 
-        <button id="btn-voltar" onclick="renderView('home')" class="hidden fixed bottom-6 left-6 w-14 h-14 bg-black/40 backdrop-blur-md border border-white/20 rounded-full text-white flex items-center justify-center shadow-2xl z-50 hover:bg-black/60 active:scale-90 transition-transform">
+        <button id="btn-voltar" onclick="renderView('home')" class="hidden fixed bottom-6 left-6 w-14 h-14 bg-black/50 backdrop-blur-md border border-white/20 rounded-full text-white flex items-center justify-center shadow-2xl z-50 hover:bg-black/70 active:scale-90 transition-transform">
             <i class="fa-solid fa-arrow-left text-xl"></i>
         </button>
 
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    <script>
+        // Função fantasma caso o Firebase seja bloqueado pelo celular
+        window.registrarEvento = function(tipo, detalhes) { console.log('Evento Local:', tipo); };
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBjuvcJvTWw7lMrIwej5lHbIUXe99lJDN4",
-            authDomain: "crmpetshop.firebaseapp.com",
-            projectId: "crmpetshop",
-            storageBucket: "crmpetshop.firebasestorage.app",
-            messagingSenderId: "381013124221",
-            appId: "1:381013124221:web:48f398a62ce40b7db6fd14"
-        };
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const leadId = urlParams.get('lead_id') || 'anonimo';
-
-        async function registrarEvento(tipoEvento, detalhes = {}) {
-            try {
-                await addDoc(collection(db, "eventos_tracking"), {
-                    lead_id: leadId,
-                    origem_aplicacao: "revista_semanal",
-                    tipo_evento: tipoEvento,
-                    detalhes: detalhes,
-                    timestamp: Date.now()
-                });
-            } catch (e) { console.error(e); }
-        }
-
-        // LÓGICA DO MENU HAMBÚRGUER
-        window.toggleMenu = function() {
-            const menu = document.getElementById('side-menu');
-            const panel = document.getElementById('side-menu-panel');
-            
-            if (menu.classList.contains('hidden')) {
-                menu.classList.remove('hidden');
-                // Pequeno delay para a animação do Tailwind funcionar
-                setTimeout(() => {
-                    menu.classList.remove('opacity-0');
-                    panel.classList.remove('translate-x-full');
-                }, 10);
-            } else {
-                panel.classList.add('translate-x-full');
-                menu.classList.add('opacity-0');
-                setTimeout(() => menu.classList.add('hidden'), 300);
-            }
-        }
-
-        window.fecharMenuClickFora = function(event) {
-            if(event.target.id === 'side-menu') {
-                toggleMenu();
-            }
-        }
-
-        // BASE DE DADOS LOCAL
         const bancoDeArtigos = {
             varejo: { id: 'varejo', nome: 'Varejo (Pet Shop)', tagColor: 'text-blue-700', bgColor: 'bg-blue-50', artigos: [
                 { id: 'v1', titulo: 'Como aumentar a margem de lucro na venda de rações premium', img: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&q=80', resumo: 'Descubra a matemática por trás da prateleira e como o estoque parado devora seu caixa.' },
@@ -178,45 +126,50 @@
             ]}
         };
 
-        const mainContent = document.getElementById('main-content');
-        const btnVoltar = document.getElementById('btn-voltar');
         let currentView = 'home';
 
-        // LÓGICA DE NAVEGAÇÃO DOS SEGMENTOS
-        window.goToCategory = function(catId) {
-            // Se o usuário clicar no cabeçalho enquanto lê um artigo, força a ida pra HOME primeiro.
-            if (currentView !== 'home') {
-                renderView('home');
+        window.toggleMenu = function() {
+            const menu = document.getElementById('side-menu');
+            const panel = document.getElementById('side-menu-panel');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                setTimeout(() => { menu.classList.remove('opacity-0'); panel.classList.remove('translate-x-full'); }, 10);
+            } else {
+                panel.classList.add('translate-x-full');
+                menu.classList.add('opacity-0');
+                setTimeout(() => menu.classList.add('hidden'), 300);
             }
-            // Dá tempo para a HOME carregar e rola até a seção clicada
+        }
+
+        window.fecharMenuClickFora = function(event) { if(event.target.id === 'side-menu') toggleMenu(); }
+
+        window.goToCategory = function(catId) {
+            if (currentView !== 'home') renderView('home');
             setTimeout(() => {
                 const section = document.getElementById('sec-' + catId);
-                if(section) {
-                    // Adiciona um offset por causa do cabeçalho fixo
-                    const y = section.getBoundingClientRect().top + window.scrollY - 100;
-                    window.scrollTo({top: y, behavior: 'smooth'});
-                }
+                if(section) window.scrollTo({top: section.getBoundingClientRect().top + window.scrollY - 100, behavior: 'smooth'});
             }, 50);
         }
 
         window.renderView = function(view, param = null) {
             currentView = view;
+            const mainContent = document.getElementById('main-content');
+            const btnVoltar = document.getElementById('btn-voltar');
+            
             mainContent.innerHTML = ''; 
             window.scrollTo(0, 0);
             
-            // Controle do Botão Flutuante
             if (view === 'home') {
                 btnVoltar.classList.add('hidden');
-                renderHomeFeed();
+                renderHomeFeed(mainContent);
             } else if (view === 'artigo') {
                 btnVoltar.classList.remove('hidden');
-                renderArtigo(param);
+                renderArtigo(mainContent, param);
             }
         };
 
-        function renderHomeFeed() {
+        function renderHomeFeed(container) {
             let html = `<div class="fade-in">`;
-
             const destaque = bancoDeArtigos.varejo.artigos[0];
             html += `
                 <div class="cursor-pointer bg-white mb-2 relative group" onclick="abrirArtigo('varejo', '${destaque.id}')">
@@ -232,16 +185,13 @@
             let indexCat = 0;
             for (const key in bancoDeArtigos) {
                 const cat = bancoDeArtigos[key];
-                
                 html += `
                     <section id="sec-${cat.id}" class="${cat.bgColor} py-8 px-4 border-t border-gray-200">
                         <h3 class="${cat.tagColor} text-sm font-black uppercase tracking-[0.2em] mb-5 border-l-4 border-current pl-3">${cat.nome}</h3>
                         <div class="flex flex-col gap-6">
                 `;
-
                 cat.artigos.forEach((artigo, idx) => {
                     if (key === 'varejo' && idx === 0) return;
-
                     if (idx === 0 || (key === 'varejo' && idx === 1)) {
                         html += `
                             <div class="cursor-pointer group" onclick="abrirArtigo('${key}', '${artigo.id}')">
@@ -261,63 +211,100 @@
                         `;
                     }
                 });
-                
                 html += `</div></section>`;
-
+                
                 if (indexCat === 1 || indexCat === 3) {
                     html += `
                         <div class="bg-gray-900 text-white p-8 text-center relative overflow-hidden">
-                            <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at center, #ffffff 1px, transparent 1px); background-size: 10px 10px;"></div>
                             <span class="text-[9px] text-blue-400 uppercase tracking-widest font-bold block mb-2 z-10 relative">Anúncio PetLojas</span>
                             <h4 class="text-xl font-black mt-1 leading-tight z-10 relative">Tempo é dinheiro.</h4>
                             <p class="text-gray-400 text-sm mt-2 mb-5 z-10 relative">Automatize seu WhatsApp e venda enquanto você descansa.</p>
-                            <button onclick="clicouCTA('banner_feed')" class="bg-blue-600 hover:bg-blue-500 active:scale-95 transition-transform px-6 py-3 rounded-full font-black text-sm z-10 relative shadow-lg shadow-blue-500/30">Descobrir como</button>
+                            <button onclick="clicouCTA('banner_feed')" class="bg-blue-600 px-6 py-3 rounded-full font-black text-sm z-10 relative shadow-lg">Descobrir como</button>
                         </div>
                     `;
                 }
                 indexCat++;
             }
-            mainContent.innerHTML = html;
+            container.innerHTML = html + `</div>`;
         }
 
         window.abrirArtigo = function(catId, artigoId) {
             const artigo = bancoDeArtigos[catId].artigos.find(a => a.id === artigoId);
-            registrarEvento('leu_artigo', { categoria: catId, artigo_id: artigoId, titulo: artigo.titulo });
+            window.registrarEvento('leu_artigo', { categoria: catId, artigo_id: artigoId });
             renderView('artigo', { catId, artigo });
         }
 
-        function renderArtigo(dados) {
-            const { catId, artigo } = dados;
-            mainContent.innerHTML = `
+        function renderArtigo(container, dados) {
+            const { artigo } = dados;
+            container.innerHTML = `
                 <div class="fade-in bg-white min-h-screen">
                     <div class="px-5 pt-8 pb-6">
                         <h1 class="text-3xl font-black text-gray-900 leading-tight tracking-tight">${artigo.titulo}</h1>
-                        <div class="flex items-center gap-2 mt-4 text-xs font-bold text-gray-400 uppercase tracking-wider">
-                            <i class="fa-regular fa-clock"></i> Leitura de 2 min
-                        </div>
                     </div>
                     <img src="${artigo.img}" class="w-full h-64 object-cover shadow-inner">
                     <div class="px-6 py-8 text-gray-800 leading-relaxed text-lg font-serif">
                         <p><span class="float-left text-6xl font-black mr-3 mt-2 text-blue-600 font-sans leading-none">O</span> conteúdo estratégico deste artigo é focado em aumentar a eficiência do seu negócio pet. Aplique as dicas hoje mesmo para ver os resultados na próxima semana.</p>
-                        <br>
-                        <h3 class="font-bold text-xl text-gray-900 font-sans mt-4">Ponto de Atenção</h3>
+                        <br><h3 class="font-bold text-xl text-gray-900 font-sans mt-4">Ponto de Atenção</h3>
                         <p>O mercado muda rapidamente, e os gestores que automatizam tarefas saem na frente da concorrência local.</p>
                     </div>
                     <div class="m-5 p-8 rounded-2xl bg-blue-600 text-white text-center shadow-xl shadow-blue-200">
                         <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fa-solid fa-rocket"></i></div>
                         <h4 class="font-black text-xl mb-2">Escale sua operação Pet!</h4>
-                        <p class="text-sm text-blue-100 mb-6">Pare de apagar incêndios e comece a gerenciar seu fluxo de clientes com inteligência.</p>
-                        <button onclick="clicouCTA('${artigo.id}')" class="w-full bg-white hover:bg-gray-100 active:scale-95 transition-transform text-blue-700 font-black py-3 px-8 rounded-full shadow-lg">Falar com Consultor</button>
+                        <p class="text-sm text-blue-100 mb-6">Pare de apagar incêndios e comece a gerenciar seu fluxo com inteligência.</p>
+                        <button onclick="clicouCTA('${artigo.id}')" class="w-full bg-white text-blue-700 font-black py-3 px-8 rounded-full shadow-lg">Falar com Consultor</button>
                     </div>
-                    <div class="h-10"></div> </div>
+                    <div class="h-10"></div>
+                </div>
             `;
         }
 
-        window.clicouCTA = (o) => registrarEvento('clicou_cta', { de: o });
-        
-        // Dispara ao carregar
-        registrarEvento('abriu_revista', { edicao: '01' });
+        window.clicouCTA = (o) => window.registrarEvento('clicou_cta', { de: o });
+
+        // INICIALIZA A UI IMEDIATAMENTE (GARANTE QUE NÃO FIQUE BRANCO)
         renderView('home');
+    </script>
+
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        try {
+            const firebaseConfig = {
+                apiKey: "AIzaSyBjuvcJvTWw7lMrIwej5lHbIUXe99lJDN4",
+                authDomain: "crmpetshop.firebaseapp.com",
+                projectId: "crmpetshop",
+                storageBucket: "crmpetshop.firebasestorage.app",
+                messagingSenderId: "381013124221",
+                appId: "1:381013124221:web:48f398a62ce40b7db6fd14"
+            };
+            
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const leadId = urlParams.get('lead_id') || 'anonimo';
+
+            // Sobrescreve a função fantasma com o rastreio real
+            window.registrarEvento = async function(tipoEvento, detalhes = {}) {
+                try {
+                    await addDoc(collection(db, "eventos_tracking"), {
+                        lead_id: leadId,
+                        origem_aplicacao: "revista_semanal",
+                        tipo_evento: tipoEvento,
+                        detalhes: detalhes,
+                        timestamp: Date.now()
+                    });
+                    console.log("📡 [PIXEL] Gravado:", tipoEvento);
+                } catch (e) { console.error("Erro no rastreio:", e); }
+            }
+
+            // Registra a abertura inicial (já que a UI abriu primeiro)
+            window.registrarEvento('abriu_revista', { edicao: '01' });
+
+        } catch(err) {
+            console.warn("⚠️ Firebase bloqueado pelo navegador/AdBlock. Revista segue funcionando 100% offline.");
+        }
     </script>
 </body>
 </html>
