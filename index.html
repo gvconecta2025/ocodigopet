@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>O Código Pet - Revista Semanal</title>
+    <title>O Código Pet - Revista Semanal - GV Conecta</title>
     
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#2563eb">
@@ -44,16 +44,16 @@
             </div>
             <div class="p-5 flex-1 overflow-y-auto space-y-3">
                 <h3 class="font-bold text-gray-400 text-[10px] uppercase tracking-[0.2em] mb-4">Navegação</h3>
-                <button onclick="toggleMenu(); renderView('home')" class="w-full flex items-center gap-3 font-bold text-gray-700 p-3 rounded-lg hover:bg-gray-100"><i class="fa-solid fa-house text-blue-500"></i> Início</button>
+                <button onclick="toggleMenu(); window.renderView('home')" class="w-full flex items-center gap-3 font-bold text-gray-700 p-3 rounded-lg hover:bg-gray-100"><i class="fa-solid fa-house text-blue-500"></i> Início</button>
                 
                 <div id="menu-conta-logado" class="hidden space-y-3 border-t border-gray-100 pt-3">
-                    <button onclick="toggleMenu(); renderView('conta')" class="w-full flex items-center gap-3 font-bold text-gray-700 p-3 rounded-lg hover:bg-gray-100"><i class="fa-solid fa-user-gear text-blue-500"></i> Minha Conta</button>
-                    <button onclick="executarLogout()" class="w-full flex items-center gap-3 font-bold text-red-600 p-3 rounded-lg hover:bg-red-50"><i class="fa-solid fa-right-from-bracket"></i> Sair</button>
+                    <button onclick="toggleMenu(); window.renderView('conta')" class="w-full flex items-center gap-3 font-bold text-gray-700 p-3 rounded-lg hover:bg-gray-100"><i class="fa-solid fa-user-gear text-blue-500"></i> Minha Conta</button>
+                    <button onclick="window.executarLogout()" class="w-full flex items-center gap-3 font-bold text-red-600 p-3 rounded-lg hover:bg-red-50"><i class="fa-solid fa-right-from-bracket"></i> Sair</button>
                 </div>
                 
                 <h3 class="font-bold text-gray-400 text-[10px] uppercase tracking-[0.2em] mt-6 mb-4">Acervo de Edições</h3>
                 <ul class="space-y-4">
-                    <li><button onclick="toggleMenu(); renderView('home')" class="w-full flex items-center justify-between font-black text-blue-700 border border-blue-200 bg-blue-50 p-3 rounded-lg">Edição 01 <span class="bg-blue-600 text-white text-[9px] px-2 py-1 rounded uppercase">Atual</span></button></li>
+                    <li><button onclick="toggleMenu(); window.renderView('home')" class="w-full flex items-center justify-between font-black text-blue-700 border border-blue-200 bg-blue-50 p-3 rounded-lg">Edição 01 <span class="bg-blue-600 text-white text-[9px] px-2 py-1 rounded uppercase">Atual</span></button></li>
                     <li><span class="block w-full text-left font-bold text-gray-400 p-3 rounded-lg">Edição 02 (Em breve)</span></li>
                 </ul>
             </div>
@@ -67,7 +67,7 @@
         
         <header class="bg-white sticky top-0 z-40 shadow-md header-line w-full">
             <div class="px-4 py-3 flex justify-between items-center">
-                <div class="flex flex-col cursor-pointer group" onclick="handleLogoClick()">
+                <div class="flex flex-col cursor-pointer group" onclick="window.handleLogoClick()">
                     <h1 class="text-2xl font-black tracking-tighter text-blue-700 uppercase leading-none">O CÓDIGO PET</h1>
                     <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Revista Semanal</span>
                 </div>
@@ -78,51 +78,59 @@
             </div>
             
             <div id="nav-categorias" class="bg-gray-50 border-b border-gray-200 px-4 py-2 overflow-x-auto whitespace-nowrap text-[11px] font-bold text-gray-500 uppercase tracking-wide flex gap-5 scrollbar-hide">
-                <span onclick="goToCategory('varejo')" class="cursor-pointer hover:text-blue-600 transition">Pet Shop</span>
-                <span onclick="goToCategory('clinica')" class="cursor-pointer hover:text-teal-600 transition">Clínica</span>
-                <span onclick="goToCategory('estetica')" class="cursor-pointer hover:text-pink-600 transition">Estética</span>
-                <span onclick="goToCategory('comportamento')" class="cursor-pointer hover:text-orange-600 transition">Adestramento</span>
-                <span onclick="goToCategory('hospedagem')" class="cursor-pointer hover:text-indigo-600 transition">Hotelzinho</span>
+                <span onclick="window.goToCategory('varejo')" class="cursor-pointer hover:text-blue-600 transition">Pet Shop</span>
+                <span onclick="window.goToCategory('clinica')" class="cursor-pointer hover:text-teal-600 transition">Clínica Vet</span>
+                <span onclick="window.goToCategory('estetica')" class="cursor-pointer hover:text-pink-600 transition">Estética</span>
+                <span onclick="window.goToCategory('adestramento')" class="cursor-pointer hover:text-orange-600 transition">Adestramento</span>
+                <span onclick="window.goToCategory('hospedagem')" class="cursor-pointer hover:text-indigo-600 transition">Hotelzinho</span>
             </div>
         </header>
 
         <main id="main-content" class="flex-1 pb-16 bg-white"></main>
 
         <div class="fixed bottom-6 left-0 right-0 max-w-md mx-auto z-30 pointer-events-none h-12">
-            <button id="btn-voltar" onclick="renderView('home')" class="hidden absolute left-5 pointer-events-auto w-12 h-12 bg-black/60 backdrop-blur-md border border-white/20 rounded-full text-white flex items-center justify-center shadow-2xl hover:bg-black/80 active:scale-90 transition-all duration-300"><i class="fa-solid fa-arrow-left text-lg"></i></button>
+            <button id="btn-voltar" onclick="window.renderView('home')" class="hidden absolute left-5 pointer-events-auto w-12 h-12 bg-black/60 backdrop-blur-md border border-white/20 rounded-full text-white flex items-center justify-center shadow-2xl hover:bg-black/80 active:scale-90 transition-all duration-300"><i class="fa-solid fa-arrow-left text-lg"></i></button>
             <button id="btn-up" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="absolute right-5 pointer-events-auto w-12 h-12 bg-black/60 backdrop-blur-md border border-white/20 rounded-full text-white flex items-center justify-center shadow-2xl hover:bg-black/80 active:scale-90 transition-all duration-300 translate-y-10 opacity-0"><i class="fa-solid fa-arrow-up text-lg"></i></button>
         </div>
 
         <div id="auth-modal" class="fixed inset-0 bg-black/80 z-[100] hidden items-center justify-center backdrop-blur-sm p-4 fade-in">
             <div class="bg-white rounded-2xl p-8 w-full max-w-sm shadow-2xl slide-up relative">
-                <button onclick="fecharAuth()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-900"><i class="fa-solid fa-xmark text-xl"></i></button>
+                <button onclick="window.fecharAuth()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-900"><i class="fa-solid fa-xmark text-xl"></i></button>
                 
                 <div id="auth-content-login">
                     <h3 class="text-2xl font-black tracking-tighter text-gray-950 mb-2">Acesse a Revista</h3>
                     <p class="text-sm text-gray-500 mb-6">Faça login ou cadastre-se gratuitamente para destravar a leitura completa.</p>
                     <div class="space-y-4">
-                        <input type="email" id="auth-email" placeholder="Seu e-mail corporativo" class="w-full p-3 border border-gray-200 rounded-xl outline-none focus:border-blue-500 transition">
+                        <input type="email" id="auth-email" placeholder="Seu e-mail (Login)" class="w-full p-3 border border-gray-200 rounded-xl outline-none focus:border-blue-500 transition">
                         <input type="password" id="auth-pass" placeholder="Sua senha" class="w-full p-3 border border-gray-200 rounded-xl outline-none focus:border-blue-500 transition">
                         <div id="auth-error" class="text-xs text-red-600 hidden"></div>
-                        <button onclick="executarLogin()" class="w-full bg-blue-600 text-white font-bold py-3.5 rounded-xl hover:bg-blue-700 transition active:scale-95">Entrar</button>
+                        <button onclick="window.executarLogin()" class="w-full bg-blue-600 text-white font-bold py-3.5 rounded-xl hover:bg-blue-700 transition active:scale-95">Entrar</button>
                         
                         <div class="flex justify-between items-center pt-2">
-                            <button onclick="executarEsqueciSenha()" class="text-xs text-blue-600 font-medium">Esqueci a senha</button>
-                            <button onclick="toggleAuthMode('cadastro')" class="text-xs text-gray-500 font-medium">Criar Conta Grátis</button>
+                            <button onclick="window.executarEsqueciSenha()" class="text-xs text-blue-600 font-medium">Esqueci a senha</button>
+                            <button onclick="window.toggleAuthMode('cadastro')" class="text-xs text-gray-500 font-medium">Criar Conta Grátis</button>
                         </div>
                     </div>
                 </div>
 
-                <div id="auth-content-cadastro" class="hidden">
+                <div id="auth-content-cadastro" class="hidden overflow-y-auto">
                     <h3 class="text-2xl font-black tracking-tighter text-gray-950 mb-2">Cadastro Grátis</h3>
-                    <p class="text-sm text-gray-500 mb-6">Insira seu e-mail corporativo para se cadastrar como usuário e destravar o conteúdo.</p>
+                    <p class="text-sm text-gray-500 mb-6 font-medium">Insira seu e-mail de usuário para ler todos os artigos.</p>
                     <div class="space-y-4">
                         <input type="text" id="reg-nome" placeholder="Seu nome completo" class="w-full p-3 border border-gray-200 rounded-xl outline-none focus:border-blue-500 transition">
                         <input type="email" id="reg-email" placeholder="Seu melhor e-mail (Login)" class="w-full p-3 border border-gray-200 rounded-xl outline-none focus:border-blue-500 transition">
                         <input type="password" id="reg-pass" placeholder="Crie uma senha" class="w-full p-3 border border-gray-200 rounded-xl outline-none focus:border-blue-500 transition">
+                        
+                        <div class="flex items-start gap-2 pt-2">
+                            <input type="checkbox" id="reg-consent" required class="w-4 h-4 mt-0.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+                            <label for="reg-consent" class="text-[11px] text-gray-500 leading-relaxed">Concordo com os Termos de Uso e entendo que é gratuito.</label>
+                        </div>
+
                         <div id="reg-error" class="text-xs text-red-600 hidden"></div>
-                        <button onclick="executarCadastro()" id="btn-registrar" class="w-full bg-green-600 text-white font-bold py-3.5 rounded-xl hover:bg-green-700 transition active:scale-95">Finalizar Cadastro Grátis</button>
-                        <button onclick="toggleAuthMode('login')" class="w-full text-xs text-blue-600 font-medium py-2">Já tenho conta (Login)</button>
+                        
+                        <button onclick="window.executarCadastro()" id="btn-registrar" class="w-full bg-green-600 text-white font-bold py-3.5 rounded-xl hover:bg-green-700 transition active:scale-95">Finalizar Cadastro Grátis</button>
+                        
+                        <button onclick="window.toggleAuthMode('login')" class="w-full text-xs text-blue-600 font-medium py-2">Já tenho conta (Login)</button>
                     </div>
                 </div>
             </div>
@@ -131,13 +139,13 @@
         <div id="gestor-modal" class="fixed inset-0 bg-white z-[110] hidden flex-col max-w-md mx-auto h-screen fade-in">
             <div class="p-6 flex justify-between items-center border-b border-gray-100">
                 <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Acesso Premium Gestão</span>
-                <button onclick="fecharGestorForm()" class="text-gray-400 hover:text-red-600 text-xl"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="window.fecharGestorForm()" class="text-gray-400 hover:text-red-600 text-xl"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
-            <div class="flex-1 overflow-y-auto p-8 md:p-12 flex flex-col justify-center">
+            <div class="flex-1 overflow-y-auto p-8 md:p-12 flex flex-col">
                 <form id="form-gestor" class="space-y-12">
                     <div class="slide-up">
-                        <label class="tf-label">1. Como podemos te chamar?</label>
+                        <label class="tf-label">1. Qual o seu nome de gestor?</label>
                         <input type="text" id="gestor-nome" placeholder="Seu nome completo" required class="tf-input">
                     </div>
                     
@@ -147,18 +155,27 @@
                     </div>
                     
                     <div class="slide-up" style="animation-delay: 0.2s">
-                        <label class="tf-label">3. Confirmar E-mail (Login)</label>
+                        <label class="tf-label">3. Confirmar E-mail Corporativo</label>
                         <input type="email" id="gestor-email" readonly class="tf-input text-gray-400 border-gray-100">
                     </div>
 
-                    <div class="slide-up p-5 rounded-2xl bg-gray-50 border border-gray-100" style="animation-delay: 0.3s">
+                    <div class="slide-up" style="animation-delay: 0.3s">
+                        <label class="tf-label">4. O que quer ler no futuro? (Selecione)</label>
+                        <div class="flex flex-wrap gap-2 mt-4" id="gestor-interesses">
+                            ${['Gestão Financeira', 'Marketing Digital', 'Fidelização', 'Atendimento Balcão', 'RH e Equipe', 'Clínica e Tendências'].map(t => 
+                                `<button type="button" onclick="window.toggleTag(this, '${t}')" class="border-2 border-gray-200 bg-white text-gray-600 px-4 py-2 rounded-full text-xs font-medium transition-all">${t}</button>`
+                            ).join('')}
+                        </div>
+                    </div>
+
+                    <div class="slide-up p-5 rounded-2xl bg-gray-50 border border-gray-100" style="animation-delay: 0.4s">
                         <p class="text-xs text-gray-500 leading-relaxed">
                             <i class="fa-solid fa-circle-info text-blue-500 mr-1"></i> 
-                            O acesso aos artigos de gestão é **gratuito**. Ao enviar, você concorda que a **GV Conecta** poderá enviar comunicações sobre atualizações da revista e novidades via WhatsApp ou e-mail no futuro.
+                            O acesso aos artigos de gestão é **gratuito**. Ao enviar, você entende e concorda que a **GV Conecta** poderá enviar comunicações sobre atualizações da revista e novidades via WhatsApp ou e-mail no futuro.
                         </p>
                     </div>
 
-                    <button type="submit" class="w-full bg-blue-600 text-white font-black text-lg py-5 rounded-2xl shadow-lg hover:bg-blue-700 transition active:scale-95 slide-up" style="animation-delay: 0.4s">
+                    <button type="submit" class="w-full bg-blue-600 text-white font-black text-lg py-5 rounded-2xl shadow-lg hover:bg-blue-700 transition active:scale-95 slide-up" style="animation-delay: 0.5s">
                         Liberar Acesso Gestão
                     </button>
                 </form>
@@ -172,7 +189,7 @@
         import { getFirestore, collection, addDoc, getDocs, query, where, serverTimestamp, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        // ✅ INTEGRADO: Credenciais reais do projeto crmpetshop Beta (Ponto 2)
+        // ✅ Credenciais reais do projeto crmpetshop (Beta)
         const firebaseConfig = {
           apiKey: "AIzaSyBjuvcJvTWw7lMrIwej5lHbIUXe99lJDN4",
           authDomain: "crmpetshop.firebaseapp.com",
@@ -185,16 +202,313 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // ✅ Configuração Hierarquia (Ponto 2)
+        // ✅ Configuração Hierarquia (Ponto 1)
         const PROGRAMMER_EMAIL = "professoragiselle.edu2@gmail.com";
         const ADMIN_EMAILS = [PROGRAMMER_EMAIL, "administrador@gvconecta.com.br"]; // Lista admins
 
-        // Expor para o escopo global (usado nos scripts abaixo)
-        window.GvFirebase = { app, db, auth, collection, addDoc, getDocs, query, where, serverTimestamp, doc, updateDoc, getDoc, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider, PROGRAMMER_EMAIL, ADMIN_EMAILS };
+        // ✅ VARIÁVEIS DE ESTADO GLOBAL (Módulo)
+        let currentUser = null;
+        let userData = null; // Dados Firestore
+        let currentView = 'home';
+        let pendingArticle = null; // Paywall pending
+
+        // ==========================================
+        // MOTOR DE AUTENTICAÇÃO REAL (Ponto 1)
+        // ==========================================
+        onAuthStateChanged(auth, user => {
+            currentUser = user;
+            const menuLogado = document.getElementById('menu-conta-logado');
+            
+            if (user) {
+                menuLogado.classList.remove('hidden');
+                document.getElementById('header-edicao').innerText = isProgrammer() ? "PROG" : "Ed. 01";
+                // Busca dados Firestore
+                buscarDadosUsuario(user.uid);
+            } else {
+                menuLogado.classList.add('hidden');
+                document.getElementById('header-edicao').innerText = "Ed. 01";
+                userData = null;
+            }
+            renderView(currentView); // Re-renderiza com contexto logado
+        });
+
+        // ✅ UTILITÁRIOS HIERARQUIA (Ponto 1)
+        const isProgrammer = () => currentUser && currentUser.email === PROGRAMMER_EMAIL;
+        const isAdmin = () => currentUser && ADMIN_EMAILS.includes(currentUser.email);
+
+        // 🔥 FUNÇÕES FIREBASE (Expostas ao Global window)
+
+        window.executarLogin = () => {
+            const email = document.getElementById('auth-email').value;
+            const pass = document.getElementById('auth-pass').value;
+            const errorBlock = document.getElementById('auth-error');
+            errorBlock.classList.add('hidden');
+
+            signInWithEmailAndPassword(auth, email, pass)
+                .then(() => { 
+                    window.fecharAuth(); 
+                    if(pendingArticle) { TreatingCliqueArtigoMod(pendingArticle.catId, pendingArticle.artId); }
+                    else if (currentView === 'home' && isAdmin()) { renderView('admin'); }
+                })
+                .catch(err => { errorBlock.innerText = "Login falhou. Verifique e-mail corporativo e senha."; errorBlock.classList.remove('hidden'); });
+        }
+
+        // ✅ Bug Fix Cadastro Clicável (Ponto 3) - Pedir e-mail (Ponto 2)
+        window.executarCadastro = () => {
+            const nome = document.getElementById('reg-nome').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const pass = document.getElementById('reg-pass').value.trim();
+            const consent = document.getElementById('reg-consent').checked;
+            const errorBlock = document.getElementById('reg-error');
+            errorBlock.classList.add('hidden');
+
+            // Validação (Ponto 3)
+            if(!nome || !email || !pass || !consent) { errorBlock.innerText = "Preencha todos os campos e aceite os termos."; errorBlock.classList.remove('hidden'); return; }
+            if(pass.length < 6) { errorBlock.innerText = "A senha deve ter pelo menos 6 caracteres."; errorBlock.classList.remove('hidden'); return; }
+
+            // 1. Criar conta no Auth (E-mail = usuário - Ponto 2)
+            createUserWithEmailAndPassword(auth, email, pass)
+                .then(userCredential => {
+                    // 2. Captação de Dados no Firestore coleção 'leitores'
+                    addDoc(collection(db, "leitores"), {
+                        uid: userCredential.user.uid,
+                        nome: nome,
+                        email: email, // Captando e-mail (Ponto 2)
+                        dataCadastro: serverTimestamp(),
+                        módulo: "Revista GV Beta",
+                        qualificadoGestor: false // Inicialmente leitor comum
+                    });
+                    window.fecharAuth();
+                    localStorage.setItem('gv_artigos_lidos', 0); // Zera paywall
+                    alert("Conta criada com sucesso! O acesso gratuito à revista foi liberado.");
+                    if(pendingArticle) TreatingCliqueArtigoMod(pendingArticle.catId, pendingArticle.artId);
+                })
+                .catch(err => { 
+                    if(err.code === 'auth/email-already-in-use') errorBlock.innerText = "Este e-mail já está cadastrado. Tente fazer login.";
+                    else errorBlock.innerText = "Falha no cadastro (verifique e-mail ou senha)."; 
+                    errorBlock.classList.remove('hidden'); 
+                });
+        }
+
+        window.executarEsqueciSenha = () => {
+            const email = document.getElementById('auth-email').value.trim();
+            const errorBlock = document.getElementById('auth-error');
+            errorBlock.classList.add('hidden');
+
+            if(!email || !email.includes('@')) { alert("Insira um e-mail válido no campo acima para receber o link de recuperação."); return; }
+
+            sendPasswordResetEmail(auth, email)
+                .then(() => { alert("Um e-mail de recuperação de senha foi enviado para " + email + ". Verifique sua caixa de entrada."); })
+                .catch(err => { errorBlock.innerText = "Erro ao enviar e-mail. Verifique se o endereço está correto."; errorBlock.classList.remove('hidden'); });
+        }
+
+        window.executarLogout = () => {
+            signOut(auth).then(() => {
+                alert("Você saiu da sua conta.");
+                window.renderView('home');
+            });
+        }
+
+        // ✅ Alterar Senha dentro da Revista (Ponto 1)
+        window.executarAlterarSenha = () => {
+            const user = auth.currentUser;
+            const passCurr = document.getElementById('change-pass-curr').value;
+            const passNew = document.getElementById('change-pass-new').value;
+            const errorBlock = document.getElementById('change-pass-error');
+            const successBlock = document.getElementById('change-pass-success');
+            
+            errorBlock.classList.add('hidden');
+            successBlock.classList.add('hidden');
+
+            if(!passCurr || !passNew) { errorBlock.innerText = "Preencha a senha atual e a nova senha."; errorBlock.classList.remove('hidden'); return; }
+            
+            // Reautenticar (segurança Firebase)
+            const credential = EmailAuthProvider.credential(user.email, passCurr);
+            reauthenticateWithCredential(user, credential)
+                .then(() => {
+                    updatePassword(user, passNew).then(() => {
+                        successBlock.classList.remove('hidden');
+                        document.getElementById('change-pass-curr').value = '';
+                        document.getElementById('change-pass-new').value = '';
+                    });
+                })
+                .catch(err => { errorBlock.innerText = "Senha atual incorreta."; errorBlock.classList.remove('hidden'); });
+        }
+
+        // ==========================================
+        // MOTOR DE NAVEGAÇÃO & PAYWALL (Ponto 1)
+        // ==========================================
+        const TreatingCliqueArtigoMod = (catId, artId) => {
+            pendingArticle = { catId, artId };
+            const categoria = bancoDeArtigos[catId];
+            const artigo = categoria.artigos.find(a => a.id === artId);
+
+            // 1. Se deslogado, verifica paywall (lógica baseada em Turn anterior)
+            if (!currentUser) {
+                let lidos = parseInt(localStorage.getItem('gv_artigos_lidos') || 0);
+                if (lidos >= 2) {
+                    window.abrirAuth('cadastro'); // Pede cadastro grátis
+                    return;
+                }
+                // Permite leitura livre, incrementa contador
+                localStorage.setItem('gv_artigos_lidos', lidos + 1);
+            }
+            
+            // 2. Se logado e premium, verifica form gestor (Ponto 2)
+            if (artigo.premium && currentUser && (!userData || !userData.qualificadoGestor) && !isAdmin()) {
+                window.abrirGestorForm(); // Pede form gestão
+                return;
+            }
+
+            renderView('artigo', { catId, artId });
+            pendingArticle = null;
+        }
+        window.tratarCliqueArtigoGlobal = TreatingCliqueArtigoMod; // Expondo
+
+        window.goToCategory = (secId) => {
+            if(currentView !== 'home') renderView('home');
+            setTimeout(() => { document.getElementById(secId).scrollIntoView({ behavior: 'smooth' }); }, 10);
+        }
+
+        window.handleLogoClick = () => {
+            if(currentView !== 'home' && currentView !== 'admin') renderView('home');
+            
+            logoClicks++;
+            clearTimeout(logoTimer);
+            logoTimer = setTimeout(() => { logoClicks = 0; }, 1500); // 1.5s 
+
+            if (logoClicks >= 5) {
+                logoClicks = 0;
+                // Hierarquia: Apenas Admin/Prog acessam (Ponto 1)
+                if(isAdmin()) { renderView('admin'); } 
+                else {
+                    if(!currentUser) window.abrirAuth('login');
+                    alert("Acesso restrito a Administradores GV.");
+                }
+            }
+        }
+
+        // ✅ Captação Gestores (Ponto 2)
+        window.abrirGestorForm = () => {
+            document.getElementById('gestor-modal').classList.remove('hidden');
+            document.getElementById('gestor-modal').classList.add('flex');
+            // Pré-preenche e-mail e nome
+            document.getElementById('gestor-email').value = currentUser.email;
+            document.getElementById('gestor-nome').value = userData ? userData.nome : (currentUser.displayName || '');
+            document.body.style.overflow = 'hidden';
+        }
+
+        const gestorInteressesArray = [];
+        window.toggleTag = (btn, tema) => {
+            if(gestorInteressesArray.includes(tema)) {
+                gestorInteressesArray.splice(gestorInteressesArray.indexOf(tema), 1);
+                btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+            } else {
+                gestorInteressesArray.push(tema);
+                btn.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
+            }
+        }
+
+        // Envio do Form Gestão (Ponto 2 - Captação Gestores)
+        document.getElementById('form-gestor').addEventListener('submit', (e) => {
+            e.preventDefault();
+            if(!currentUser) return;
+            
+            const nome = document.getElementById('gestor-nome').value.trim();
+            const whatsapp = document.getElementById('gestor-whatsapp').value.trim();
+            const email = document.getElementById('gestor-email').value; // readonly
+
+            if(gestorInteressesArray.length === 0) { alert("Por favor, selecione pelo menos um interesse futuro."); return; }
+
+            // 1. Salva dados na coleção 'gestores' (Ponto 2)
+            addDoc(collection(db, "gestores"), {
+                uid: currentUser.uid,
+                nome: nome,
+                email: email, // Captando e-mail
+                whatsapp: whatsapp, // Captando whatsapp
+                interesses: gestorInteressesArray, // Captando Interesses (Ponto 2)
+                dataQualificacao: serverTimestamp(),
+                origem: "Revista S. - Paywall"
+            });
+
+            // 2. Atualiza o status do leitor
+            if(userData && userData.firestoreId) {
+                updateDoc(doc(db, "leitores", userData.firestoreId), { qualificadoGestor: true });
+                userData.qualificadoGestor = true;
+            }
+
+            window.fecharGestorForm();
+            alert("Obrigado! Seu acesso aos conteúdos de Gestão foi liberado.");
+            if(pendingArticle) TreatingCliqueArtigoMod(pendingArticle.catId, pendingArticle.artId);
+        });
+
+        // ==========================================
+        // RENDERIZAÇÃO VIEWS (Hardcoded Design)
+        // ==========================================
+        const renderView = (view, param = null) => {
+            currentView = view;
+            const mainContent = document.getElementById('main-content');
+            const btnVoltar = document.getElementById('btn-voltar');
+            const navCategorias = document.getElementById('nav-categorias');
+            
+            mainContent.innerHTML = ''; window.scrollTo(0, 0);
+
+            if (view === 'home') { btnVoltar.classList.add('hidden'); navCategorias.classList.remove('hidden'); renderHomeFeed(mainContent); } 
+            else if (view === 'artigo') { btnVoltar.classList.remove('hidden'); navCategorias.classList.add('hidden'); renderArtigo(mainContent, param); }
+            else if (view === 'conta') { btnVoltar.classList.remove('hidden'); navCategorias.classList.add('hidden'); renderContaView(mainContent); }
+            else if (view === 'admin') {
+                btnVoltar.classList.remove('hidden'); navCategorias.classList.add('hidden');
+                mainContent.innerHTML = '<div class="p-5 bg-gray-100 min-h-screen text-center"><i class="fa-solid fa-tools text-5xl text-gray-300 mt-20 mb-5"></i><h2 class="text-3xl font-black tracking-tighter text-gray-950 mb-2">Painel de Comando</h2><p class="text-sm text-gray-600">Este é o Painel Central do PWA, visível apenas para Programador/Admin clicando 5 vezes no logo.</p></div>';
+            }
+        }
+        window.renderView = renderView; // Expondo
+
+        // ✅ View Minha Conta (Ponto 1)
+        function renderContaView(container) {
+            const role = isProgrammer() ? "Programador" : (isAdmin() ? "Admin" : "Leitor GV");
+            container.innerHTML = `
+                <div class="fade-in p-6 bg-white min-h-screen">
+                    <h2 class="text-3xl font-black tracking-tighter text-gray-950 mb-2">Minha Conta</h2>
+                    <p class="text-sm text-gray-500 mb-8">Gerencie suas credenciais de acesso.</p>
+                    
+                    <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 mb-8 space-y-3 text-sm">
+                        <div class="flex justify-between items-center"><span class="text-xs text-gray-400 font-bold uppercase">Nome:</span> <span class="font-bold text-gray-900">${userData ? userData.nome : currentUser.displayName || '---'}</span></div>
+                        <div class="flex justify-between items-center"><span class="text-xs text-gray-400 font-bold uppercase">E-mail (Login):</span> <span class="font-bold text-gray-700">${currentUser.email}</span></div>
+                        <div class="flex justify-between items-center"><span class="text-xs text-gray-400 font-bold uppercase">Nível:</span> <span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-3 py-1 rounded-full uppercase">${role}</span></div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                        <h4 class="font-bold text-gray-900 mb-5 flex items-center gap-2"><i class="fa-solid fa-key text-blue-500"></i> Alterar Minha Senha</h4>
+                        <div class="space-y-4">
+                            <input type="password" id="change-pass-curr" placeholder="Senha atual" class="w-full p-3 border border-gray-200 rounded-xl outline-none focus:border-blue-500 transition">
+                            <input type="password" id="change-pass-new" placeholder="Nova senha (min. 6 carac.)" class="w-full p-3 border border-gray-200 rounded-xl outline-none focus:border-blue-500 transition">
+                            <div id="change-pass-error" class="text-xs text-red-600 hidden"></div>
+                            <div id="change-pass-success" class="text-xs text-green-600 hidden">Senha alterada com sucesso!</div>
+                            <button onclick="window.executarAlterarSenha()" class="w-full bg-gray-900 text-white font-bold py-3 rounded-xl hover:bg-gray-800 transition active:scale-95">Atualizar Senha</button>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        // Busca dados Firestore colecao 'leitores'
+        async function buscarDadosUsuario(uid) {
+            const q = query(collection(db, "leitores"), where("uid", "==", uid));
+            const querySnapshot = await getDocs(q);
+            if (!querySnapshot.empty) {
+                const docSnap = querySnapshot.docs[0];
+                userData = { firestoreId: docSnap.id, ...docSnap.data() };
+                if(currentView === 'artigo' && pendingArticle) TryingCliqueArtigoMod(pendingArticle.catId, pendingArticle.artId);
+            }
+        }
+
     </script>
 
     <script>
-        // Banco de Dados Estático (Design Aprovado + Conteúdo Ed. 01)
+        // Variáveis UI
+        let logoClicks = 0;
+        let logoTimer;
+
+        // Banco de Dados Estático (Ed. 01)
         const bancoDeArtigos = {
             varejo: { id: 'varejo', nome: 'Pet Shop', tagColor: 'text-blue-700', bgColor: 'bg-blue-50', artigos: [
                 { id: 'v1', premium: false, titulo: '5 técnicas de vitrinismo para aumentar a venda de brinquedos', img: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&q=80', resumo: 'Como organizar as prateleiras de forma que o cliente compre por impulso.' },
@@ -207,80 +521,7 @@
             ]}
         };
 
-        // VARIÁVEIS DE ESTADO GLOBAL
-        let currentUser = null;
-        let userData = null; // Dados complementares do Firestore
-        let currentView = 'home';
-        let pendingArticle = null; // Artigo que tentou ler antes do paywall/form
-
-        // Monitorar estado de autenticação real (Ponto 2)
-        window.addEventListener('load', () => {
-            if(window.GvFirebase) {
-                const { auth, onAuthStateChanged, getAuth } = window.GvFirebase;
-                onAuthStateChanged(getAuth(), user => {
-                    currentUser = user;
-                    const menuLogado = document.getElementById('menu-conta-logado');
-                    
-                    if (user) {
-                        menuLogado.classList.remove('hidden');
-                        document.getElementById('header-edicao').innerText = isProgrammer() ? "PROG" : "Ed. 01";
-                        // Busca dados complementares (para saber se é gestor qualificado)
-                        buscarDadosUsuario(user.uid);
-                    } else {
-                        menuLogado.classList.add('hidden');
-                        document.getElementById('header-edicao').innerText = "Ed. 01";
-                        userData = null;
-                    }
-                    renderView(currentView); // Re-renderiza a view atual com o contexto do usuário
-                });
-            } else {
-                renderView('home'); // Firebase falhou, carrega offline/estático
-            }
-        });
-
-        // UTILITÁRIOS DE HIERARQUIA (Ponto 2)
-        function isProgrammer() { return currentUser && currentUser.email === window.GvFirebase.PROGRAMMER_EMAIL; }
-        function isAdmin() { return currentUser && window.GvFirebase.ADMIN_EMAILS.includes(currentUser.email); }
-
-        // MOTOR DE NAVEGAÇÃO
-        function renderView(view, param = null) {
-            currentView = view;
-            const mainContent = document.getElementById('main-content');
-            const btnVoltar = document.getElementById('btn-voltar');
-            const navCategorias = document.getElementById('nav-categorias');
-            
-            mainContent.innerHTML = ''; // Limpa conteúdo
-            window.scrollTo(0, 0);
-
-            if (view === 'home') {
-                btnVoltar.classList.add('hidden');
-                navCategorias.classList.remove('hidden');
-                renderHomeFeed(mainContent);
-            } 
-            else if (view === 'artigo') {
-                btnVoltar.classList.remove('hidden');
-                navCategorias.classList.add('hidden');
-                renderArtigo(mainContent, param);
-            }
-            else if (view === 'conta') {
-                btnVoltar.classList.remove('hidden');
-                navCategorias.classList.add('hidden');
-                renderContaView(mainContent);
-            }
-            // View do Painel Central Protegida (5 Cliques - Ponto 3)
-            else if (view === 'admin') {
-                if(isAdmin()) {
-                    btnVoltar.classList.remove('hidden');
-                    navCategorias.classList.add('hidden');
-                    renderAdminPanel(mainContent);
-                } else {
-                    alert("Acesso Negado. Área restrita.");
-                    renderView('home');
-                }
-            }
-        }
-
-        // RENDERIZADORES DE INTERFACE
+        // RENDERIZADORES UI HARDCODED (Ponto 4)
 
         function renderHomeFeed(container) {
             let html = `
@@ -301,11 +542,11 @@
                 `;
 
                 categoria.artigos.forEach((artigo, idx) => {
-                    const badge = artigo.premium ? `<span class="text-[9px] text-yellow-700 font-bold bg-yellow-200 px-2 py-0.5 rounded ml-2 inline-flex items-center gap-1 shrink-0"><i class="fa-solid fa-lock text-[8px]"></i> ${artigo.categoriaNome || 'Premium'}</span>` : '';
+                    const badge = artigo.premium ? `<span class="text-[9px] text-yellow-700 font-bold bg-yellow-200 px-2 py-0.5 rounded ml-2 inline-flex items-center gap-1 shrink-0"><i class="fa-solid fa-lock text-[8px]"></i> ${artigo.categoriaNome || 'Premium Gestão'}</span>` : '';
                     
                     if (idx === 0) { // Destaque da seção
                         html += `
-                            <div class="cursor-pointer group" onclick="tratarCliqueArtigo('${categoria.id}', '${artigo.id}')">
+                            <div class="cursor-pointer group" onclick="window.tratarCliqueArtigoGlobal('${categoria.id}', '${artigo.id}')">
                                 <img src="${artigo.img}" class="w-full h-48 object-cover rounded shadow-sm mb-3 group-hover:opacity-90 transition">
                                 <h4 class="font-bold text-lg text-gray-900 group-hover:text-blue-700 flex items-center">${artigo.titulo} ${badge}</h4>
                                 <p class="text-gray-500 text-sm mt-1 line-clamp-2">${artigo.resumo}</p>
@@ -313,7 +554,7 @@
                         `;
                     } else { // Lista
                         html += `
-                            <div class="flex items-start gap-3 cursor-pointer group border-t border-gray-100 pt-4" onclick="tratarCliqueArtigo('${categoria.id}', '${artigo.id}')">
+                            <div class="flex items-start gap-3 cursor-pointer group border-t border-gray-100 pt-4" onclick="window.tratarCliqueArtigoGlobal('${categoria.id}', '${artigo.id}')">
                                 <div class="flex-1 pt-1"><h4 class="font-bold text-sm text-gray-800 leading-tight group-hover:text-blue-700 inline">${artigo.titulo}</h4> ${badge}</div>
                                 <img src="${artigo.img}" class="w-16 h-12 object-cover rounded shrink-0">
                             </div>
@@ -329,17 +570,21 @@
             const categoria = bancoDeArtigos[param.catId];
             const artigo = categoria.artigos.find(a => a.id === param.artId);
             
-            // ✅ Lógica de Bloqueio (Paywall / Form Gestão - Ponto 2)
-            const bloqueioPaywall = !currentUser && checkPaywallBlocked();
-            const bloqueioGestor = artigo.premium && currentUser && (!userData || !userData.qualificadoGestor) && !isAdmin();
+            // ✅ Motor UI de Paywall/Form Gestão (Ponto 2 - baseado Turn anterior)
+            let bloqueado = false;
+            let currentModuloUser = document.getElementById('menu-conta-logado').classList.contains('hidden') ? null : 'logado';
             
-            const bloqueado = bloqueioPaywall || bloqueioGestor;
+            // Lógica UI baseada no contador do Ponto 2
+            let paywallBlocked = !currentModuloUser && (parseInt(localStorage.getItem('gv_artigos_lidos') || 0) >= 2);
+            let gestorBlocked = artigo.premium && currentModuloUser && !isAdminOrProgUI(); // Stub AdminUI
+            
+            bloqueado = paywallBlocked || gestorBlocked;
 
             let mainContentHtml = `
                 <div class="prose prose-sm prose-slate max-w-none text-gray-800 leading-relaxed space-y-4 font-serif pt-4">
                     <p class="text-lg font-bold">Resumo Estratégico:</p>
                     <p>${artigo.resumo}</p>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
                 </div>
             `;
 
@@ -347,10 +592,8 @@
                 // Conteúdo falso/borrado para o paywall
                 mainContentHtml = `
                     <div class="prose prose-sm prose-slate max-w-none text-gray-800 leading-relaxed space-y-4 font-serif pt-4 blur-content">
-                        <p class="text-lg font-bold">Resumo Estratégico:</p>
-                        <p>${artigo.resumo}</p>
                         <p>O texto completo deste artigo estratégico contém dados financeiros, planilhas de giro de estoque, KPIs cruciais e análises de mercado detalhadas para decisores de negócios pet shop e clínicas.</p>
-                        <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.</p>
+                        <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
                     </div>
                 `;
             }
@@ -370,7 +613,7 @@
                         
                         <div class="mt-8 mb-6 border-y border-gray-100 py-3 flex items-center justify-between gap-3 ${bloqueado ? 'blur-content' : ''}">
                             <span class="text-xs text-gray-400 font-medium">Compartilhar Artigo:</span>
-                            <button onclick="copiarLinkWhatsApp('${artigo.id}', '${artigo.titulo.replace(/'/g, "\\'")}')" class="bg-green-600 text-white text-xs font-bold px-4 py-2 rounded-full flex items-center gap-2 hover:bg-green-700 active:scale-95 transition">
+                            <button onclick="window.copiarLinkWhatsApp('${artigo.id}', '${artigo.titulo.replace(/'/g, "\\'")}')" class="bg-green-600 text-white text-xs font-bold px-4 py-2 rounded-full flex items-center gap-2 hover:bg-green-700 active:scale-95 transition">
                                 <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp
                             </button>
                         </div>
@@ -378,22 +621,22 @@
                         ${mainContentHtml}
                     </div>
                     
-                    ${bloqueioPaywall ? `
+                    ${paywallBlocked ? `
                         <div class="absolute inset-x-5 top-72 z-20 p-8 rounded-3xl bg-white/95 backdrop-blur-sm shadow-2xl border border-gray-100 text-center slide-up">
-                            <i class="fa-solid fa-hand-holding-heart text-4xl text-blue-500 mb-5"></i>
+                            <i class="fa-solid fa-lock text-4xl text-blue-500 mb-5"></i>
                             <h4 class="font-bold text-xl text-gray-900 mb-2">Gostando da Revista?</h4>
-                            <p class="text-sm text-gray-600 mb-6 leading-relaxed">Você leu seus 2 artigos grátis. Para continuar lendo esta e outras edições, faça seu **Cadastro Grátis** agora.</p>
-                            <button onclick="abrirAuth('cadastro')" class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl text-sm shadow-md hover:bg-blue-700 transition active:scale-95">Criar Conta Grátis (E-mail)</button>
-                            <button onclick="abrirAuth('login')" class="w-full text-blue-700 font-medium py-3 text-sm">Já tenho conta (Entrar)</button>
+                            <p class="text-sm text-gray-600 mb-6 leading-relaxed">Você leu seus 2 artigos grátis. Para continuar lendo esta e outras edições, faça seu **Cadastro Grátis** (Login) agora.</p>
+                            <button onclick="window.abrirAuth('cadastro')" class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl text-sm shadow-md hover:bg-blue-700 transition active:scale-95">Criar Conta Grátis (E-mail)</button>
+                            <button onclick="window.abrirAuth('login')" class="w-full text-blue-700 font-medium py-3 text-sm">Já tenho conta (Entrar)</button>
                         </div>
                     ` : ''}
 
-                    ${bloqueioGestor ? `
+                    ${gestorBlocked ? `
                         <div class="absolute inset-x-5 top-72 z-20 p-8 rounded-3xl bg-white/95 backdrop-blur-sm shadow-2xl border border-gray-100 text-center slide-up">
                             <i class="fa-solid fa-lock text-4xl text-yellow-500 mb-5"></i>
                             <h4 class="font-bold text-xl text-gray-900 mb-2">Conteúdo Restrito de Gestão</h4>
                             <p class="text-sm text-gray-600 mb-6 leading-relaxed">Este artigo contém estratégias avançadas. Como usuário cadastrado, basta preencher um formulário rápido (grátis) para liberar.</p>
-                            <button onclick="abrirGestorForm()" class="w-full bg-yellow-500 text-gray-950 font-bold py-4 rounded-xl text-sm shadow-md hover:bg-yellow-600 transition active:scale-95">Liberar Conteúdo Gestão (Grátis)</button>
+                            <button onclick="window.abrirGestorForm()" class="w-full bg-yellow-500 text-gray-950 font-bold py-4 rounded-xl text-sm shadow-md hover:bg-yellow-600 transition active:scale-95">Liberar Conteúdo Gestão (Grátis)</button>
                         </div>
                     ` : ''}
 
@@ -405,113 +648,18 @@
                 </div>
             `;
         }
-
-        // ✅ View Minha Conta (Alterar Senha - Ponto 2)
-        function renderContaView(container) {
-            const role = isProgrammer() ? "Programador" : (isAdmin() ? "Administrador" : "Leitor GV");
-            container.innerHTML = `
-                <div class="fade-in p-6 bg-white min-h-screen">
-                    <h2 class="text-3xl font-black tracking-tighter text-gray-950 mb-2">Minha Conta</h2>
-                    <p class="text-sm text-gray-500 mb-8">Gerencie suas credenciais de acesso à Revista O Código Pet.</p>
-                    
-                    <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 mb-8 space-y-3">
-                        <div class="flex justify-between items-center"><span class="text-xs text-gray-400 font-bold uppercase">Nome:</span> <span class="font-bold text-gray-900">${userData ? userData.nome : currentUser.displayName || '---'}</span></div>
-                        <div class="flex justify-between items-center"><span class="text-xs text-gray-400 font-bold uppercase">E-mail:</span> <span class="font-bold text-gray-700">${currentUser.email}</span></div>
-                        <div class="flex justify-between items-center"><span class="text-xs text-gray-400 font-bold uppercase">Nível de Acesso:</span> <span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-3 py-1 rounded-full uppercase">${role}</span></div>
-                    </div>
-
-                    <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                        <h4 class="font-bold text-gray-900 mb-5 flex items-center gap-2"><i class="fa-solid fa-key text-blue-500"></i> Alterar Minha Senha</h4>
-                        <div class="space-y-4">
-                            <input type="password" id="change-pass-curr" placeholder="Senha atual" class="w-full p-3 border border-gray-200 rounded-xl outline-none focus:border-blue-500 transition">
-                            <input type="password" id="change-pass-new" placeholder="Nova senha" class="w-full p-3 border border-gray-200 rounded-xl outline-none focus:border-blue-500 transition">
-                            <div id="change-pass-error" class="text-xs text-red-600 hidden"></div>
-                            <div id="change-pass-success" class="text-xs text-green-600 hidden">Senha alterada com sucesso!</div>
-                            <button onclick="executarAlterarSenha()" class="w-full bg-gray-900 text-white font-bold py-3 rounded-xl hover:bg-gray-800 transition active:scale-95">Atualizar Senha</button>
-                        </div>
-                    </div>
-                </div>
-            `;
+        
+        // Stub UI para checar admin
+        function isAdminOrProgUI() {
+            const role = document.getElementById('header-edicao').innerText;
+            return role === "PROG" || role === "ADMIN";
         }
 
-        // ✅ PAINEL CENTRAL PROTEGIDO (Ponto 3)
-        function renderAdminPanel(container) {
-            container.innerHTML = `
-                <div class="fade-in p-5 bg-gray-100 min-h-screen overflow-y-auto">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-3xl font-black tracking-tighter text-gray-950">Painel Central <span class="text-red-600">PROG</span></h2>
-                        <button onclick="executarLogout()" class="text-gray-600 hover:text-red-600"><i class="fa-solid fa-right-from-bracket text-lg"></i></button>
-                    </div>
-                    
-                    <div class="grid grid-cols-2 gap-4 mb-8">
-                        <div class="bg-white p-4 rounded-xl shadow border border-gray-100 overflow-hidden">
-                            <span class="text-xs text-gray-400 font-bold uppercase block mb-1">Módulo Atual</span>
-                            <span class="text-lg font-black text-blue-700 truncate">Revista Semanal</span>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl shadow border border-gray-100">
-                            <span class="text-xs text-gray-400 font-bold uppercase block mb-1">Status Sistema</span>
-                            <span class="text-lg font-black text-green-600">Online Beta</span>
-                        </div>
-                    </div>
-
-                    <div class="bg-white p-6 rounded-2xl shadow border border-gray-100 mb-8 text-center">
-                        <i class="fa-solid fa-tools text-5xl text-gray-300 mb-5"></i>
-                        <h4 class="font-bold text-gray-900 mb-2">Área de Desenvolvimento</h4>
-                        <p class="text-sm text-gray-600 leading-relaxed mb-6">Esta view simula o Painel de Comando PWA que será construído nos Módulos 2 (CRM) e 3 (WhatsApp/Automação). Atualmente, é acessada apenas pelo Programador/Admin.</p>
-                        <button disabled class="w-full bg-gray-100 text-gray-400 font-bold py-3 rounded-xl mb-3">Gerar Nova Edição (Módulo Autoria)</button>
-                        <button disabled class="w-full bg-gray-100 text-gray-400 font-bold py-3 rounded-xl">Disparo WhatsApp (Módulo Disparo)</button>
-                    </div>
-                    
-                    <div class="text-center p-5 rounded-2xl bg-gray-900 text-white">
-                        <h3 class="text-xl font-black tracking-tighter text-blue-400">GV CONECTA</h3>
-                    </div>
-                </div>
-            `;
-        }
-
-        // LÓGICA DE AÇÃO & UTILITÁRIOS
-
-        // ✅ Lógica de Paywall (Ponto 2)
-        function checkPaywallBlocked() {
-            let lidos = localStorage.getItem('gv_artigos_lidos') || 0;
-            return parseInt(lidos) >= 2; // Bloqueia no 3º artigo (índice 2)
-        }
-        function incrementarContadorLidos() {
-            if(currentUser) return; // Não conta para logados
-            let lidos = parseInt(localStorage.getItem('gv_artigos_lidos') || 0);
-            localStorage.setItem('gv_artigos_lidos', lidos + 1);
-        }
-
-        function tratarCliqueArtigo(catId, artId) {
-            pendingArticle = { catId, artId };
-            const categoria = bancoDeArtigos[catId];
-            const artigo = categoria.artigos.find(a => a.id === artId);
-
-            // 1. Se deslogado, verifica paywall
-            if (!currentUser) {
-                if (checkPaywallBlocked()) {
-                    abrirAuth('cadastro'); // Bloqueia e pede cadastro grátis
-                    return;
-                }
-                incrementarContadorLidos(); // Permite ler, incrementa contador
-            }
-            
-            // 2. Se logado e premium, verifica form gestor
-            if (artigo.premium && currentUser && (!userData || !userData.qualificadoGestor) && !isAdmin()) {
-                abrirGestorForm(); // Bloqueia e pede form gestão
-                return;
-            }
-
-            // Permite leitura
-            renderView('artigo', { catId, artId });
-            pendingArticle = null;
-        }
-
+        // UTILITÁRIOS UI (Classic)
         function toggleMenu(forceClose) {
             const menu = document.getElementById('side-menu');
             const panel = document.getElementById('side-menu-panel');
             const show = forceClose === false ? false : menu.classList.contains('hidden');
-
             if (show) {
                 menu.classList.remove('hidden');
                 setTimeout(() => { menu.classList.remove('opacity-0'); panel.classList.remove('translate-x-full'); }, 10);
@@ -522,49 +670,17 @@
         }
         function fecharMenuClickFora(event) { if(event.target.id === 'side-menu') toggleMenu(false); }
 
-        function goToCategory(secId) {
-            toggleMenu(false); // Fecha menu lateral se aberto
-            document.getElementById(secId).scrollIntoView({ behavior: 'smooth' });
-        }
-
-        // Copiar Link para WhatsApp
         function copiarLinkWhatsApp(artId, titulo) {
             const shareUrl = window.location.origin + window.location.pathname + '?artigo_id=' + artId;
             const texto = encodeURIComponent(`*O Código Pet:* _${titulo}_\nLeia completo aqui: ${shareUrl}`);
             window.open(`https://wa.me/?text=${texto}`, '_blank');
         }
 
-        // Gatilho do Painel Central (5 Cliques no Logo - Ponto 3)
-        let logoClicks = 0;
-        let logoTimer;
-        function handleLogoClick() {
-            if(currentView !== 'home' && currentView !== 'admin') renderView('home'); // Volta pra home se tiver lendo
-            
-            logoClicks++;
-            clearTimeout(logoTimer);
-            logoTimer = setTimeout(() => { logoClicks = 0; }, 1500); // 1.5s para 5 cliques rápidos
-
-            if (logoClicks >= 5) {
-                logoClicks = 0;
-                clearTimeout(logoTimer);
-                // Hierarquia: Apenas Admin/Prog acessam (Ponto 2/3)
-                if(isAdmin()) {
-                    renderView('admin'); 
-                } else {
-                    // Se deslogado ou leitor, força abrir login administrativo
-                    abrirAuth('login'); 
-                    document.getElementById('auth-error').innerText = "Acesso restrito. Faça login administrativo.";
-                    document.getElementById('auth-error').classList.remove('hidden');
-                }
-            }
-        }
-
-        // ✅ LÓGICA DE AUTENTICAÇÃO REAL (Ponto 2)
         function abrirAuth(modo = 'login') {
             document.getElementById('auth-modal').classList.remove('hidden');
             document.getElementById('auth-modal').classList.add('flex');
             toggleAuthMode(modo);
-            document.body.style.overflow = 'hidden'; // Impede scroll da página
+            document.body.style.overflow = 'hidden'; 
         }
         function fecharAuth() {
             document.getElementById('auth-modal').classList.add('hidden');
@@ -573,6 +689,8 @@
             document.getElementById('auth-error').classList.add('hidden');
             document.getElementById('reg-error').classList.add('hidden');
         }
+        window.fecharAuth = fecharAuth; window.abrirAuth = abrirAuth; // Expondo
+
         function toggleAuthMode(modo) {
             if(modo === 'login') {
                 document.getElementById('auth-content-login').classList.remove('hidden');
@@ -582,192 +700,21 @@
                 document.getElementById('auth-content-cadastro').classList.remove('hidden');
             }
         }
+        window.toggleAuthMode = toggleAuthMode; // Expondo
 
-        // 🔥 Funções Firebase Auth Reais (Ponto 2)
-
-        function executarLogin() {
-            const { auth, signInWithEmailAndPassword, getAuth } = window.GvFirebase;
-            const email = document.getElementById('auth-email').value;
-            const pass = document.getElementById('auth-pass').value;
-            const errorBlock = document.getElementById('auth-error');
-            errorBlock.classList.add('hidden');
-
-            signInWithEmailAndPassword(getAuth(), email, pass)
-                .then(() => { 
-                    fecharAuth(); 
-                    if(pendingArticle) { tratarCliqueArtigo(pendingArticle.catId, pendingArticle.artId); }
-                    else if (currentView === 'home' && isAdmin()) { renderView('admin'); } // Entra direto no painel se for admin clicando no logo
-                })
-                .catch(err => { errorBlock.innerText = "Falha no login. Verifique e-mail corporativo e senha."; errorBlock.classList.remove('hidden'); });
-        }
-
-        // ✅ Correção Cadastro (Ponto 1) - Pedir e-mail (Ponto 2)
-        function executarCadastro() {
-            const { auth, db, createUserWithEmailAndPassword, getAuth, collection, addDoc, serverTimestamp } = window.GvFirebase;
-            const nome = document.getElementById('reg-nome').value.trim();
-            const email = document.getElementById('reg-email').value.trim();
-            const pass = document.getElementById('reg-pass').value.trim();
-            const errorBlock = document.getElementById('reg-error');
-            errorBlock.classList.add('hidden');
-
-            // Validação básica frontend (garante inputs preenchidos - Ponto 1)
-            if(!nome || !email || !pass) { errorBlock.innerText = "Preencha todos os campos."; errorBlock.classList.remove('hidden'); return; }
-            if(pass.length < 6) { errorBlock.innerText = "A senha deve ter pelo menos 6 caracteres."; errorBlock.classList.remove('hidden'); return; }
-
-            // 1. Criar conta no Auth (E-mail = usuário - Ponto 2)
-            createUserWithEmailAndPassword(getAuth(), email, pass)
-                .then(userCredential => {
-                    // 2. Captação de Dados no Firestore coleção 'leitores' (Ponto 2)
-                    addDoc(collection(db, "leitores"), {
-                        uid: userCredential.user.uid,
-                        nome: nome,
-                        email: email, // Captando e-mail (Ponto 2)
-                        dataCadastro: serverTimestamp(),
-                        qualificadoGestor: false // Inicialmente leitor comum
-                    });
-                    fecharAuth();
-                    localStorage.setItem('gv_artigos_lidos', 0); // Zera contador paywall
-                    alert("Conta criada com sucesso! O acesso gratuito à revista foi liberado.");
-                    if(pendingArticle) tratarCliqueArtigo(pendingArticle.catId, pendingArticle.artId);
-                })
-                .catch(err => { 
-                    console.error(err);
-                    if(err.code === 'auth/email-already-in-use') errorBlock.innerText = "Este e-mail já está cadastrado. Tente fazer login.";
-                    else errorBlock.innerText = "Falha no cadastro. Verifique os dados."; 
-                    errorBlock.classList.remove('hidden'); 
-                });
-        }
-
-        // ✅ Esqueci a Senha (Ponto 2)
-        function executarEsqueciSenha() {
-            const { auth, sendPasswordResetEmail, getAuth } = window.GvFirebase;
-            const email = document.getElementById('auth-email').value.trim();
-            const errorBlock = document.getElementById('auth-error');
-            errorBlock.classList.add('hidden');
-
-            if(!email || !email.includes('@')) { alert("Insira um e-mail válido no campo acima para receber o link de recuperação."); return; }
-
-            sendPasswordResetEmail(getAuth(), email)
-                .then(() => { alert("Um e-mail de recuperação de senha foi enviado para " + email + ". Verifique sua caixa de entrada."); })
-                .catch(err => { errorBlock.innerText = "Erro ao enviar e-mail. Verifique se o endereço está correto."; errorBlock.classList.remove('hidden'); });
-        }
-
-        // ✅ Alterar Senha dentro da Revista (Ponto 2)
-        function executarAlterarSenha() {
-            const { auth, getAuth, updatePassword, reauthenticateWithCredential, EmailAuthProvider } = window.GvFirebase;
-            const user = getAuth().currentUser;
-            const passCurr = document.getElementById('change-pass-curr').value;
-            const passNew = document.getElementById('change-pass-new').value;
-            const errorBlock = document.getElementById('change-pass-error');
-            const successBlock = document.getElementById('change-pass-success');
-            
-            errorBlock.classList.add('hidden');
-            successBlock.classList.add('hidden');
-
-            if(!passCurr || !passNew) { errorBlock.innerText = "Preencha a senha atual e a nova senha."; errorBlock.classList.remove('hidden'); return; }
-            if(passNew.length < 6) { errorBlock.innerText = "A nova senha deve ter pelo menos 6 caracteres."; errorBlock.classList.remove('hidden'); return; }
-
-            // 1. Reautenticar (segurança Firebase para operações sensíveis)
-            const credential = EmailAuthProvider.credential(user.email, passCurr);
-            reauthenticateWithCredential(user, credential)
-                .then(() => {
-                    // 2. Atualizar Senha
-                    updatePassword(user, passNew).then(() => {
-                        successBlock.classList.remove('hidden');
-                        document.getElementById('change-pass-curr').value = '';
-                        document.getElementById('change-pass-new').value = '';
-                    }).catch(err => { errorBlock.innerText = "Erro ao atualizar senha. Tente novamente."; errorBlock.classList.remove('hidden'); });
-                })
-                .catch(err => { errorBlock.innerText = "Senha atual incorreta."; errorBlock.classList.remove('hidden'); });
-        }
-
-        function executarLogout() {
-            if(!window.GvFirebase) return;
-            window.GvFirebase.signOut(window.GvFirebase.getAuth()).then(() => {
-                alert("Você saiu da sua conta.");
-                fecharAuth();
-                renderView('home');
-            });
-        }
-
-        // ✅ LÓGICA FORMULÁRIO GESTÃO (Ponto 2)
-
-        function abrirGestorForm() {
-            if(!currentUser) return abrirAuth('cadastro');
-            document.getElementById('gestor-modal').classList.remove('hidden');
-            document.getElementById('gestor-modal').classList.add('flex');
-            // Pré-preenche e-mail e nome (se houver)
-            document.getElementById('gestor-email').value = currentUser.email;
-            document.getElementById('gestor-nome').value = userData ? userData.nome : (currentUser.displayName || '');
-            document.body.style.overflow = 'hidden';
-        }
-        function fecharGestorForm() {
+        // ✅ Fechar Form Gestão
+        window.fecharGestorForm = () => {
             document.getElementById('gestor-modal').classList.add('hidden');
             document.getElementById('gestor-modal').classList.remove('flex');
             document.body.style.overflow = '';
         }
 
-        // Envio do Form Gestão (Ponto 2 - Captação Gestores)
-        window.onload = () => {
-            const formGestor = document.getElementById('form-gestor');
-            if(formGestor) {
-                formGestor.addEventListener('submit', executarQualificacaoGestor);
-            }
-        };
-
-        function executarQualificacaoGestor(e) {
-            e.preventDefault();
-            if(!window.GvFirebase || !currentUser) return;
-            const { db, collection, addDoc, serverTimestamp, doc, updateDoc } = window.GvFirebase;
-            
-            const nome = document.getElementById('gestor-nome').value.trim();
-            const whatsapp = document.getElementById('gestor-whatsapp').value.trim();
-            const email = document.getElementById('gestor-email').value; // readonly
-
-            // 1. Salva dados na coleção centralizada 'gestores' (Ponto 2)
-            addDoc(collection(db, "gestores"), {
-                uid: currentUser.uid,
-                nome: nome, // Captando nome
-                email: email, // Captando e-mail
-                whatsapp: whatsapp, // Captando whatsapp
-                dataQualificacao: serverTimestamp(),
-                origem: "Revista S."
-            });
-
-            // 2. Atualiza o status do leitor para 'qualificado' (para não pedir o form de novo)
-            if(userData && userData.firestoreId) {
-                const leitorRef = doc(db, "leitores", userData.firestoreId);
-                updateDoc(leitorRef, { qualificadoGestor: true });
-                userData.qualificadoGestor = true; // Atualiza estado local
-            }
-
-            fecharGestorForm();
-            alert("Obrigado! Seu acesso aos conteúdos de Gestão e Finanças foi liberado.");
-            if(pendingArticle) tratarCliqueArtigo(pendingArticle.catId, pendingArticle.artId);
-        }
-
-        // Função auxiliar para buscar dados complementares do Firestore
-        async function buscarDadosUsuario(uid) {
-            const { db, collection, getDocs, query, where } = window.GvFirebase;
-            const q = query(collection(db, "leitores"), where("uid", "==", uid));
-            const querySnapshot = await getDocs(q);
-            if (!querySnapshot.empty) {
-                const doc = querySnapshot.docs[0];
-                userData = { firestoreId: doc.id, ...doc.data() };
-                if (currentView === 'artigo') renderView('artigo', pendingArticle); // Re-renderiza artigo se tiver bloqueado
-            }
-        }
-
-        // Scroll para botão "UP"
+        // Scroll UP
         window.addEventListener('scroll', () => {
             const btnUp = document.getElementById('btn-up');
-            if(btnUp) {
-                window.scrollY > 300 ? btnUp.classList.remove('translate-y-10', 'opacity-0') : btnUp.classList.add('translate-y-10', 'opacity-0');
-            }
+            if(btnUp) window.scrollY > 300 ? btnUp.classList.remove('translate-y-10', 'opacity-0') : btnUp.classList.add('translate-y-10', 'opacity-0');
         });
 
-        // INICIALIZAÇÃO
-        renderView('home');
     </script>
 </body>
 </html>
