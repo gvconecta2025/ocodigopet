@@ -30,6 +30,7 @@
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
         .blur-content { filter: blur(6px); user-select: none; pointer-events: none; }
+        .tf-option { @apply w-full bg-blue-50/50 border border-blue-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-[0_2px_10px_-3px_rgba(0,0,0,0.1)] hover:border-blue-400 hover:bg-blue-100 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between; }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans antialiased overflow-x-hidden">
@@ -67,7 +68,7 @@
         
         <header class="bg-white sticky top-0 z-40 shadow-md header-line w-full">
             <div class="px-4 py-3 flex justify-between items-center">
-                <div class="flex flex-col cursor-pointer group" onclick="renderView('home')">
+                <div class="flex flex-col cursor-pointer group" onclick="handleLogoClick()">
                     <h1 class="text-2xl font-black tracking-tighter text-blue-700 uppercase leading-none">O CÓDIGO PET</h1>
                     <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Revista do Profissional</span>
                 </div>
@@ -77,7 +78,7 @@
                 </div>
             </div>
             
-            <div class="bg-gray-50 border-b border-gray-200 px-4 py-2 overflow-x-auto whitespace-nowrap text-[11px] font-bold text-gray-500 uppercase tracking-wide flex gap-5 scrollbar-hide">
+            <div id="nav-categorias" class="bg-gray-50 border-b border-gray-200 px-4 py-2 overflow-x-auto whitespace-nowrap text-[11px] font-bold text-gray-500 uppercase tracking-wide flex gap-5 scrollbar-hide transition-all">
                 <span onclick="goToCategory('varejo')" class="cursor-pointer hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition">Pet Shop</span>
                 <span onclick="goToCategory('clinica')" class="cursor-pointer hover:text-teal-600 border-b-2 border-transparent hover:border-teal-600 transition">Clínica</span>
                 <span onclick="goToCategory('estetica')" class="cursor-pointer hover:text-pink-600 border-b-2 border-transparent hover:border-pink-600 transition">Estética</span>
@@ -99,51 +100,28 @@
                 <span class="text-xs font-bold text-gray-500 uppercase tracking-widest"><i class="fa-solid fa-lock text-blue-600"></i> Acesso Premium 100% Gratuito</span>
                 <button onclick="fecharTypeform()" class="text-gray-400 hover:text-gray-800 text-xl"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            
-            <div class="flex-1 overflow-y-auto p-6 flex flex-col pt-6">
-                
+            <div class="flex-1 overflow-y-auto p-6 flex flex-col pt-10">
                 <div id="step-1" class="tf-step slide-up w-full">
                     <span class="text-blue-600 font-bold mb-2 block">1 de 4</span>
                     <h2 class="text-2xl font-black text-gray-900 mb-4 leading-tight">Qual a sua função na empresa?</h2>
-                    <p class="text-sm text-gray-500 mb-6 border-l-4 border-yellow-400 pl-3">⚠️ Conteúdo restrito a decisores do mercado Pet. <strong class="text-gray-800">O acesso é 100% gratuito</strong>, basta preencher abaixo.</p>
-                    
-                    <button onclick="tfNext(2, 'cargo', 'Dono / Sócio')" class="w-full bg-white border-2 border-gray-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between">
-                        <span>Dono(a) / Sócio(a)</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
-                    </button>
-                    <button onclick="tfNext(2, 'cargo', 'Gerente / Administrador')" class="w-full bg-white border-2 border-gray-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between">
-                        <span>Gerente / Administrador(a)</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
-                    </button>
-                    <button onclick="tfNext(2, 'cargo', 'Médico Veterinário')" class="w-full bg-white border-2 border-gray-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between">
-                        <span>Médico(a) Veterinário(a)</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
-                    </button>
-                    <button onclick="tfNext(2, 'cargo', 'Coordenador Operacional')" class="w-full bg-white border-2 border-gray-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between">
-                        <span>Coordenador(a)</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
-                    </button>
+                    <p class="text-sm text-gray-500 mb-6 border-l-4 border-yellow-400 pl-3">⚠️ Conteúdo restrito a decisores do mercado Pet. <strong class="text-gray-800">O acesso é 100% gratuito</strong>.</p>
+                    <button onclick="tfNext(2, 'cargo', 'Dono / Sócio')" class="tf-option"><span>Dono(a) / Sócio(a)</span> <i class="fa-solid fa-chevron-right text-blue-400"></i></button>
+                    <button onclick="tfNext(2, 'cargo', 'Gerente / Administrador')" class="tf-option"><span>Gerente / Administrador(a)</span> <i class="fa-solid fa-chevron-right text-blue-400"></i></button>
+                    <button onclick="tfNext(2, 'cargo', 'Médico Veterinário')" class="tf-option"><span>Médico(a) Veterinário(a)</span> <i class="fa-solid fa-chevron-right text-blue-400"></i></button>
+                    <button onclick="tfNext(2, 'cargo', 'Coordenador Operacional')" class="tf-option"><span>Coordenador(a)</span> <i class="fa-solid fa-chevron-right text-blue-400"></i></button>
                 </div>
-
                 <div id="step-2" class="tf-step slide-up w-full hidden">
                     <span class="text-blue-600 font-bold mb-2 block">2 de 4</span>
-                    <h2 class="text-2xl font-black text-gray-900 mb-6 leading-tight">Qual é o maior desafio na sua operação hoje?</h2>
-                    
-                    <button onclick="tfNext(3, 'desafio', 'Atrair clientes')" class="w-full bg-white border-2 border-gray-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between">
-                        <span>Atrair novos clientes</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
-                    </button>
-                    <button onclick="tfNext(3, 'desafio', 'Tempo e Organização')" class="w-full bg-white border-2 border-gray-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between">
-                        <span>Falta de tempo e desorganização</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
-                    </button>
-                    <button onclick="tfNext(3, 'desafio', 'Margem de Lucro')" class="w-full bg-white border-2 border-gray-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between">
-                        <span>Margem de lucro baixa</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
-                    </button>
-                    <button onclick="tfNext(3, 'desafio', 'Gestão de Equipe')" class="w-full bg-white border-2 border-gray-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between">
-                        <span>Problemas com a equipe</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
-                    </button>
+                    <h2 class="text-2xl font-black text-gray-900 mb-8 leading-tight">Qual é o maior desafio na sua operação hoje?</h2>
+                    <button onclick="tfNext(3, 'desafio', 'Atrair clientes')" class="tf-option"><span>Atrair novos clientes</span> <i class="fa-solid fa-chevron-right text-blue-400"></i></button>
+                    <button onclick="tfNext(3, 'desafio', 'Tempo e Organização')" class="tf-option"><span>Falta de tempo e desorganização</span> <i class="fa-solid fa-chevron-right text-blue-400"></i></button>
+                    <button onclick="tfNext(3, 'desafio', 'Margem de Lucro')" class="tf-option"><span>Margem de lucro baixa</span> <i class="fa-solid fa-chevron-right text-blue-400"></i></button>
+                    <button onclick="tfNext(3, 'desafio', 'Gestão de Equipe')" class="tf-option"><span>Problemas com a equipe</span> <i class="fa-solid fa-chevron-right text-blue-400"></i></button>
                 </div>
-
                 <div id="step-3" class="tf-step slide-up w-full hidden">
                     <span class="text-blue-600 font-bold mb-2 block">3 de 4</span>
-                    <h2 class="text-2xl font-black text-gray-900 mb-2 leading-tight">O que você gostaria de ler nas próximas edições?</h2>
+                    <h2 class="text-2xl font-black text-gray-900 mb-2 leading-tight">O que gostaria de ler nas próximas edições?</h2>
                     <p class="text-sm text-gray-500 mb-6">Selecione os tópicos (pode marcar quantos quiser):</p>
-                    
                     <div class="flex flex-wrap gap-2 mb-8">
                         <button type="button" onclick="toggleTag(this, 'Gestão Financeira')" class="border-2 border-gray-200 bg-white text-gray-600 px-4 py-2 rounded-full text-xs font-bold transition-colors">Gestão Financeira</button>
                         <button type="button" onclick="toggleTag(this, 'Precificação')" class="border-2 border-gray-200 bg-white text-gray-600 px-4 py-2 rounded-full text-xs font-bold transition-colors">Precificação</button>
@@ -161,25 +139,16 @@
                         <button type="button" onclick="toggleTag(this, 'Adestramento')" class="border-2 border-gray-200 bg-white text-gray-600 px-4 py-2 rounded-full text-xs font-bold transition-colors">Adestramento</button>
                         <button type="button" onclick="toggleTag(this, 'Técnicas Banho/Tosa')" class="border-2 border-gray-200 bg-white text-gray-600 px-4 py-2 rounded-full text-xs font-bold transition-colors">Técnicas Banho/Tosa</button>
                     </div>
-
-                    <button onclick="avancarPassoMultiplo()" class="w-full bg-gray-900 hover:bg-black text-white font-black text-lg py-4 rounded-full shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2">
-                        Continuar <i class="fa-solid fa-arrow-right"></i>
-                    </button>
+                    <button onclick="avancarPassoMultiplo()" class="w-full bg-gray-900 hover:bg-black text-white font-black text-lg py-4 rounded-full shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2">Continuar <i class="fa-solid fa-arrow-right"></i></button>
                 </div>
-
                 <div id="step-4" class="tf-step slide-up w-full hidden">
                     <span class="text-blue-600 font-bold mb-2 block">4 de 4</span>
                     <h2 class="text-2xl font-black text-gray-900 mb-2 leading-tight">Desbloqueio Gratuito</h2>
                     <p class="text-gray-500 mb-8 text-sm">Insira seus dados para liberar a leitura. <strong class="text-gray-800">Você não pagará nada por isso.</strong></p>
-                    
                     <input type="text" id="tf-nome" placeholder="Seu Nome" class="w-full bg-gray-50 border border-gray-300 text-gray-900 font-bold rounded-full focus:border-blue-500 focus:bg-white outline-none px-6 py-4 mb-4 transition-all text-lg shadow-sm">
                     <input type="tel" id="tf-whatsapp" placeholder="WhatsApp (com DDD)" class="w-full bg-gray-50 border border-gray-300 text-gray-900 font-bold rounded-full focus:border-blue-500 focus:bg-white outline-none px-6 py-4 mb-8 transition-all text-lg shadow-sm">
-                    
-                    <button onclick="tfSubmit()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black text-lg py-5 rounded-full shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2">
-                        Ler Artigo Agora <i class="fa-solid fa-unlock"></i>
-                    </button>
+                    <button onclick="tfSubmit()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black text-lg py-5 rounded-full shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2">Ler Artigo Agora <i class="fa-solid fa-unlock"></i></button>
                 </div>
-
             </div>
         </div>
     </div>
@@ -187,9 +156,27 @@
     <script>
         window.registrarEvento = function(tipo, detalhes) {};
         window.qualificarLead = async function(dados) {};
+        window.fetchAdminData = async function() { return { eventos: 0, leads: 0 }; }; // Fallback
 
         let tfData = { cargo: '', desafio: '', interesses: [], nome: '', whatsapp: '' };
         let pendingArticle = null;
+        let currentView = 'home';
+        
+        // Gatilho do Painel Central
+        let logoClicks = 0;
+        let logoTimer = null;
+        window.handleLogoClick = function() {
+            if (currentView !== 'home' && currentView !== 'admin') {
+                renderView('home');
+            }
+            logoClicks++;
+            if (logoClicks >= 5) {
+                logoClicks = 0;
+                renderView('admin');
+            }
+            clearTimeout(logoTimer);
+            logoTimer = setTimeout(() => { logoClicks = 0; }, 1500);
+        }
 
         const bancoDeArtigos = {
             varejo: { id: 'varejo', nome: 'Pet Shop', tagColor: 'text-blue-700', bgColor: 'bg-blue-50', artigos: [
@@ -260,16 +247,23 @@
             currentView = view;
             const mainContent = document.getElementById('main-content');
             const btnVoltar = document.getElementById('btn-voltar');
+            const navCategorias = document.getElementById('nav-categorias');
             
             mainContent.innerHTML = ''; 
             window.scrollTo(0, 0);
             
             if (view === 'home') {
                 btnVoltar.classList.add('hidden');
+                navCategorias.classList.remove('hidden');
                 renderHomeFeed(mainContent);
             } else if (view === 'artigo') {
                 btnVoltar.classList.remove('hidden');
+                navCategorias.classList.remove('hidden');
                 renderArtigo(mainContent, param);
+            } else if (view === 'admin') {
+                btnVoltar.classList.remove('hidden');
+                navCategorias.classList.add('hidden'); // Oculta barra de categorias no painel
+                renderAdminPanel(mainContent);
             }
         };
 
@@ -330,8 +324,6 @@
             }
         }
 
-        // --- LÓGICA DO FORMULÁRIO (TYPEFORM) ---
-        
         window.abrirTypeform = function() {
             document.getElementById('typeform-modal').classList.remove('hidden');
             document.getElementById('typeform-modal').classList.add('flex');
@@ -360,7 +352,6 @@
             mostrarPasso(nextStepNum);
         }
 
-        // Nova função para as Tags (Múltipla Seleção)
         window.toggleTag = function(btnElement, tema) {
             if(tfData.interesses.includes(tema)) {
                 tfData.interesses = tfData.interesses.filter(t => t !== tema);
@@ -373,9 +364,7 @@
             }
         }
 
-        window.avancarPassoMultiplo = function() {
-            mostrarPasso(4);
-        }
+        window.avancarPassoMultiplo = function() { mostrarPasso(4); }
 
         window.tfSubmit = function() {
             tfData.nome = document.getElementById('tf-nome').value.trim();
@@ -403,7 +392,6 @@
         function renderArtigo(container, dados) {
             const { catId, artigo } = dados;
             const cat = bancoDeArtigos[catId];
-            
             const sugestoes = cat.artigos.filter(a => a.id !== artigo.id).slice(0, 3);
             
             let html = `
@@ -443,13 +431,85 @@
                 `;
             });
 
-            html += `
+            html += `</div></div></div>`;
+            container.innerHTML = html;
+        }
+
+        // ==========================================
+        // PAINEL CENTRAL (ADMIN)
+        // ==========================================
+        window.switchAdminTab = function(tabName) {
+            document.querySelectorAll('.admin-tab').forEach(el => {
+                el.classList.remove('border-blue-600', 'text-blue-600');
+                el.classList.add('border-transparent', 'text-gray-500');
+            });
+            document.getElementById('tab-btn-' + tabName).classList.remove('border-transparent', 'text-gray-500');
+            document.getElementById('tab-btn-' + tabName).classList.add('border-blue-600', 'text-blue-600');
+            
+            document.querySelectorAll('.admin-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('content-' + tabName).classList.remove('hidden');
+        }
+
+        function renderAdminPanel(container) {
+            container.innerHTML = `
+                <div class="bg-gray-100 min-h-screen fade-in">
+                    <div class="bg-gray-900 text-white p-6 pt-10">
+                        <h1 class="text-2xl font-black uppercase tracking-tight">Painel Central</h1>
+                        <p class="text-sm text-gray-400 mt-1"><i class="fa-solid fa-shield-halved text-blue-500"></i> Acesso Restrito à Gestão</p>
+                    </div>
+                    
+                    <div class="flex border-b border-gray-300 bg-white sticky top-0 z-10 shadow-sm">
+                        <button id="tab-btn-insights" onclick="switchAdminTab('insights')" class="admin-tab flex-1 py-4 font-bold border-b-2 border-blue-600 text-blue-600 transition-colors">Relatórios e Insights</button>
+                        <button id="tab-btn-leads" onclick="switchAdminTab('leads')" class="admin-tab flex-1 py-4 font-bold border-b-2 border-transparent text-gray-500 transition-colors">Leads Qualificados</button>
+                    </div>
+                    
+                    <div id="content-insights" class="admin-content p-5 space-y-4">
+                        <h3 class="font-black text-gray-900 text-lg mb-2">Visão Geral</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                                <span class="text-xs text-gray-500 font-bold uppercase tracking-widest block mb-1">Leads Gestores</span>
+                                <span id="dash-leads" class="text-3xl font-black text-blue-600">--</span>
+                            </div>
+                            <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                                <span class="text-xs text-gray-500 font-bold uppercase tracking-widest block mb-1">Acessos Totais</span>
+                                <span id="dash-eventos" class="text-3xl font-black text-gray-900">--</span>
+                            </div>
                         </div>
+                        
+                        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm mt-4">
+                            <h4 class="font-bold text-gray-800 border-b border-gray-100 pb-2 mb-4">Interesses do Público (Top 5)</h4>
+                            <div id="dash-interesses" class="text-sm text-gray-500">A carregar métricas do Firebase...</div>
+                        </div>
+                    </div>
+                    
+                    <div id="content-leads" class="admin-content p-5 hidden">
+                        <h3 class="font-black text-gray-900 text-lg mb-4">Últimos Gestores Capturados</h3>
+                        <div id="dash-lista-leads" class="space-y-3">A carregar leads do Firebase...</div>
                     </div>
                 </div>
             `;
             
-            container.innerHTML = html;
+            // Invoca a extração de dados do motor 2 (se conectado)
+            setTimeout(() => {
+                window.fetchAdminData().then(dados => {
+                    document.getElementById('dash-leads').innerText = dados.totalLeads;
+                    document.getElementById('dash-eventos').innerText = dados.totalEventos;
+                    
+                    if(dados.leadsList && dados.leadsList.length > 0) {
+                        document.getElementById('dash-lista-leads').innerHTML = dados.leadsList.map(l => 
+                            `<div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                                <h5 class="font-bold text-gray-900">${l.nome}</h5>
+                                <p class="text-xs text-gray-500 mt-1 mb-2"><i class="fa-solid fa-briefcase"></i> ${l.cargo}</p>
+                                <a href="https://wa.me/${l.telefone.replace(/\D/g,'')}" target="_blank" class="bg-green-50 text-green-700 text-xs font-bold px-3 py-1.5 rounded-full inline-block"><i class="fa-brands fa-whatsapp"></i> ${l.telefone}</a>
+                            </div>`
+                        ).join('');
+                    } else {
+                        document.getElementById('dash-lista-leads').innerHTML = "<p class="text-gray-400 text-sm">Nenhum lead qualificado ainda.</p>";
+                    }
+                    
+                    document.getElementById('dash-interesses').innerHTML = "<p class='text-green-600 font-bold'><i class='fa-solid fa-check'></i> Módulo conectado. Implementação de gráficos agregados no próximo sprint.</p>";
+                });
+            }, 500);
         }
 
         window.clicouCTA = (o) => window.registrarEvento('clicou_cta', { de: o });
@@ -463,7 +523,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         try {
             const firebaseConfig = {
@@ -500,12 +560,28 @@
                         telefone: dados.whatsapp,
                         cargo: dados.cargo,
                         desafio: dados.desafio,
-                        interesses: dados.interesses, // Enviando o Array selecionado
+                        interesses: dados.interesses,
                         origem: "regwall_typeform",
                         data_captura: serverTimestamp()
                     });
                     window.registrarEvento('lead_qualificado', { cargo: dados.cargo });
                 } catch (e) { console.error("Erro BD:", e); }
+            }
+
+            // FUNÇÃO DO PAINEL DE ADMINISTRAÇÃO (EXTRAÇÃO)
+            window.fetchAdminData = async function() {
+                let report = { totalLeads: 0, totalEventos: 0, leadsList: [] };
+                try {
+                    const snapLeads = await getDocs(query(collection(db, "leads_qualificados_revista"), limit(20)));
+                    report.totalLeads = snapLeads.size;
+                    snapLeads.forEach(doc => { report.leadsList.push(doc.data()); });
+
+                    const snapEventos = await getDocs(query(collection(db, "eventos_tracking"), limit(50)));
+                    report.totalEventos = snapEventos.size; // Em MVP, limite baixo para não onerar
+                } catch(e) {
+                    console.error("Erro ao puxar relatórios:", e);
+                }
+                return report;
             }
 
             window.registrarEvento('abriu_revista', { edicao: '01' });
