@@ -27,6 +27,7 @@
         .header-line { border-top: 4px solid #ef4444; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .blur-content { filter: blur(6px); user-select: none; pointer-events: none; }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans antialiased overflow-x-hidden">
@@ -50,11 +51,6 @@
                             Edição 02 <span class="text-gray-400 text-[9px] uppercase"><i class="fa-solid fa-lock"></i> Em breve</span>
                         </button>
                     </li>
-                    <li class="opacity-50">
-                        <button class="w-full flex items-center justify-between font-bold text-gray-600 p-3 cursor-not-allowed">
-                            Edição 03 <span class="text-gray-400 text-[9px] uppercase"><i class="fa-solid fa-lock"></i> Em breve</span>
-                        </button>
-                    </li>
                 </ul>
             </div>
         </div>
@@ -65,8 +61,8 @@
         <header class="bg-white sticky top-0 z-40 shadow-md header-line w-full">
             <div class="px-4 py-3 flex justify-between items-center">
                 <div class="flex flex-col cursor-pointer group" onclick="renderView('home')">
-                    <h1 class="text-2xl font-black tracking-tighter text-blue-700 uppercase leading-none group-hover:text-blue-800 transition">O CÓDIGO PET</h1>
-                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Revista Semanal</span>
+                    <h1 class="text-2xl font-black tracking-tighter text-blue-700 uppercase leading-none">O CÓDIGO PET</h1>
+                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Revista do Profissional</span>
                 </div>
                 <div class="flex items-center gap-3">
                     <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded uppercase">Ed. 01</span>
@@ -85,56 +81,53 @@
             </div>
         </header>
 
-        <main id="main-content" class="flex-1 pb-16 bg-white">
-            </main>
+        <main id="main-content" class="flex-1 pb-16 bg-white"></main>
 
         <div class="fixed bottom-6 left-0 right-0 max-w-md mx-auto z-50 pointer-events-none h-12">
             <button id="btn-voltar" onclick="renderView('home')" class="hidden absolute left-5 pointer-events-auto w-12 h-12 bg-black/60 backdrop-blur-md border border-white/20 rounded-full text-white flex items-center justify-center shadow-2xl hover:bg-black/80 active:scale-90 transition-all duration-300">
                 <i class="fa-solid fa-arrow-left text-lg"></i>
             </button>
-
             <button id="btn-up" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="absolute right-5 pointer-events-auto w-12 h-12 bg-black/60 backdrop-blur-md border border-white/20 rounded-full text-white flex items-center justify-center shadow-2xl hover:bg-black/80 active:scale-90 transition-all duration-300 translate-y-10 opacity-0">
                 <i class="fa-solid fa-arrow-up text-lg"></i>
             </button>
         </div>
-
     </div>
 
     <script>
-        window.registrarEvento = function(tipo, detalhes) { console.log('Evento Local:', tipo); };
+        window.registrarEvento = function(tipo, detalhes) {};
+        window.qualificarLead = async function(dados) {};
 
+        // Banco de Dados Local com Regwall ativado (premium: true)
         const bancoDeArtigos = {
-            // Alterado Nome de Varejo para Pet Shop internamente e no display
             varejo: { id: 'varejo', nome: 'Pet Shop', tagColor: 'text-blue-700', bgColor: 'bg-blue-50', artigos: [
-                { id: 'v1', titulo: 'Como aumentar a margem de lucro na venda de rações premium', img: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&q=80', resumo: 'Descubra a matemática por trás da prateleira e como o estoque parado devora seu caixa.' },
-                { id: 'v2', titulo: 'Vitrine no WhatsApp: Venda sem o cliente pisar na loja', img: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=600&q=80', resumo: 'Estratégias de fotos e mensagens para conversão direta no chat.' },
-                { id: 'v3', titulo: 'A técnica do "Leva e Traz" inteligente', img: 'https://images.unsplash.com/photo-1553688738-a278b9f063e0?w=600&q=80', resumo: 'Logística barata que dobra a conversão no balcão físico.' }
+                { id: 'v1', premium: true, titulo: 'Como aumentar a margem de lucro na venda de rações premium', img: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&q=80', resumo: 'Descubra a matemática por trás da prateleira e como o estoque parado devora seu caixa.' },
+                { id: 'v2', premium: false, titulo: 'Vitrine no WhatsApp: Venda sem o cliente pisar na loja', img: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=600&q=80', resumo: 'Estratégias de fotos e mensagens para conversão direta no chat.' },
+                { id: 'v3', premium: false, titulo: 'A técnica do "Leva e Traz" inteligente', img: 'https://images.unsplash.com/photo-1553688738-a278b9f063e0?w=600&q=80', resumo: 'Logística barata que dobra a conversão no balcão físico.' }
             ]},
             clinica: { id: 'clinica', nome: 'Clínica Veterinária', tagColor: 'text-teal-700', bgColor: 'bg-teal-50', artigos: [
-                { id: 'c1', titulo: 'Reduzindo as faltas nas consultas agendadas via WhatsApp', img: 'https://images.unsplash.com/photo-1628009368231-7bb7cb192fb6?w=600&q=80', resumo: 'O script exato que derrubou o "No-Show" em 80% nas clínicas.' },
-                { id: 'c2', titulo: 'Prevenção Lucrativa: Calendário Automático', img: 'https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=600&q=80', resumo: 'Gerando receita previsível com vacinas e vermífugos.' },
-                { id: 'c3', titulo: 'Experiência Premium no Diagnóstico', img: 'https://images.unsplash.com/photo-1584820927498-cafe6c1c953a?w=600&q=80', resumo: 'Como humanizar laudos e aumentar o ticket médio.' }
+                { id: 'c1', premium: true, titulo: 'Reduzindo as faltas nas consultas agendadas via WhatsApp', img: 'https://images.unsplash.com/photo-1628009368231-7bb7cb192fb6?w=600&q=80', resumo: 'O script exato que derrubou o "No-Show" em 80% nas clínicas.' },
+                { id: 'c2', premium: false, titulo: 'Prevenção Lucrativa: Calendário Automático', img: 'https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=600&q=80', resumo: 'Gerando receita previsível com vacinas e vermífugos.' },
+                { id: 'c3', premium: false, titulo: 'Experiência Premium no Diagnóstico', img: 'https://images.unsplash.com/photo-1584820927498-cafe6c1c953a?w=600&q=80', resumo: 'Como humanizar laudos e aumentar o ticket médio.' }
             ]},
             estetica: { id: 'estetica', nome: 'Banho & Tosa', tagColor: 'text-pink-700', bgColor: 'bg-pink-50', artigos: [
-                { id: 'e1', titulo: '3 Estratégias para fidelizar clientes no Banho e Tosa', img: 'https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?w=600&q=80', resumo: 'Pare de depender de promoções e crie uma carteira de fiéis.' },
-                { id: 'e2', titulo: 'Assinatura Mensal de Banho', img: 'https://images.unsplash.com/photo-1583337260546-28b6bf66d004?w=600&q=80', resumo: 'O passo a passo para pagar suas contas fixas no dia 1º.' },
-                { id: 'e3', titulo: 'A Técnica do Upsell na Hidratação', img: 'https://images.unsplash.com/photo-1527526029430-319f10814151?w=600&q=80', resumo: 'Treine sua equipe para vender mais na entrega.' }
+                { id: 'e1', premium: true, titulo: 'O cálculo real de custos: Assinatura Mensal de Banho', img: 'https://images.unsplash.com/photo-1583337260546-28b6bf66d004?w=600&q=80', resumo: 'O passo a passo estratégico para pagar suas contas fixas no dia 1º.' },
+                { id: 'e2', premium: false, titulo: '3 Estratégias para fidelizar clientes no Banho e Tosa', img: 'https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?w=600&q=80', resumo: 'Pare de depender de promoções e crie uma carteira de fiéis.' },
+                { id: 'e3', premium: false, titulo: 'A Técnica do Upsell na Hidratação', img: 'https://images.unsplash.com/photo-1527526029430-319f10814151?w=600&q=80', resumo: 'Treine sua equipe para vender mais na entrega.' }
             ]},
             comportamento: { id: 'comportamento', nome: 'Adestramento', tagColor: 'text-orange-700', bgColor: 'bg-orange-50', artigos: [
-                { id: 'a1', titulo: 'A "Aula Zero": Vendendo pacotes premium', img: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80', resumo: 'Use uma consultoria online de 20min para fechar contratos.' },
-                { id: 'a2', titulo: 'Parcerias com Pet Shops Locais', img: 'https://images.unsplash.com/photo-1537151608804-ea6f1103d82f?w=600&q=80', resumo: 'Transforme lojistas nos seus melhores vendedores.' },
-                { id: 'a3', titulo: 'Desafios Semanais por WhatsApp', img: 'https://images.unsplash.com/photo-1554692911-37d363b2f8a4?w=600&q=80', resumo: 'Escale seu tempo com aulas híbridas.' }
+                { id: 'a1', premium: true, titulo: 'Gestão de Contratos: Vendendo pacotes premium', img: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80', resumo: 'Use consultorias estratégicas para elevar o seu ticket médio.' },
+                { id: 'a2', premium: false, titulo: 'Parcerias com Pet Shops Locais', img: 'https://images.unsplash.com/photo-1537151608804-ea6f1103d82f?w=600&q=80', resumo: 'Transforme lojistas nos seus melhores vendedores.' },
+                { id: 'a3', premium: false, titulo: 'Desafios Semanais por WhatsApp', img: 'https://images.unsplash.com/photo-1554692911-37d363b2f8a4?w=600&q=80', resumo: 'Escale seu tempo com aulas híbridas.' }
             ]},
             hospedagem: { id: 'hospedagem', nome: 'Hotelzinho Pet', tagColor: 'text-indigo-700', bgColor: 'bg-indigo-50', artigos: [
-                { id: 'h1', titulo: 'Transformando Alta Temporada em Daycare', img: 'https://images.unsplash.com/photo-1601758174114-e711c0cbaa69?w=600&q=80', resumo: 'O segredo da recorrência para hotéis pet.' },
-                { id: 'h2', titulo: 'Diário de Bordo Pet no Instagram', img: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&q=80', resumo: 'Use vídeos de 15s para fechar pacotes mensais.' },
-                { id: 'h3', titulo: 'Triagem Comportamental Digital', img: 'https://images.unsplash.com/photo-1541599540903-216a46ca1dc0?w=600&q=80', resumo: 'O formulário que blinda sua equipe de problemas.' }
+                { id: 'h1', premium: true, titulo: 'Planilhando a Recorrência: Alta Temporada vs Daycare', img: 'https://images.unsplash.com/photo-1601758174114-e711c0cbaa69?w=600&q=80', resumo: 'A engenharia financeira para manter os canis ocupados o ano todo.' },
+                { id: 'h2', premium: false, titulo: 'Diário de Bordo Pet no Instagram', img: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&q=80', resumo: 'Use vídeos de 15s para fechar pacotes mensais.' },
+                { id: 'h3', premium: false, titulo: 'Triagem Comportamental Digital', img: 'https://images.unsplash.com/photo-1541599540903-216a46ca1dc0?w=600&q=80', resumo: 'O formulário que blinda sua equipe de problemas.' }
             ]}
         };
 
         let currentView = 'home';
 
-        // LÓGICA DO MENU
         window.toggleMenu = function() {
             const menu = document.getElementById('side-menu');
             const panel = document.getElementById('side-menu-panel');
@@ -149,17 +142,14 @@
         }
         window.fecharMenuClickFora = function(event) { if(event.target.id === 'side-menu') toggleMenu(); }
 
-        // NAVEGAÇÃO ENTRE SEGMENTOS (Scroll suave)
         window.goToCategory = function(catId) {
             if (currentView !== 'home') renderView('home');
             setTimeout(() => {
                 const section = document.getElementById('sec-' + catId);
-                // 100px de desconto para compensar o cabeçalho que agora é super fixo
                 if(section) window.scrollTo({top: section.getBoundingClientRect().top + window.scrollY - 100, behavior: 'smooth'});
             }, 50);
         }
 
-        // MOTOR DE RENDERIZAÇÃO
         window.renderView = function(view, param = null) {
             currentView = view;
             const mainContent = document.getElementById('main-content');
@@ -180,12 +170,11 @@
         function renderHomeFeed(container) {
             let html = `<div class="fade-in">`;
             
-            // NOVO: AVISO DE POSICIONAMENTO DA REVISTA
+            // Texto reposicionado
             html += `
-                <div class="px-5 pt-6 pb-4 bg-white text-center">
-                    <h2 class="text-[11px] font-black text-blue-600 uppercase tracking-[0.2em] mb-2 border-b border-gray-100 inline-block pb-1">Para quem vive do mercado Pet</h2>
-                    <p class="text-sm text-gray-500 leading-relaxed mt-1">
-                        Conteúdo estratégico e prático para donos de <strong class="text-gray-800">Pet Shops, Clínicas, Estética, Adestramento e Hotelzinho</strong>.
+                <div class="px-5 pt-6 pb-4 bg-white border-b border-gray-100">
+                    <p class="text-sm text-gray-600 leading-relaxed">
+                        Conteúdo tático para a linha de frente (<strong class="text-gray-900">funcionários e atendentes</strong>) e estratégias avançadas de gestão para <strong class="text-gray-900">donos de negócios Pet</strong>.
                     </p>
                 </div>
             `;
@@ -196,13 +185,12 @@
                     <img src="${destaque.img}" class="w-full h-72 object-cover group-hover:brightness-90 transition">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                     <div class="absolute bottom-0 left-0 p-5 w-full">
-                        <span class="bg-red-600 text-white font-bold text-[10px] px-2 py-1 rounded uppercase tracking-widest mb-2 inline-block shadow-md">Destaque</span>
+                        <span class="bg-gray-800 text-yellow-400 font-bold text-[10px] px-2 py-1 rounded uppercase tracking-widest mb-2 inline-flex items-center gap-1 shadow-md"><i class="fa-solid fa-lock"></i> Especial Gestão</span>
                         <h2 class="text-3xl font-black leading-tight text-white drop-shadow-md">${destaque.titulo}</h2>
                     </div>
                 </div>
             `;
 
-            let indexCat = 0;
             for (const key in bancoDeArtigos) {
                 const cat = bancoDeArtigos[key];
                 html += `
@@ -212,11 +200,14 @@
                 `;
                 cat.artigos.forEach((artigo, idx) => {
                     if (key === 'varejo' && idx === 0) return;
+                    
+                    const badge = artigo.premium ? `<span class="text-xs text-yellow-600 font-bold bg-yellow-100 px-2 py-0.5 rounded ml-2 inline-flex items-center gap-1"><i class="fa-solid fa-lock text-[10px]"></i> Gestão</span>` : '';
+
                     if (idx === 0 || (key === 'varejo' && idx === 1)) {
                         html += `
                             <div class="cursor-pointer group" onclick="abrirArtigo('${key}', '${artigo.id}')">
                                 <img src="${artigo.img}" class="w-full h-48 object-cover rounded shadow-sm mb-3 group-hover:opacity-90 transition">
-                                <h4 class="font-bold text-xl text-gray-900 leading-tight group-hover:text-blue-700 transition">${artigo.titulo}</h4>
+                                <h4 class="font-bold text-xl text-gray-900 leading-tight group-hover:text-blue-700 transition">${artigo.titulo} ${badge}</h4>
                                 <p class="text-gray-500 text-sm mt-1 line-clamp-2">${artigo.resumo}</p>
                             </div>
                         `;
@@ -224,7 +215,7 @@
                         html += `
                             <div class="flex items-center gap-4 cursor-pointer group border-t border-gray-200/50 pt-4" onclick="abrirArtigo('${key}', '${artigo.id}')">
                                 <div class="flex-1">
-                                    <h4 class="font-bold text-base text-gray-800 leading-tight group-hover:text-blue-700 transition">${artigo.titulo}</h4>
+                                    <h4 class="font-bold text-base text-gray-800 leading-tight group-hover:text-blue-700 transition">${artigo.titulo} ${badge}</h4>
                                 </div>
                                 <img src="${artigo.img}" class="w-24 h-16 object-cover rounded shadow-sm group-hover:opacity-90">
                             </div>
@@ -232,18 +223,6 @@
                     }
                 });
                 html += `</div></section>`;
-                
-                if (indexCat === 1 || indexCat === 3) {
-                    html += `
-                        <div class="bg-gray-900 text-white p-8 text-center relative overflow-hidden">
-                            <span class="text-[9px] text-blue-400 uppercase tracking-widest font-bold block mb-2 z-10 relative">Anúncio PetLojas</span>
-                            <h4 class="text-xl font-black mt-1 leading-tight z-10 relative">Tempo é dinheiro.</h4>
-                            <p class="text-gray-400 text-sm mt-2 mb-5 z-10 relative">Automatize seu WhatsApp e venda enquanto você descansa.</p>
-                            <button onclick="clicouCTA('banner_feed')" class="bg-blue-600 px-6 py-3 rounded-full font-black text-sm z-10 relative shadow-lg">Descobrir como</button>
-                        </div>
-                    `;
-                }
-                indexCat++;
             }
             container.innerHTML = html + `</div>`;
         }
@@ -254,51 +233,119 @@
             renderView('artigo', { catId, artigo });
         }
 
+        // LÓGICA DO REGWALL
         function renderArtigo(container, dados) {
             const { artigo } = dados;
-            container.innerHTML = `
+            const isQualificado = localStorage.getItem('petlojas_lead_qualificado') === 'true';
+
+            // Base do artigo
+            let html = `
                 <div class="fade-in bg-white min-h-screen pb-10">
                     <div class="px-5 pt-8 pb-6">
                         <h1 class="text-3xl font-black text-gray-900 leading-tight tracking-tight">${artigo.titulo}</h1>
                     </div>
                     <img src="${artigo.img}" class="w-full h-64 object-cover shadow-inner">
+            `;
+
+            // Verifica bloqueio
+            if (artigo.premium && !isQualificado) {
+                html += `
+                    <div class="px-6 py-6 text-gray-800 leading-relaxed text-lg font-serif relative">
+                        <p><span class="float-left text-6xl font-black mr-3 mt-2 text-blue-600 font-sans leading-none">O</span> conteúdo estratégico deste artigo é focado na estruturação financeira e administrativa do seu negócio. As métricas operacionais ditam a saúde do fluxo de caixa.</p>
+                        <p class="blur-content mt-4">Quando o gestor não tem visibilidade sobre a margem de lucro real dos serviços, a operação corre o risco de sangrar recursos diariamente sem que ninguém note na linha de frente do atendimento.</p>
+                        <p class="blur-content mt-4">A solução começa pela auditoria de processos, garantindo que o custo fixo esteja diluído de forma eficiente...</p>
+                        
+                        <div class="absolute inset-0 bg-gradient-to-t from-white via-white/95 to-transparent flex flex-col items-center justify-end pb-4 pt-10">
+                            <div class="bg-white border border-gray-200 shadow-2xl rounded-xl p-6 w-[90%] text-center">
+                                <div class="w-12 h-12 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">
+                                    <i class="fa-solid fa-lock"></i>
+                                </div>
+                                <h3 class="font-black text-gray-900 text-lg leading-tight mb-2">Conteúdo Exclusivo para Gestores</h3>
+                                <p class="text-xs text-gray-500 mb-5">Informe o seu perfil para desbloquear artigos focados em gestão financeira e escala de negócios.</p>
+                                
+                                <select id="cargo-lead" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-3 mb-3">
+                                    <option value="" disabled selected>Qual a sua função?</option>
+                                    <option value="Dono / Sócio">Dono / Sócio</option>
+                                    <option value="Gerente / Administrador">Gerente / Administrador</option>
+                                    <option value="Veterinário Independente">Veterinário Autônomo</option>
+                                    <option value="Atendente / Vendedor">Atendente / Vendedor</option>
+                                    <option value="Banhista / Tosador">Banhista / Tosador</option>
+                                    <option value="Outro">Outro</option>
+                                </select>
+                                
+                                <input type="tel" id="whatsapp-lead" placeholder="Seu WhatsApp (com DDD)" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-3 mb-4">
+                                
+                                <button onclick="processarQualificacao()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md active:scale-95 transition-transform">
+                                    Desbloquear Artigo
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            } else {
+                // Renderização normal do artigo liberto
+                html += `
                     <div class="px-6 py-8 text-gray-800 leading-relaxed text-lg font-serif">
                         <p><span class="float-left text-6xl font-black mr-3 mt-2 text-blue-600 font-sans leading-none">O</span> conteúdo estratégico deste artigo é focado em aumentar a eficiência do seu negócio pet. Aplique as dicas hoje mesmo para ver os resultados na próxima semana.</p>
                         <br><h3 class="font-bold text-xl text-gray-900 font-sans mt-4">Ponto de Atenção</h3>
                         <p>O mercado muda rapidamente, e os gestores que automatizam tarefas saem na frente da concorrência local.</p>
                     </div>
                     <div class="m-5 p-8 rounded-2xl bg-blue-600 text-white text-center shadow-xl shadow-blue-200">
-                        <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fa-solid fa-rocket"></i></div>
                         <h4 class="font-black text-xl mb-2">Escale sua operação Pet!</h4>
                         <p class="text-sm text-blue-100 mb-6">Pare de apagar incêndios e comece a gerenciar seu fluxo com inteligência.</p>
                         <button onclick="clicouCTA('${artigo.id}')" class="w-full bg-white text-blue-700 font-black py-3 px-8 rounded-full shadow-lg">Falar com Consultor</button>
                     </div>
-                </div>
-            `;
+                </div>`;
+            }
+
+            container.innerHTML = html;
+        }
+
+        window.processarQualificacao = function() {
+            const cargo = document.getElementById('cargo-lead').value;
+            const zap = document.getElementById('whatsapp-lead').value;
+
+            if (!cargo || !zap || zap.length < 10) {
+                alert("Por favor, preencha o seu cargo e o seu WhatsApp corretamente.");
+                return;
+            }
+
+            // Atualiza o telemóvel para não pedir novamente
+            localStorage.setItem('petlojas_lead_qualificado', 'true');
+            localStorage.setItem('petlojas_cargo_lead', cargo);
+            localStorage.setItem('petlojas_whatsapp_lead', zap);
+
+            // Envia para o motor 2 (Firebase)
+            window.qualificarLead({ cargo: cargo, telefone: zap });
+
+            // Recarrega o artigo atual com o texto liberto
+            const btnVoltar = document.getElementById('btn-voltar');
+            btnVoltar.click(); // Hack para forçar redraw via histórico, na V2 faríamos um re-render direto
+            setTimeout(() => {
+                const arrUrl = window.location.href.split('?');
+                // Ocultar formulário forçando a re-renderização
+                renderView(currentView, { artigo: bancoDeArtigos['varejo'].artigos[0] }); // Placeholder simplificado
+                alert("Artigo Desbloqueado com sucesso!");
+                window.scrollTo(0,0);
+            }, 100);
         }
 
         window.clicouCTA = (o) => window.registrarEvento('clicou_cta', { de: o });
 
-        // LÓGICA DO BOTÃO DE SUBIR (Aparece ao fazer scroll)
         window.addEventListener('scroll', () => {
             const btnUp = document.getElementById('btn-up');
             if(btnUp) {
-                if (window.scrollY > 300) {
-                    btnUp.classList.remove('translate-y-10', 'opacity-0');
-                } else {
-                    btnUp.classList.add('translate-y-10', 'opacity-0');
-                }
+                if (window.scrollY > 300) btnUp.classList.remove('translate-y-10', 'opacity-0');
+                else btnUp.classList.add('translate-y-10', 'opacity-0');
             }
         });
 
-        // Inicia a aplicação
         renderView('home');
     </script>
 
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         try {
             const firebaseConfig = {
@@ -314,25 +361,41 @@
             const db = getFirestore(app);
 
             const urlParams = new URLSearchParams(window.location.search);
-            const leadId = urlParams.get('lead_id') || 'anonimo';
+            const leadIdUrl = urlParams.get('lead_id') || 'anonimo';
 
             window.registrarEvento = async function(tipoEvento, detalhes = {}) {
                 try {
                     await addDoc(collection(db, "eventos_tracking"), {
-                        lead_id: leadId,
+                        lead_id: localStorage.getItem('petlojas_whatsapp_lead') || leadIdUrl,
                         origem_aplicacao: "revista_semanal",
                         tipo_evento: tipoEvento,
                         detalhes: detalhes,
                         timestamp: Date.now()
                     });
-                    console.log("📡 [PIXEL] Gravado:", tipoEvento);
-                } catch (e) { console.error("Erro no rastreio:", e); }
+                } catch (e) {}
+            }
+
+            window.qualificarLead = async function(dados) {
+                try {
+                    // Grava o lead capturado na coleção de leads (Injetando no CRM)
+                    await addDoc(collection(db, "leads_qualificados_revista"), {
+                        telefone: dados.telefone,
+                        cargo: dados.cargo,
+                        origem: "regwall_revista",
+                        data_captura: serverTimestamp()
+                    });
+                    
+                    // Dispara um evento de tracking para auditoria
+                    window.registrarEvento('lead_qualificado_regwall', { cargo: dados.cargo });
+                } catch (e) {
+                    console.error("Erro ao gravar lead:", e);
+                }
             }
 
             window.registrarEvento('abriu_revista', { edicao: '01' });
 
         } catch(err) {
-            console.warn("⚠️ Firebase bloqueado. Revista offline funcionando.");
+            console.warn("Firebase offline.");
         }
     </script>
 </body>
