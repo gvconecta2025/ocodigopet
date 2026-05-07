@@ -70,10 +70,10 @@
             
             <div id="nav-categorias" class="bg-gray-50 border-b border-gray-200 px-4 py-2 overflow-x-auto whitespace-nowrap text-[11px] font-bold text-gray-500 uppercase tracking-wide flex gap-5 scrollbar-hide">
                 <span onclick="goToCategory('varejo')" class="cursor-pointer hover:text-blue-600 transition">Pet Shop</span>
-                <span onclick="goToCategory('clinica')" class="cursor-pointer hover:text-teal-600 transition">Clínica</span>
-                <span onclick="goToCategory('estetica')" class="cursor-pointer hover:text-pink-600 transition">Estética</span>
-                <span onclick="goToCategory('comportamento')" class="cursor-pointer hover:text-orange-600 transition">Adestramento</span>
-                <span onclick="goToCategory('hospedagem')" class="cursor-pointer hover:text-indigo-600 transition">Hotelzinho</span>
+                <span onclick="goToCategory('clinica')" class="cursor-pointer hover:text-teal-600 transition">Clínica Vet</span>
+                <span onclick="goToCategory('estetica')" class="cursor-pointer hover:text-blue-600 transition">Estética</span>
+                <span onclick="goToCategory('adestramento')" class="cursor-pointer hover:text-blue-600 transition">Adestramento</span>
+                <span onclick="goToCategory('hotelzinho')" class="cursor-pointer hover:text-blue-600 transition">Hotelzinho</span>
             </div>
         </header>
 
@@ -126,7 +126,7 @@
                         <div class="flex-1 border-t border-gray-200"></div>
                     </div>
                     
-                    <button onclick="executarLoginGoogle()" class="w-full bg-white border-2 border-gray-100 text-gray-700 font-bold py-3.5 rounded-lg shadow-sm hover:border-gray-300 active:scale-95 transition-transform flex items-center justify-center gap-2">
+                    <button onclick="executarLoginGoogle()" class="w-full bg-white border-2 border-gray-100 text-gray-700 font-bold py-3.5 rounded-lg shadow-sm hover:border-gray-300 active:scale-95 transition-transform flex iter flex items-center justify-center gap-2">
                         <i class="fa-brands fa-google text-red-500"></i> Continuar com Google
                     </button>
                 </div>
@@ -143,7 +143,7 @@
         window.executarLoginGoogle = function() { alert("Firebase offline."); };
         window.executarLogout = function() { alert("Firebase offline."); };
 
-        // SISTEMA DE VISITANTE ÚNICO (Conforme pedido V2)
+        // SISTEMA DE VISITANTE ÚNICO (analytics style V2)
         let visitorId = localStorage.getItem('petlojas_visitor_id');
         if(!visitorId) {
             visitorId = 'vis_' + Date.now() + Math.random().toString(36).substr(2, 5);
@@ -186,7 +186,7 @@
             logoClicks++;
             if (logoClicks >= 5) { 
                 logoClicks = 0; 
-                abrirLogin();
+                abrirLogin(); // Abre o modal de login seguro (NÃO entra direto)
             }
             clearTimeout(logoTimer);
             logoTimer = setTimeout(() => { logoClicks = 0; }, 1500);
@@ -211,7 +211,7 @@
             else { input.type = 'password'; icon.classList.add('fa-eye'); icon.classList.remove('fa-eye-slash'); }
         }
 
-        // RESTAURAÇÃO TOTAL DOS DADOS (BANCO INTEGRAL)
+        // RESTAURAÇÃO TOTAL DOS DADOS (BANCO INTEGRAL DAS 5 CATEGORIAS COM FOTOS UN SPLASH)
         const bancoDeArtigos = {
             varejo: { id: 'varejo', nome: 'Pet Shop', tagColor: 'text-blue-700', bgColor: 'bg-blue-50', artigos: [
                 { id: 'v1', premium: false, titulo: '5 técnicas de vitrinismo para aumentar a venda de brinquedos', img: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&q=80', resumo: 'Como organizar as prateleiras de forma que o cliente compre por impulso.' },
@@ -229,7 +229,7 @@
                 { id: 'c5', premium: true, titulo: 'Calculando a hora clínica: Custo Fixo vs Hora Útil', img: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=600&q=80', resumo: 'Descubra qual é o custo real para manter o consultório de portas abertas.' },
                 { id: 'c6', premium: true, titulo: 'Planos de Saúde Preventiva: Receita Recorrente', img: 'https://images.unsplash.com/photo-1606425271394-c3ca9aa1fc06?w=600&q=80', resumo: 'Como criar e vender pacotes anuais de vacina e check-up.' }
             ]},
-            estetica: { id: 'estetica', nome: 'Banho & Tosa', tagColor: 'text-pink-700', bgColor: 'bg-pink-50', artigos: [
+            estetica: { id: 'estetica', nome: 'Estética Pet', tagColor: 'text-pink-700', bgColor: 'bg-pink-50', artigos: [
                 { id: 'e1', premium: false, titulo: 'Secagem rápida: Regulagem de soprador para cães medrosos', img: 'https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?w=600&q=80', resumo: 'Otimização do tempo de secagem sem gerar trauma.' },
                 { id: 'e2', premium: false, titulo: 'Dicas de enquadramento para fotos do "Antes e Depois"', img: 'https://images.unsplash.com/photo-1583337260546-28b6bf66d004?w=600&q=80', resumo: 'Como o banhista pode gerar o conteúdo para as redes sociais.' },
                 { id: 'e3', premium: false, titulo: 'Lidando com pelagens emboladas sem machucar', img: 'https://images.unsplash.com/photo-1527526029430-319f10814151?w=600&q=80', resumo: 'Técnicas de desembaraço e uso de fluidos.' },
@@ -237,7 +237,7 @@
                 { id: 'e5', premium: true, titulo: 'Comissionamento Inteligente de Tosadores', img: 'https://images.unsplash.com/photo-1573164713988-8665fc963095?w=600&q=80', resumo: 'Formatos de remuneração que evitam passivos trabalhistas.' },
                 { id: 'e6', premium: true, titulo: 'Técnicas de Upsell: Como vender hidratação no checkout', img: 'https://images.unsplash.com/photo-1560421683-6856ea585c78?w=600&q=80', resumo: 'Aumente o ticket médio treinando a recepção.' }
             ]},
-            comportamento: { id: 'comportamento', nome: 'Adestramento', tagColor: 'text-orange-700', bgColor: 'bg-orange-50', artigos: [
+            adestramento: { id: 'adestramento', nome: 'Adestramento', tagColor: 'text-orange-700', bgColor: 'bg-orange-50', artigos: [
                 { id: 'a1', premium: false, titulo: 'O timing do reforço positivo', img: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80', resumo: 'A janela de segundos necessária para o cão associar o prêmio.' },
                 { id: 'a2', premium: false, titulo: 'Linguagem corporal do adestrador', img: 'https://images.unsplash.com/photo-1537151608804-ea6f1103d82f?w=600&q=80', resumo: 'Como a sua postura influencia o respeito do animal.' },
                 { id: 'a3', premium: false, titulo: 'Equipamentos seguros vs Ferramentas punitivas', img: 'https://images.unsplash.com/photo-1554692911-37d363b2f8a4?w=600&q=80', resumo: 'Guia básico sobre coleiras e guias.' },
@@ -331,7 +331,7 @@
                 });
                 html += `</div></section>`;
 
-                // 🧲 BANNER PETLOJAS (CORREÇÃO DE IMAGEM COM FALLBACK)
+                // 🧲 BANNER PETLOJAS VERBATIM (MODELO 1 COM FALLBACK DE FOTO)
                 if (sectionCount === 0) {
                     html += `
                         <div class="my-8 px-4">
@@ -451,9 +451,9 @@
                     <span class="text-blue-600 font-bold mb-2 block">${stepNum} de ${totalSteps}</span>
                     <h2 class="text-2xl font-black text-gray-900 mb-2 leading-tight">Último passo!</h2>
                     <p class="text-sm text-gray-500 mb-8 leading-relaxed">Inscreva-se na lista para acessar. <strong class="text-gray-800">100% Gratuito.</strong></p>
-                    <input type="text" id="tf-nome" placeholder="Seu Nome" class="w-full bg-gray-50 border border-gray-300 text-gray-900 font-bold rounded-full outline-none px-6 py-4 mb-3 transition-all text-lg">
-                    <input type="email" id="tf-email" placeholder="E-mail principal" class="w-full bg-gray-50 border border-gray-300 text-gray-900 font-bold rounded-full outline-none px-6 py-4 mb-3 transition-all text-lg">
-                    <input type="tel" id="tf-whatsapp" placeholder="WhatsApp" class="w-full bg-gray-50 border border-gray-300 text-gray-900 font-bold rounded-full outline-none px-6 py-4 mb-8 transition-all text-lg">
+                    <input type="text" id="tf-nome" placeholder="Seu Nome" class="w-full bg-gray-50 border border-gray-300 text-gray-900 font-bold rounded-full outline-none px-6 py-4 mb-3 transition-all text-lg shadow-sm">
+                    <input type="email" id="tf-email" placeholder="E-mail principal" class="w-full bg-gray-50 border border-gray-300 text-gray-900 font-bold rounded-full outline-none px-6 py-4 mb-3 transition-all text-lg shadow-sm">
+                    <input type="tel" id="tf-whatsapp" placeholder="WhatsApp" class="w-full bg-gray-50 border border-gray-300 text-gray-900 font-bold rounded-full outline-none px-6 py-4 mb-8 transition-all text-lg shadow-sm">
                     <button onclick="tfSubmit()" class="w-full bg-blue-600 text-white font-black text-lg py-5 rounded-full shadow-lg active:scale-95 transition-transform">Finalizar <i class="fa-solid fa-check ml-2"></i></button>
                 </div>
             `;
@@ -504,7 +504,7 @@
                     </div>
                     <div class="m-5 p-8 rounded-3xl bg-blue-600 text-white text-center shadow-xl">
                         <h4 class="font-black text-xl mb-4 leading-tight">Quer automatizar suas vendas?</h4>
-                        <button onclick="window.open('https://petlojas.vercel.app/checkout_petlojas.html', '_blank'); window.registrarEvento('clique_ad_petlojas', {});" class="w-full bg-white text-blue-700 font-black py-4 rounded-full shadow-lg active:scale-95 transition-transform">Gerar Orçamento</button>
+                        <button onclick="window.open('https://petlojas.vercel.app/', '_blank'); window.registrarEvento('clique_ad_petlojas', {});" class="w-full bg-white text-blue-700 font-black py-4 rounded-full shadow-lg active:scale-95 transition-transform">Conhecer o PetLojas</button>
                     </div>
                 </div>`;
         }
@@ -528,7 +528,7 @@
                             <h1 class="text-2xl font-black uppercase tracking-tight">Painel Central</h1>
                             <p class="text-sm text-gray-400 mt-1"><i class="fa-solid fa-chart-line text-blue-500"></i> Métricas em Tempo Real</p>
                         </div>
-                        <button onclick="executarLogout()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-right-from-bracket text-xl"></i></button>
+                        <button onclick="executarLogout()" class="text-gray-400 hover:text-white p-2 text-xl"><i class="fa-solid fa-right-from-bracket"></i></button>
                     </div>
                     
                     <div class="flex border-b border-gray-300 bg-white sticky top-0 z-10 shadow-sm">
@@ -546,13 +546,13 @@
                                 <span class="text-[10px] text-gray-500 font-bold uppercase block mb-1">Acessos Totais</span>
                                 <span id="dash-eventos" class="text-2xl font-black text-gray-900">--</span>
                             </div>
-                            <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm col-span-2 flex justify-between items-center">
+                            <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm col-span-2 flex justify-between items-center overflow-hidden">
                                 <span class="text-[10px] text-gray-500 font-bold uppercase">Tempo Médio de Sessão</span>
                                 <span id="dash-avgtime" class="text-2xl font-black text-green-600">--s</span>
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-3">
+                        <div class="grid grid-cols-2 gap-3 mt-4">
                             <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm text-center">
                                 <span class="text-[10px] text-gray-500 font-bold uppercase block mb-1">Conversão Form</span>
                                 <span id="dash-conv" class="text-3xl font-black text-orange-600">--%</span>
@@ -574,9 +574,9 @@
                         </div>
                     </div>
                     
-                    <div id="content-leads" class="admin-content p-4 hidden">
+                    <div id="content-leads" class="admin-content p-4 hidden overflow-y-auto">
                         <h3 class="font-black text-gray-900 text-lg mb-4">Últimos Gestores Qualificados (CRM)</h3>
-                        <div id="dash-lista-leads" class="space-y-3">Carregando leads...</div>
+                        <div id="dash-lista-leads" class="space-y-3 pb-20">Carregando leads...</div>
                     </div>
                 </div>
             `;
@@ -602,10 +602,10 @@
 
                     if(dados.leadsList && dados.leadsList.length > 0) {
                         document.getElementById('dash-lista-leads').innerHTML = dados.leadsList.map(l => 
-                            `<div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm"><h5 class="font-bold text-gray-900">${l.nome}</h5><p class="text-xs text-gray-500 mt-1 mb-2">${l.cargo || 'Leitor'}</p><a href="https://wa.me/${(l.telefone || '').replace(/\D/g,'')}" class="text-xs text-green-700 font-bold"><i class="fa-brands fa-whatsapp"></i> ${l.telefone}</a></div>`
+                            `<div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm"><h5 class="font-bold text-gray-900">${l.nome}</h5><p class="text-xs text-gray-500 mt-1 mb-2">${l.cargo || 'Leitor'}</p><a href="https://wa.me/${(l.telefone || '').replace(/\D/g,'')}" class="text-xs text-green-700 font-bold bg-green-50 px-3 py-1.5 rounded-full inline-block"><i class="fa-brands fa-whatsapp"></i> ${l.telefone}</a></div>`
                         ).join('');
                     } else {
-                        document.getElementById('dash-lista-leads').innerHTML = "<p class='text-gray-400 text-sm'>Nenhum lead.</p>";
+                        document.getElementById('dash-lista-leads').innerHTML = "<p class='text-gray-400 text-sm'>Nenhum lead qualificado ainda.</p>";
                     }
                 });
             }, 500);
@@ -616,7 +616,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, query, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, orderBy, query, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         try {
@@ -638,14 +638,14 @@
             }
 
             window.qualificarLead = async function(dados) {
-                try { await addDoc(collection(db, "leads_qualificados_revista"), { ...dados, origem: "revista", data_captura: serverTimestamp() }); } catch (e) {}
+                try { await addDoc(collection(db, "lista_gestores"), { ...dados, origem: "regwall_typeform", data_captura: serverTimestamp() }); } catch (e) {}
             }
 
             // LÓGICA DE AGREGAÇÃO PARA O PAINEL DE ADMINISTRAÇÃO (CAPRICHADO)
             window.fetchAdminData = async function() {
                 let report = { totalEventos: 0, totalLeads: 0, visitantesUnicos: 0, leadsList: [], intMap: {}, pathMap: {}, maxTime: 0, avgTime: 0, ctaClicks: 0, formOpens: 0, formCompletes: 0 };
                 try {
-                    const snapLeads = await getDocs(query(collection(db, "leads_qualificados_revista"), limit(50)));
+                    const snapLeads = await getDocs(query(collection(db, "lista_gestores"), limit(50)));
                     report.totalLeads = snapLeads.size;
                     snapLeads.forEach(doc => { 
                         const d = doc.data();
@@ -695,10 +695,11 @@
                 const btn = document.getElementById('btn-login-mail');
                 if(!e || !p) return alert('Preencha os dados.');
                 btn.innerText = "Autenticando...";
+                btn.disabled = true;
                 signInWithEmailAndPassword(auth, e, p)
                     .then((cr) => { fecharLogin(); renderView('admin'); })
                     .catch((er) => { alert('Falha no login: ' + er.message); })
-                    .finally(() => { btn.innerText = "Entrar no Painel"; });
+                    .finally(() => { btn.innerText = "Entrar no Painel"; btn.disabled = false; });
             }
 
             window.executarLoginGoogle = function() {
