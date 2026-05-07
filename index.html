@@ -30,11 +30,6 @@
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
         .blur-content { filter: blur(6px); user-select: none; pointer-events: none; }
-        
-        /* Nova Classe de Botões do Formulário: Arredondados, claros e modernos */
-        .tf-option { 
-            @apply w-full bg-blue-50/50 border border-blue-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-[0_2px_10px_-3px_rgba(0,0,0,0.1)] hover:border-blue-400 hover:bg-blue-100 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between; 
-        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans antialiased overflow-x-hidden">
@@ -112,17 +107,17 @@
                     <h2 class="text-2xl font-black text-gray-900 mb-4 leading-tight">Qual a sua função na empresa?</h2>
                     <p class="text-sm text-gray-500 mb-8 border-l-4 border-yellow-400 pl-3">⚠️ Conteúdo restrito a decisores do mercado Pet. <strong class="text-gray-800">O acesso é 100% gratuito</strong>, basta preencher abaixo.</p>
                     
-                    <button onclick="tfNext(2, 'cargo', 'Dono / Sócio')" class="tf-option">
-                        <span>Dono(a) / Sócio(a)</span> <i class="fa-solid fa-chevron-right text-sm text-blue-400"></i>
+                    <button onclick="tfNext(2, 'cargo', 'Dono / Sócio')" class="w-full bg-blue-50 border border-blue-200 text-gray-800 font-bold text-left px-6 py-5 text-lg rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-100 active:scale-95 transition-all flex items-center justify-between">
+                        <span>Dono(a) / Sócio(a)</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
                     </button>
-                    <button onclick="tfNext(2, 'cargo', 'Gerente / Administrador')" class="tf-option">
-                        <span>Gerente / Administrador(a)</span> <i class="fa-solid fa-chevron-right text-sm text-blue-400"></i>
+                    <button onclick="tfNext(2, 'cargo', 'Gerente / Administrador')" class="w-full bg-blue-50 border border-blue-200 text-gray-800 font-bold text-left px-6 py-5 text-lg rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-100 active:scale-95 transition-all flex items-center justify-between">
+                        <span>Gerente / Administrador(a)</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
                     </button>
-                    <button onclick="tfNext(2, 'cargo', 'Médico Veterinário')" class="tf-option">
-                        <span>Médico(a) Veterinário(a)</span> <i class="fa-solid fa-chevron-right text-sm text-blue-400"></i>
+                    <button onclick="tfNext(2, 'cargo', 'Médico Veterinário')" class="w-full bg-blue-50 border border-blue-200 text-gray-800 font-bold text-left px-6 py-5 text-lg rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-100 active:scale-95 transition-all flex items-center justify-between">
+                        <span>Médico(a) Veterinário(a)</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
                     </button>
-                    <button onclick="tfNext(2, 'cargo', 'Coordenador Operacional')" class="tf-option">
-                        <span>Coordenador(a)</span> <i class="fa-solid fa-chevron-right text-sm text-blue-400"></i>
+                    <button onclick="tfNext(2, 'cargo', 'Coordenador Operacional')" class="w-full bg-blue-50 border border-blue-200 text-gray-800 font-bold text-left px-6 py-5 text-lg rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-100 active:scale-95 transition-all flex items-center justify-between">
+                        <span>Coordenador(a)</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
                     </button>
                 </div>
 
@@ -130,17 +125,17 @@
                     <span class="text-blue-600 font-bold mb-2 block">2 de 3</span>
                     <h2 class="text-2xl font-black text-gray-900 mb-8 leading-tight">Qual é o maior desafio na sua operação hoje?</h2>
                     
-                    <button onclick="tfNext(3, 'desafio', 'Atrair clientes')" class="tf-option">
-                        <span>Atrair novos clientes</span> <i class="fa-solid fa-chevron-right text-sm text-blue-400"></i>
+                    <button onclick="tfNext(3, 'desafio', 'Atrair clientes')" class="w-full bg-blue-50 border border-blue-200 text-gray-800 font-bold text-left px-6 py-5 text-lg rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-100 active:scale-95 transition-all flex items-center justify-between">
+                        <span>Atrair novos clientes</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
                     </button>
-                    <button onclick="tfNext(3, 'desafio', 'Tempo e Organização')" class="tf-option">
-                        <span>Falta de tempo e desorganização</span> <i class="fa-solid fa-chevron-right text-sm text-blue-400"></i>
+                    <button onclick="tfNext(3, 'desafio', 'Tempo e Organização')" class="w-full bg-blue-50 border border-blue-200 text-gray-800 font-bold text-left px-6 py-5 text-lg rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-100 active:scale-95 transition-all flex items-center justify-between">
+                        <span>Falta de tempo e desorganização</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
                     </button>
-                    <button onclick="tfNext(3, 'desafio', 'Margem de Lucro')" class="tf-option">
-                        <span>Margem de lucro baixa</span> <i class="fa-solid fa-chevron-right text-sm text-blue-400"></i>
+                    <button onclick="tfNext(3, 'desafio', 'Margem de Lucro')" class="w-full bg-blue-50 border border-blue-200 text-gray-800 font-bold text-left px-6 py-5 text-lg rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-100 active:scale-95 transition-all flex items-center justify-between">
+                        <span>Margem de lucro baixa</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
                     </button>
-                    <button onclick="tfNext(3, 'desafio', 'Gestão de Equipe')" class="tf-option">
-                        <span>Problemas com a equipe</span> <i class="fa-solid fa-chevron-right text-sm text-blue-400"></i>
+                    <button onclick="tfNext(3, 'desafio', 'Gestão de Equipe')" class="w-full bg-blue-50 border border-blue-200 text-gray-800 font-bold text-left px-6 py-5 text-lg rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-100 active:scale-95 transition-all flex items-center justify-between">
+                        <span>Problemas com a equipe</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
                     </button>
                 </div>
 
