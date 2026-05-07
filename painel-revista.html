@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Autoria - O Código Pet - GV Conecta</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .loader {
+            border: 2px solid #f3f3f3; border-top: 2px solid #fff;
+            border-radius: 50%; width: 16px; height: 16px;
+            animation: spin 1s linear infinite; display: inline-block;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="bg-gray-950 text-gray-100 antialiased p-5 md:p-10">
+
+    <div id="painel-container" class="max-w-4xl mx-auto hidden">
+        
+        <header class="mb-10 pb-5 border-b border-gray-800 flex items-center justify-between gap-4">
+            <div class="flex flex-col">
+                <span class="text-blue-500 text-[10px] font-black uppercase tracking-[0.3em]">CMS GV Conecta</span>
+                <h1 class="text-3xl font-black tracking-tighter text-white uppercase">Painel da Revista <span class="text-red-500">Beta</span></h1>
+            </div>
+            <a href="index.html" target="_blank" class="bg-gray-800 text-xs text-gray-300 px-4 py-2 rounded-full hover:bg-gray-700 flex items-center gap-2 transition">
+                <i class="fa-solid fa-eye"></i> Ver Revista
+            </a>
+        </header>
+
+        <form id="form-artigo" class="bg-gray-900 rounded-2xl shadow-2xl p-6 md:p-8 space-y-6">
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <label for="categoriaId" class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Categoria Visual (Hardcoded)</label>
+                    <select id="categoriaId" required class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-sm text-white focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none">
+                        <option value="" disabled selected>Selecione a Categoria Visual...</option>
+                        <option value="varejo">Pet Shop (Destaque Azul)</option>
+                        <option value="clinica">Clínica Veterinária (Destaque Teal)</option>
+                        <option value="estetica">Banho & Tosa (Destaque Rosa)</option>
+                        <option value="comportamento">Adestramento (Destaque Laranja)</option>
+                        <option value="hotelzinho">Hotelzinho Pet (Destaque Indigo)</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label for="categoriaNome" class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Nome da Categoria (Texto)</label>
+                    <input type="text" id="categoriaNome" placeholder="Ex: Gestão e Negócios" required class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-sm text-white focus:ring-2 focus:ring-blue-600 outline-none">
+                </div>
+            </div>
+
+            <div>
+                <label for="titulo" class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Título do Artigo</label>
+                <input type="text" id="titulo" placeholder="Ex: 5 técnicas de vitrinismo para aumentar a venda" required class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-blue-600 outline-none">
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6 items-center">
+                <div class="md:col-span-2">
+                    <label for="img" class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">URL da Imagem de Capa (Unsplash, etc.)</label>
+                    <input type="url" id="img" placeholder="https://images.unsplash.com/photo-..." required onchange="previewImage(this.value)" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-sm text-white focus:ring-2 focus:ring-blue-600 outline-none">
+                </div>
+                <div id="image-preview" class="h-24 w-full bg-gray-800 rounded-lg flex items-center justify-center border border-gray-700 overflow-hidden">
+                    <i class="fa-solid fa-image text-gray-600 text-3xl"></i>
+                </div>
+            </div>
+
+            <div>
+                <label for="resumo" class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Resumo (Chamal para o Feed)</label>
+                <textarea id="resumo" rows="2" placeholder="Ex: Como organizar as prateleiras de forma que o cliente compre por impulso." required class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-sm text-white focus:ring-2 focus:ring-blue-600 outline-none"></textarea>
+                <p class="text-[10px] text-gray-600 mt-1">Limite recomendado: ~150 caracteres.</p>
+            </div>
+
+            <div>
+                <label for="conteudo" class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Conteúdo Completo (Aceita HTML Básico)</label>
+                <textarea id="conteudo" rows="15" placeholder="Digite o conteúdo aqui. Você pode usar tags HTML básicas como <p>, <strong>, <ul>, <li> para formatação..." required class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-sm text-white font-mono focus:ring-2 focus:ring-blue-600 outline-none"></textarea>
+            </div>
+            
+            <div class="flex items-center gap-6 p-4 bg-gray-800/50 rounded-lg border border-gray-800">
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" id="premium" class="w-5 h-5 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-600">
+                    <label for="premium" class="text-sm font-bold text-yellow-500 flex items-center gap-1.5"><i class="fa-solid fa-lock text-xs"></i> Artigo Gestão Premium?</label>
+                </div>
+            </div>
+
+            <div class="pt-6 border-t border-gray-800 flex justify-between items-center gap-4">
+                <p class="text-xs text-gray-500">Uma iniciativa GV Conecta. Conteúdo Beta.</p>
+                <button type="submit" id="btn-publicar" class="bg-blue-600 text-white font-black py-4 px-10 rounded-xl text-sm shadow-lg hover:bg-blue-700 active:scale-95 transition-all disabled:opacity-50">
+                    <span id="btn-text">PUBLICAR ARTIGO</span>
+                    <span id="btn-loader" class="loader ml-2 hidden"></span>
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // CONFIGURAÇÃO FIREBASE (PROJETO BETA - INJECTADO PELO ARQUITETO)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBjuvcJvTWw7lMrIwej5lHbIUXe99lJDN4", // Substituir pelo real
+            authDomain: "crmpetshop.firebaseapp.com",
+            projectId: "crmpetshop",
+            storageBucket: "crmpetshop.firebasestorage.app",
+            messagingSenderId: "381013124221",
+            appId: "1:381013124221:web:48f398a62ce40b7db6fd14"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // ==========================================
+        // SEGURANÇA BÁSICA JAVASCRIPT (Privado)
+        // ==========================================
+        window.GV_REVIS_PASS = "gvrevista2024"; // Senha BETA, chumbada no JS (Risco de Segurança Médio)
+
+        function verificarAcesso() {
+            const senha = prompt("CMS O Código Pet GV Conecta:\nDigite a senha de acesso privado:");
+            
+            if (senha === GV_REVIS_PASS) {
+                document.getElementById('painel-container').classList.remove('hidden');
+                console.log("[GV CMS] Acesso autorizado.");
+            } else {
+                alert("Senha incorreta. Acesso negado.");
+                document.body.innerHTML = '<div class="text-center p-20 text-gray-700">Acesso negado. Arquivo Privado GV Conecta.</div>';
+            }
+        }
+
+        // Executa verificação ao carregar
+        verificarAcesso();
+
+
+        // ==========================================
+        // LÓGICA DO FORMULÁRIO (Exigência 3)
+        // ==========================================
+        const form = document.getElementById('form-artigo');
+        const btnPublicar = document.getElementById('btn-publicar');
+        const btnText = document.getElementById('btn-text');
+        const btnLoader = document.getElementById('btn-loader');
+
+        // Preview da imagem ao digitar URL
+        window.previewImage = function(url) {
+            const preview = document.getElementById('image-preview');
+            if(url && url.startsWith('http')) {
+                preview.innerHTML = `<img src="${url}" class="h-full w-full object-cover">`;
+            } else {
+                preview.innerHTML = `<i class="fa-solid fa-image text-gray-600 text-3xl"></i>`;
+            }
+        }
+
+        // Submissão do Formulário (Injeção no Firebase)
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Estado de carregamento
+            btnPublicar.disabled = true;
+            btnText.innerText = "PUBLICANDO...";
+            btnLoader.classList.remove('hidden');
+
+            // Coleta de dados
+            const artigoData = {
+                categoriaId: document.getElementById('categoriaId').value,
+                categoriaNome: document.getElementById('categoriaNome').value.trim(),
+                titulo: document.getElementById('titulo').value.trim(),
+                img: document.getElementById('img').value.trim(),
+                resumo: document.getElementById('resumo').value.trim(),
+                conteudo: document.getElementById('conteudo').value.trim(),
+                premium: document.getElementById('premium').checked,
+                dataPublicacao: serverTimestamp() // Timestamp automático do Firebase
+            };
+
+            console.log("[GV CMS] Iniciando publicação:", artigoData);
+
+            try {
+                // Injeção direta na coleção 'revista_artigos' do Firebase Beta
+                const docRef = await addDoc(collection(db, "revista_artigos"), artigoData);
+                
+                console.log("[GV CMS] Sucesso! ID do documento:", docRef.id);
+                alert(`Artigo "${artigoData.titulo}" publicado com SUCESSO!\nID no Firebase: ${docRef.id}`);
+                
+                form.reset(); // Limpa form
+                previewImage(''); // Limpa preview
+                
+            } catch (error) {
+                console.error("[GV CMS Firestore Error] Falha ao publicar:", error);
+                alert(`FALHA na publicação do artigo.\nErro: ${error.message}`);
+            } finally {
+                // Reseta estado do botão
+                btnPublicar.disabled = false;
+                btnText.innerText = "PUBLICAR ARTIGO";
+                btnLoader.classList.add('hidden');
+            }
+        });
+
+    </script>
+</body>
+</html>
