@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Revista PetLojas - Edição 01</title>
+    <title>O Código Pet - Revista Semanal</title>
     
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#2563eb">
@@ -31,30 +31,66 @@
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans antialiased">
 
+    <div id="side-menu" class="fixed inset-0 bg-black/60 z-[60] hidden transition-opacity opacity-0" onclick="fecharMenuClickFora(event)">
+        <div class="absolute right-0 top-0 bottom-0 w-64 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col" id="side-menu-panel">
+            <div class="p-5 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                <h2 class="font-black text-gray-900 text-lg uppercase tracking-tighter">O Código Pet</h2>
+                <button onclick="toggleMenu()" class="text-gray-500 hover:text-red-600 text-2xl p-2"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-5 flex-1 overflow-y-auto">
+                <h3 class="font-bold text-gray-400 text-[10px] uppercase tracking-[0.2em] mb-4">Acervo de Edições</h3>
+                <ul class="space-y-4">
+                    <li>
+                        <button onclick="toggleMenu(); renderView('home')" class="w-full flex items-center justify-between font-black text-blue-700 border border-blue-200 bg-blue-50 p-3 rounded-lg">
+                            Edição 01 <span class="bg-blue-600 text-white text-[9px] px-2 py-1 rounded uppercase">Atual</span>
+                        </button>
+                    </li>
+                    <li class="opacity-50">
+                        <button class="w-full flex items-center justify-between font-bold text-gray-600 p-3 cursor-not-allowed">
+                            Edição 02 <span class="text-gray-400 text-[9px] uppercase"><i class="fa-solid fa-lock"></i> Em breve</span>
+                        </button>
+                    </li>
+                    <li class="opacity-50">
+                        <button class="w-full flex items-center justify-between font-bold text-gray-600 p-3 cursor-not-allowed">
+                            Edição 03 <span class="text-gray-400 text-[9px] uppercase"><i class="fa-solid fa-lock"></i> Em breve</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
     <div id="app-container" class="max-w-md mx-auto bg-white min-h-screen shadow-2xl relative overflow-x-hidden flex flex-col">
         
-        <header class="bg-white sticky top-0 z-50 shadow-sm header-line">
+        <header class="bg-white sticky top-0 z-40 shadow-sm header-line">
             <div class="px-4 py-3 flex justify-between items-center">
-                <div class="flex items-center gap-2 cursor-pointer" onclick="renderView('home')">
-                    <h1 class="text-2xl font-black tracking-tighter text-blue-700">PETLOJAS</h1>
-                    <span class="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Revista</span>
+                <div class="flex flex-col cursor-pointer group" onclick="renderView('home')">
+                    <h1 class="text-2xl font-black tracking-tighter text-blue-700 uppercase leading-none group-hover:text-blue-800 transition">O CÓDIGO PET</h1>
+                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Revista Semanal</span>
                 </div>
                 <div class="flex items-center gap-3">
                     <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded uppercase">Ed. 01</span>
-                    <button class="text-gray-600"><i class="fa-solid fa-bars text-xl"></i></button>
+                    <button onclick="toggleMenu()" class="text-gray-700 hover:text-blue-600 focus:outline-none p-1">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
                 </div>
             </div>
+            
             <div class="bg-gray-50 border-b border-gray-200 px-4 py-2 overflow-x-auto whitespace-nowrap text-[11px] font-bold text-gray-500 uppercase tracking-wide flex gap-5 scrollbar-hide">
-                <span onclick="document.getElementById('sec-varejo').scrollIntoView({behavior:'smooth'})" class="cursor-pointer hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600">Varejo</span>
-                <span onclick="document.getElementById('sec-clinica').scrollIntoView({behavior:'smooth'})" class="cursor-pointer hover:text-teal-600 border-b-2 border-transparent hover:border-teal-600">Clínica</span>
-                <span onclick="document.getElementById('sec-estetica').scrollIntoView({behavior:'smooth'})" class="cursor-pointer hover:text-pink-600 border-b-2 border-transparent hover:border-pink-600">Estética</span>
-                <span onclick="document.getElementById('sec-comportamento').scrollIntoView({behavior:'smooth'})" class="cursor-pointer hover:text-orange-600 border-b-2 border-transparent hover:border-orange-600">Adestramento</span>
-                <span onclick="document.getElementById('sec-hospedagem').scrollIntoView({behavior:'smooth'})" class="cursor-pointer hover:text-indigo-600 border-b-2 border-transparent hover:border-indigo-600">Hotelzinho</span>
+                <span onclick="goToCategory('varejo')" class="cursor-pointer hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition">Varejo</span>
+                <span onclick="goToCategory('clinica')" class="cursor-pointer hover:text-teal-600 border-b-2 border-transparent hover:border-teal-600 transition">Clínica</span>
+                <span onclick="goToCategory('estetica')" class="cursor-pointer hover:text-pink-600 border-b-2 border-transparent hover:border-pink-600 transition">Estética</span>
+                <span onclick="goToCategory('comportamento')" class="cursor-pointer hover:text-orange-600 border-b-2 border-transparent hover:border-orange-600 transition">Adestramento</span>
+                <span onclick="goToCategory('hospedagem')" class="cursor-pointer hover:text-indigo-600 border-b-2 border-transparent hover:border-indigo-600 transition">Hotelzinho</span>
             </div>
         </header>
 
         <main id="main-content" class="flex-1 pb-10 bg-white">
             </main>
+
+        <button id="btn-voltar" onclick="renderView('home')" class="hidden fixed bottom-6 left-6 w-14 h-14 bg-black/40 backdrop-blur-md border border-white/20 rounded-full text-white flex items-center justify-center shadow-2xl z-50 hover:bg-black/60 active:scale-90 transition-transform">
+            <i class="fa-solid fa-arrow-left text-xl"></i>
+        </button>
 
     </div>
 
@@ -88,6 +124,32 @@
             } catch (e) { console.error(e); }
         }
 
+        // LÓGICA DO MENU HAMBÚRGUER
+        window.toggleMenu = function() {
+            const menu = document.getElementById('side-menu');
+            const panel = document.getElementById('side-menu-panel');
+            
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                // Pequeno delay para a animação do Tailwind funcionar
+                setTimeout(() => {
+                    menu.classList.remove('opacity-0');
+                    panel.classList.remove('translate-x-full');
+                }, 10);
+            } else {
+                panel.classList.add('translate-x-full');
+                menu.classList.add('opacity-0');
+                setTimeout(() => menu.classList.add('hidden'), 300);
+            }
+        }
+
+        window.fecharMenuClickFora = function(event) {
+            if(event.target.id === 'side-menu') {
+                toggleMenu();
+            }
+        }
+
+        // BASE DE DADOS LOCAL
         const bancoDeArtigos = {
             varejo: { id: 'varejo', nome: 'Varejo (Pet Shop)', tagColor: 'text-blue-700', bgColor: 'bg-blue-50', artigos: [
                 { id: 'v1', titulo: 'Como aumentar a margem de lucro na venda de rações premium', img: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&q=80', resumo: 'Descubra a matemática por trás da prateleira e como o estoque parado devora seu caixa.' },
@@ -117,25 +179,52 @@
         };
 
         const mainContent = document.getElementById('main-content');
+        const btnVoltar = document.getElementById('btn-voltar');
+        let currentView = 'home';
+
+        // LÓGICA DE NAVEGAÇÃO DOS SEGMENTOS
+        window.goToCategory = function(catId) {
+            // Se o usuário clicar no cabeçalho enquanto lê um artigo, força a ida pra HOME primeiro.
+            if (currentView !== 'home') {
+                renderView('home');
+            }
+            // Dá tempo para a HOME carregar e rola até a seção clicada
+            setTimeout(() => {
+                const section = document.getElementById('sec-' + catId);
+                if(section) {
+                    // Adiciona um offset por causa do cabeçalho fixo
+                    const y = section.getBoundingClientRect().top + window.scrollY - 100;
+                    window.scrollTo({top: y, behavior: 'smooth'});
+                }
+            }, 50);
+        }
 
         window.renderView = function(view, param = null) {
-            mainContent.innerHTML = ''; window.scrollTo(0, 0);
-            if (view === 'home') renderHomeFeed();
-            else if (view === 'artigo') renderArtigo(param);
+            currentView = view;
+            mainContent.innerHTML = ''; 
+            window.scrollTo(0, 0);
+            
+            // Controle do Botão Flutuante
+            if (view === 'home') {
+                btnVoltar.classList.add('hidden');
+                renderHomeFeed();
+            } else if (view === 'artigo') {
+                btnVoltar.classList.remove('hidden');
+                renderArtigo(param);
+            }
         };
 
         function renderHomeFeed() {
             let html = `<div class="fade-in">`;
 
-            // DESTAQUE INICIAL
             const destaque = bancoDeArtigos.varejo.artigos[0];
             html += `
-                <div class="cursor-pointer bg-white mb-2" onclick="abrirArtigo('varejo', '${destaque.id}')">
-                    <img src="${destaque.img}" class="w-full h-64 object-cover">
-                    <div class="px-4 py-4">
-                        <span class="text-red-600 font-bold text-[10px] uppercase tracking-widest mb-1 block">Manchete do Dia</span>
-                        <h2 class="text-3xl font-black leading-tight text-gray-900">${destaque.titulo}</h2>
-                        <p class="text-gray-600 text-sm mt-2">${destaque.resumo}</p>
+                <div class="cursor-pointer bg-white mb-2 relative group" onclick="abrirArtigo('varejo', '${destaque.id}')">
+                    <img src="${destaque.img}" class="w-full h-72 object-cover group-hover:brightness-90 transition">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 p-5 w-full">
+                        <span class="bg-red-600 text-white font-bold text-[10px] px-2 py-1 rounded uppercase tracking-widest mb-2 inline-block shadow-md">Destaque</span>
+                        <h2 class="text-3xl font-black leading-tight text-white drop-shadow-md">${destaque.titulo}</h2>
                     </div>
                 </div>
             `;
@@ -144,10 +233,9 @@
             for (const key in bancoDeArtigos) {
                 const cat = bancoDeArtigos[key];
                 
-                // MUDANÇA: A SEÇÃO AGORA TEM O bgColor NO FUNDO
                 html += `
                     <section id="sec-${cat.id}" class="${cat.bgColor} py-8 px-4 border-t border-gray-200">
-                        <h3 class="${cat.tagColor} text-xs font-black uppercase tracking-[0.2em] mb-5 border-l-4 border-current pl-3">${cat.nome}</h3>
+                        <h3 class="${cat.tagColor} text-sm font-black uppercase tracking-[0.2em] mb-5 border-l-4 border-current pl-3">${cat.nome}</h3>
                         <div class="flex flex-col gap-6">
                 `;
 
@@ -157,17 +245,18 @@
                     if (idx === 0 || (key === 'varejo' && idx === 1)) {
                         html += `
                             <div class="cursor-pointer group" onclick="abrirArtigo('${key}', '${artigo.id}')">
-                                <img src="${artigo.img}" class="w-full h-48 object-cover rounded shadow-sm mb-3 group-hover:opacity-90">
-                                <h4 class="font-bold text-xl text-gray-900 leading-tight">${artigo.titulo}</h4>
+                                <img src="${artigo.img}" class="w-full h-48 object-cover rounded shadow-sm mb-3 group-hover:opacity-90 transition">
+                                <h4 class="font-bold text-xl text-gray-900 leading-tight group-hover:text-blue-700 transition">${artigo.titulo}</h4>
+                                <p class="text-gray-500 text-sm mt-1 line-clamp-2">${artigo.resumo}</p>
                             </div>
                         `;
                     } else {
                         html += `
                             <div class="flex items-center gap-4 cursor-pointer group border-t border-gray-200/50 pt-4" onclick="abrirArtigo('${key}', '${artigo.id}')">
                                 <div class="flex-1">
-                                    <h4 class="font-bold text-base text-gray-800 leading-tight group-hover:text-blue-700">${artigo.titulo}</h4>
+                                    <h4 class="font-bold text-base text-gray-800 leading-tight group-hover:text-blue-700 transition">${artigo.titulo}</h4>
                                 </div>
-                                <img src="${artigo.img}" class="w-24 h-16 object-cover rounded">
+                                <img src="${artigo.img}" class="w-24 h-16 object-cover rounded shadow-sm group-hover:opacity-90">
                             </div>
                         `;
                     }
@@ -175,48 +264,9 @@
                 
                 html += `</div></section>`;
 
-                // ANÚNCIO ENTRE SEÇÕES
                 if (indexCat === 1 || indexCat === 3) {
                     html += `
-                        <div class="bg-gray-900 text-white p-8 text-center">
-                            <span class="text-[9px] text-blue-400 uppercase tracking-widest font-bold">Publicidade PetLojas</span>
-                            <h4 class="text-xl font-black mt-2 leading-tight">Cansado de perder tempo no balcão?</h4>
-                            <p class="text-gray-400 text-sm mt-2 mb-5">Automatize seu WhatsApp e venda enquanto dorme.</p>
-                            <button onclick="clicouCTA('banner_feed')" class="bg-blue-600 px-6 py-2 rounded font-bold text-sm">Saiba Como</button>
-                        </div>
-                    `;
-                }
-                indexCat++;
-            }
-            mainContent.innerHTML = html;
-        }
-
-        window.abrirArtigo = function(catId, artigoId) {
-            const artigo = bancoDeArtigos[catId].artigos.find(a => a.id === artigoId);
-            registrarEvento('leu_artigo', { categoria: catId, artigo_id: artigoId, titulo: artigo.titulo });
-            renderView('artigo', { catId, artigo });
-        }
-
-        function renderArtigo(dados) {
-            const { catId, artigo } = dados;
-            mainContent.innerHTML = `
-                <div class="fade-in bg-white min-h-screen">
-                    <div class="p-4"><button onclick="renderView('home')" class="text-gray-400 text-xs font-bold uppercase"><i class="fa-solid fa-arrow-left"></i> Início</button></div>
-                    <div class="px-5 pb-4"><h1 class="text-3xl font-black text-gray-900 leading-tight">${artigo.titulo}</h1></div>
-                    <img src="${artigo.img}" class="w-full h-64 object-cover">
-                    <div class="px-6 py-8 text-gray-800 leading-relaxed text-lg font-serif">
-                        <p>Conteúdo estratégico focado em aumentar a eficiência do seu negócio pet. Aplique as dicas hoje mesmo.</p>
-                    </div>
-                    <div class="m-5 p-6 rounded bg-blue-600 text-white text-center">
-                        <h4 class="font-black text-lg">Impulsione seu Pet Shop!</h4>
-                        <button onclick="clicouCTA('${artigo.id}')" class="mt-4 bg-white text-blue-600 font-bold py-2 px-8 rounded">Ver Planos</button>
-                    </div>
-                </div>
-            `;
-        }
-
-        window.clicouCTA = (o) => registrarEvento('clicou_cta', { de: o });
-        renderHomeFeed();
-    </script>
-</body>
-</html>
+                        <div class="bg-gray-900 text-white p-8 text-center relative overflow-hidden">
+                            <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at center, #ffffff 1px, transparent 1px); background-size: 10px 10px;"></div>
+                            <span class="text-[9px] text-blue-400 uppercase tracking-widest font-bold block mb-2 z-10 relative">Anúncio PetLojas</span>
+                            <h4 class="text-xl font-black mt-1 leading-tight z-10 relative">Tempo é dinheiro.</h4>
