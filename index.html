@@ -12,13 +12,7 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then((registration) => {
-                        console.log('✅ [PWA] Service Worker operante. Escopo:', registration.scope);
-                    })
-                    .catch((error) => {
-                        console.error('❌ [PWA] Falha na ignição do Service Worker:', error);
-                    });
+                navigator.serviceWorker.register('/sw.js').then((reg) => console.log('✅ PWA ON')).catch((err) => console.log('❌ PWA OFF', err));
             });
         }
     </script>
@@ -30,8 +24,9 @@
         body { -webkit-tap-highlight-color: transparent; }
         .fade-in { animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        /* Traço vermelho estilo portal de notícias */
-        .header-line { border-top: 4px solid #ef4444; } 
+        .header-line { border-top: 4px solid #ef4444; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans antialiased">
@@ -45,18 +40,16 @@
                     <span class="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Revista</span>
                 </div>
                 <div class="flex items-center gap-3">
-                    <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded uppercase animate-pulse">Ed. 01</span>
-                    <button class="text-gray-600 hover:text-blue-700 focus:outline-none">
-                        <i class="fa-solid fa-bars text-xl"></i>
-                    </button>
+                    <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded uppercase">Ed. 01</span>
+                    <button class="text-gray-600"><i class="fa-solid fa-bars text-xl"></i></button>
                 </div>
             </div>
-            <div class="bg-gray-50 border-b border-gray-200 px-4 py-2 overflow-x-auto whitespace-nowrap text-xs font-bold text-gray-500 uppercase tracking-wide flex gap-4 scrollbar-hide">
-                <span onclick="document.getElementById('sec-varejo').scrollIntoView({behavior:'smooth'})" class="cursor-pointer hover:text-blue-600">Varejo</span>
-                <span onclick="document.getElementById('sec-clinica').scrollIntoView({behavior:'smooth'})" class="cursor-pointer hover:text-teal-600">Clínica</span>
-                <span onclick="document.getElementById('sec-estetica').scrollIntoView({behavior:'smooth'})" class="cursor-pointer hover:text-pink-600">Estética</span>
-                <span onclick="document.getElementById('sec-comportamento').scrollIntoView({behavior:'smooth'})" class="cursor-pointer hover:text-orange-600">Adestramento</span>
-                <span onclick="document.getElementById('sec-hospedagem').scrollIntoView({behavior:'smooth'})" class="cursor-pointer hover:text-indigo-600">Hotelzinho</span>
+            <div class="bg-gray-50 border-b border-gray-200 px-4 py-2 overflow-x-auto whitespace-nowrap text-[11px] font-bold text-gray-500 uppercase tracking-wide flex gap-5 scrollbar-hide">
+                <span onclick="document.getElementById('sec-varejo').scrollIntoView({behavior:'smooth'})" class="cursor-pointer hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600">Varejo</span>
+                <span onclick="document.getElementById('sec-clinica').scrollIntoView({behavior:'smooth'})" class="cursor-pointer hover:text-teal-600 border-b-2 border-transparent hover:border-teal-600">Clínica</span>
+                <span onclick="document.getElementById('sec-estetica').scrollIntoView({behavior:'smooth'})" class="cursor-pointer hover:text-pink-600 border-b-2 border-transparent hover:border-pink-600">Estética</span>
+                <span onclick="document.getElementById('sec-comportamento').scrollIntoView({behavior:'smooth'})" class="cursor-pointer hover:text-orange-600 border-b-2 border-transparent hover:border-orange-600">Adestramento</span>
+                <span onclick="document.getElementById('sec-hospedagem').scrollIntoView({behavior:'smooth'})" class="cursor-pointer hover:text-indigo-600 border-b-2 border-transparent hover:border-indigo-600">Hotelzinho</span>
             </div>
         </header>
 
@@ -69,7 +62,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // CONFIGURAÇÃO DO FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyBjuvcJvTWw7lMrIwej5lHbIUXe99lJDN4",
             authDomain: "crmpetshop.firebaseapp.com",
@@ -81,50 +73,43 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // O PIXEL OCULTO
         const urlParams = new URLSearchParams(window.location.search);
         const leadId = urlParams.get('lead_id') || 'anonimo';
 
         async function registrarEvento(tipoEvento, detalhes = {}) {
-            const evento = {
-                lead_id: leadId,
-                origem_aplicacao: "revista_semanal",
-                tipo_evento: tipoEvento,
-                detalhes: detalhes,
-                timestamp: Date.now(),
-                data_legivel: new Date().toLocaleString('pt-BR')
-            };
-            console.log("📡 [PIXEL]:", evento);
             try {
-                await addDoc(collection(db, "eventos_tracking"), evento);
-            } catch (e) {
-                console.error("Erro ao gravar evento: ", e);
-            }
+                await addDoc(collection(db, "eventos_tracking"), {
+                    lead_id: leadId,
+                    origem_aplicacao: "revista_semanal",
+                    tipo_evento: tipoEvento,
+                    detalhes: detalhes,
+                    timestamp: Date.now()
+                });
+            } catch (e) { console.error(e); }
         }
 
-        // BASE DE DADOS LOCAL
         const bancoDeArtigos = {
-            varejo: { id: 'varejo', nome: 'Varejo (Pet Shop)', tagColor: 'text-blue-600', artigos: [
+            varejo: { id: 'varejo', nome: 'Varejo (Pet Shop)', tagColor: 'text-blue-700', bgColor: 'bg-blue-50', artigos: [
                 { id: 'v1', titulo: 'Como aumentar a margem de lucro na venda de rações premium', img: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&q=80', resumo: 'Descubra a matemática por trás da prateleira e como o estoque parado devora seu caixa.' },
-                { id: 'v2', titulo: 'Vitrine no WhatsApp: Roteiro exato para vender sem o cliente pisar na loja', img: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=600&q=80', resumo: 'Estratégias de fotos e mensagens para conversão direta no chat.' },
+                { id: 'v2', titulo: 'Vitrine no WhatsApp: Venda sem o cliente pisar na loja', img: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=600&q=80', resumo: 'Estratégias de fotos e mensagens para conversão direta no chat.' },
                 { id: 'v3', titulo: 'A técnica do "Leva e Traz" inteligente', img: 'https://images.unsplash.com/photo-1553688738-a278b9f063e0?w=600&q=80', resumo: 'Logística barata que dobra a conversão no balcão físico.' }
             ]},
-            clinica: { id: 'clinica', nome: 'Clínica Veterinária', tagColor: 'text-teal-600', artigos: [
-                { id: 'c1', titulo: 'Reduzindo as faltas nas consultas agendadas via WhatsApp', img: 'https://images.unsplash.com/photo-1628009368231-7bb7cb192fb6?w=600&q=80', resumo: 'O script exato que derrubou o "No-Show" em 80% nas clínicas de bairro.' },
+            clinica: { id: 'clinica', nome: 'Clínica Veterinária', tagColor: 'text-teal-700', bgColor: 'bg-teal-50', artigos: [
+                { id: 'c1', titulo: 'Reduzindo as faltas nas consultas agendadas via WhatsApp', img: 'https://images.unsplash.com/photo-1628009368231-7bb7cb192fb6?w=600&q=80', resumo: 'O script exato que derrubou o "No-Show" em 80% nas clínicas.' },
                 { id: 'c2', titulo: 'Prevenção Lucrativa: Calendário Automático', img: 'https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=600&q=80', resumo: 'Gerando receita previsível com vacinas e vermífugos.' },
                 { id: 'c3', titulo: 'Experiência Premium no Diagnóstico', img: 'https://images.unsplash.com/photo-1584820927498-cafe6c1c953a?w=600&q=80', resumo: 'Como humanizar laudos e aumentar o ticket médio.' }
             ]},
-            estetica: { id: 'estetica', nome: 'Banho & Tosa', tagColor: 'text-pink-600', artigos: [
-                { id: 'e1', titulo: '3 Estratégias para fidelizar clientes no Banho e Tosa', img: 'https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?w=600&q=80', resumo: 'Pare de depender de promoções e crie uma carteira de clientes fiéis.' },
+            estetica: { id: 'estetica', nome: 'Banho & Tosa', tagColor: 'text-pink-700', bgColor: 'bg-pink-50', artigos: [
+                { id: 'e1', titulo: '3 Estratégias para fidelizar clientes no Banho e Tosa', img: 'https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?w=600&q=80', resumo: 'Pare de depender de promoções e crie uma carteira de fiéis.' },
                 { id: 'e2', titulo: 'Assinatura Mensal de Banho', img: 'https://images.unsplash.com/photo-1583337260546-28b6bf66d004?w=600&q=80', resumo: 'O passo a passo para pagar suas contas fixas no dia 1º.' },
-                { id: 'e3', titulo: 'A Técnica do Upsell na Hidratação', img: 'https://images.unsplash.com/photo-1527526029430-319f10814151?w=600&q=80', resumo: 'Treine sua equipe para vender mais no momento da entrega.' }
+                { id: 'e3', titulo: 'A Técnica do Upsell na Hidratação', img: 'https://images.unsplash.com/photo-1527526029430-319f10814151?w=600&q=80', resumo: 'Treine sua equipe para vender mais na entrega.' }
             ]},
-            comportamento: { id: 'comportamento', nome: 'Adestramento', tagColor: 'text-orange-600', artigos: [
-                { id: 'a1', titulo: 'A "Aula Zero": Vendendo pacotes premium', img: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80', resumo: 'Use uma consultoria online de 20min para fechar contratos de alto valor.' },
-                { id: 'a2', titulo: 'Parcerias com Pet Shops', img: 'https://images.unsplash.com/photo-1537151608804-ea6f1103d82f?w=600&q=80', resumo: 'Transforme lojistas nos seus melhores vendedores.' },
-                { id: 'a3', titulo: 'Desafios Semanais por WhatsApp', img: 'https://images.unsplash.com/photo-1554692911-37d363b2f8a4?w=600&q=80', resumo: 'Escale seu tempo misturando aulas presenciais e online.' }
+            comportamento: { id: 'comportamento', nome: 'Adestramento', tagColor: 'text-orange-700', bgColor: 'bg-orange-50', artigos: [
+                { id: 'a1', titulo: 'A "Aula Zero": Vendendo pacotes premium', img: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80', resumo: 'Use uma consultoria online de 20min para fechar contratos.' },
+                { id: 'a2', titulo: 'Parcerias com Pet Shops Locais', img: 'https://images.unsplash.com/photo-1537151608804-ea6f1103d82f?w=600&q=80', resumo: 'Transforme lojistas nos seus melhores vendedores.' },
+                { id: 'a3', titulo: 'Desafios Semanais por WhatsApp', img: 'https://images.unsplash.com/photo-1554692911-37d363b2f8a4?w=600&q=80', resumo: 'Escale seu tempo com aulas híbridas.' }
             ]},
-            hospedagem: { id: 'hospedagem', nome: 'Hotelzinho Pet', tagColor: 'text-indigo-600', artigos: [
+            hospedagem: { id: 'hospedagem', nome: 'Hotelzinho Pet', tagColor: 'text-indigo-700', bgColor: 'bg-indigo-50', artigos: [
                 { id: 'h1', titulo: 'Transformando Alta Temporada em Daycare', img: 'https://images.unsplash.com/photo-1601758174114-e711c0cbaa69?w=600&q=80', resumo: 'O segredo da recorrência para hotéis pet.' },
                 { id: 'h2', titulo: 'Diário de Bordo Pet no Instagram', img: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&q=80', resumo: 'Use vídeos de 15s para fechar pacotes mensais.' },
                 { id: 'h3', titulo: 'Triagem Comportamental Digital', img: 'https://images.unsplash.com/photo-1541599540903-216a46ca1dc0?w=600&q=80', resumo: 'O formulário que blinda sua equipe de problemas.' }
@@ -134,89 +119,75 @@
         const mainContent = document.getElementById('main-content');
 
         window.renderView = function(view, param = null) {
-            mainContent.innerHTML = ''; 
-            window.scrollTo(0, 0);
+            mainContent.innerHTML = ''; window.scrollTo(0, 0);
             if (view === 'home') renderHomeFeed();
             else if (view === 'artigo') renderArtigo(param);
         };
 
-        // 📰 RENDERIZAÇÃO ESTILO PORTAL DE NOTÍCIAS (G1)
         function renderHomeFeed() {
             let html = `<div class="fade-in">`;
 
-            // DESTAQUE PRINCIPAL (HERO)
+            // DESTAQUE INICIAL
             const destaque = bancoDeArtigos.varejo.artigos[0];
             html += `
-                <div class="cursor-pointer bg-white mb-6" onclick="abrirArtigo('varejo', '${destaque.id}')">
-                    <img src="${destaque.img}" class="w-full h-64 object-cover" alt="Destaque">
-                    <div class="px-4 py-3">
-                        <span class="text-red-600 font-bold text-xs uppercase tracking-widest mb-1 block flex items-center gap-1">
-                            <i class="fa-solid fa-fire"></i> Em Alta
-                        </span>
-                        <h2 class="text-3xl font-black leading-tight text-gray-900 tracking-tight">${destaque.titulo}</h2>
-                        <p class="text-gray-600 text-base mt-2 leading-snug">${destaque.resumo}</p>
+                <div class="cursor-pointer bg-white mb-2" onclick="abrirArtigo('varejo', '${destaque.id}')">
+                    <img src="${destaque.img}" class="w-full h-64 object-cover">
+                    <div class="px-4 py-4">
+                        <span class="text-red-600 font-bold text-[10px] uppercase tracking-widest mb-1 block">Manchete do Dia</span>
+                        <h2 class="text-3xl font-black leading-tight text-gray-900">${destaque.titulo}</h2>
+                        <p class="text-gray-600 text-sm mt-2">${destaque.resumo}</p>
                     </div>
                 </div>
             `;
 
-            // LOOP PELAS EDITORIAS (CATEGORIAS)
             let indexCat = 0;
             for (const key in bancoDeArtigos) {
                 const cat = bancoDeArtigos[key];
                 
-                // Cabeçalho da Editoria
+                // MUDANÇA: A SEÇÃO AGORA TEM O bgColor NO FUNDO
                 html += `
-                    <div id="sec-${cat.id}" class="mt-6 pt-4 border-t-[3px] border-gray-900 px-4">
-                        <h3 class="${cat.tagColor} text-xl font-black uppercase tracking-tight mb-4">${cat.nome}</h3>
-                        <div class="flex flex-col gap-5">
+                    <section id="sec-${cat.id}" class="${cat.bgColor} py-8 px-4 border-t border-gray-200">
+                        <h3 class="${cat.tagColor} text-xs font-black uppercase tracking-[0.2em] mb-5 border-l-4 border-current pl-3">${cat.nome}</h3>
+                        <div class="flex flex-col gap-6">
                 `;
 
-                // Artigos da Editoria
                 cat.artigos.forEach((artigo, idx) => {
-                    // Pula o primeiro artigo do varejo, pois já está no Destaque Principal lá no topo
                     if (key === 'varejo' && idx === 0) return;
 
-                    // O primeiro artigo de cada seção ganha foto maior
                     if (idx === 0 || (key === 'varejo' && idx === 1)) {
                         html += `
                             <div class="cursor-pointer group" onclick="abrirArtigo('${key}', '${artigo.id}')">
-                                <img src="${artigo.img}" class="w-full h-44 object-cover rounded mb-2 group-hover:brightness-90 transition">
-                                <h4 class="font-bold text-xl text-gray-900 leading-tight group-hover:text-blue-700 transition">${artigo.titulo}</h4>
+                                <img src="${artigo.img}" class="w-full h-48 object-cover rounded shadow-sm mb-3 group-hover:opacity-90">
+                                <h4 class="font-bold text-xl text-gray-900 leading-tight">${artigo.titulo}</h4>
                             </div>
                         `;
                     } else {
-                        // Formato de Lista (Notícias Menores)
                         html += `
-                            <div class="flex items-start gap-3 cursor-pointer group border-t border-gray-200 pt-3" onclick="abrirArtigo('${key}', '${artigo.id}')">
-                                <div class="flex-1 pt-1">
-                                    <h4 class="font-semibold text-[17px] text-gray-800 leading-tight group-hover:text-blue-700 transition">${artigo.titulo}</h4>
+                            <div class="flex items-center gap-4 cursor-pointer group border-t border-gray-200/50 pt-4" onclick="abrirArtigo('${key}', '${artigo.id}')">
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-base text-gray-800 leading-tight group-hover:text-blue-700">${artigo.titulo}</h4>
                                 </div>
-                                <img src="${artigo.img}" class="w-28 h-20 object-cover rounded group-hover:brightness-90 transition">
+                                <img src="${artigo.img}" class="w-24 h-16 object-cover rounded">
                             </div>
                         `;
                     }
                 });
                 
-                html += `</div></div>`; // Fecha lista e editoria
+                html += `</div></section>`;
 
-                // 🧲 ENXERTO: ANÚNCIO NATIVO APÓS A 2ª E A 4ª SEÇÃO
+                // ANÚNCIO ENTRE SEÇÕES
                 if (indexCat === 1 || indexCat === 3) {
                     html += `
-                        <div class="my-8 px-4 fade-in">
-                            <div class="bg-blue-50 border border-blue-100 p-5 rounded-lg relative cursor-pointer overflow-hidden group" onclick="clicouCTA('banner_feed')">
-                                <div class="absolute top-0 left-0 w-1 h-full bg-blue-600"></div>
-                                <span class="text-[10px] text-gray-400 uppercase tracking-widest block mb-2 font-bold">Patrocinado</span>
-                                <h4 class="font-black text-gray-900 text-xl leading-tight mb-2 group-hover:text-blue-700 transition">Atendimento lento perde vendas.</h4>
-                                <p class="text-sm text-gray-600 mb-3 leading-snug">Conheça o sistema PetLojas e automatize sua operação via WhatsApp. Zero dor de cabeça.</p>
-                                <span class="text-blue-600 font-bold text-sm flex items-center gap-1">Conheça a plataforma <i class="fa-solid fa-arrow-right"></i></span>
-                            </div>
+                        <div class="bg-gray-900 text-white p-8 text-center">
+                            <span class="text-[9px] text-blue-400 uppercase tracking-widest font-bold">Publicidade PetLojas</span>
+                            <h4 class="text-xl font-black mt-2 leading-tight">Cansado de perder tempo no balcão?</h4>
+                            <p class="text-gray-400 text-sm mt-2 mb-5">Automatize seu WhatsApp e venda enquanto dorme.</p>
+                            <button onclick="clicouCTA('banner_feed')" class="bg-blue-600 px-6 py-2 rounded font-bold text-sm">Saiba Como</button>
                         </div>
                     `;
                 }
                 indexCat++;
             }
-
-            html += `<div class="pb-12 text-center text-xs text-gray-400 mt-8">Fim do feed. © PetLojas.</div></div>`;
             mainContent.innerHTML = html;
         }
 
@@ -228,48 +199,24 @@
 
         function renderArtigo(dados) {
             const { catId, artigo } = dados;
-            let html = `
+            mainContent.innerHTML = `
                 <div class="fade-in bg-white min-h-screen">
-                    <div class="px-4 py-4 header-line">
-                        <button onclick="renderView('home')" class="text-gray-500 hover:text-blue-600 font-bold text-sm uppercase tracking-wider mb-4 flex items-center gap-1">
-                            <i class="fa-solid fa-chevron-left"></i> Voltar ao início
-                        </button>
-                        <h1 class="text-3xl font-black text-gray-900 leading-tight tracking-tight">${artigo.titulo}</h1>
-                        <p class="text-gray-500 text-sm mt-3 border-b border-gray-100 pb-4">Por <span class="font-bold">Redação PetLojas</span> • Atualizado agora</p>
-                    </div>
-                    
+                    <div class="p-4"><button onclick="renderView('home')" class="text-gray-400 text-xs font-bold uppercase"><i class="fa-solid fa-arrow-left"></i> Início</button></div>
+                    <div class="px-5 pb-4"><h1 class="text-3xl font-black text-gray-900 leading-tight">${artigo.titulo}</h1></div>
                     <img src="${artigo.img}" class="w-full h-64 object-cover">
-                    
-                    <div class="px-5 py-6 text-gray-800 leading-relaxed text-lg font-serif">
-                        <p><span class="float-left text-5xl font-black mr-2 mt-1 text-gray-900">O</span> mercado pet é dinâmico. O conteúdo deste artigo traz estratégias valiosas para melhorar a gestão e aumentar a lucratividade da sua operação diária. O foco principal não é trabalhar mais horas, mas sim trabalhar de forma inteligente.</p>
-                        <br>
-                        <h3 class="font-black text-2xl text-gray-900 mt-4 mb-2 font-sans tracking-tight">O Poder da Automação</h3>
-                        <p>Quando você organiza o seu fluxo de atendimento e delega as tarefas repetitivas para a tecnologia, sobra tempo para focar no que realmente importa: a experiência do cliente e o crescimento do caixa da loja.</p>
-                        <br>
-                        <p>A previsibilidade de receita é o que separa um negócio amador de um profissional. Aplique essa técnica de funil e veja seus números mudarem já nos primeiros 15 dias.</p>
+                    <div class="px-6 py-8 text-gray-800 leading-relaxed text-lg font-serif">
+                        <p>Conteúdo estratégico focado em aumentar a eficiência do seu negócio pet. Aplique as dicas hoje mesmo.</p>
                     </div>
-
-                    <div class="mx-5 mb-10 mt-2 p-6 rounded bg-gray-900 text-center shadow-lg border-t-4 border-blue-500">
-                        <h4 class="font-black text-white text-xl mb-2 tracking-tight">Quer escalar seu Pet Shop?</h4>
-                        <p class="text-sm text-gray-300 mb-5">Conheça a Infraestrutura Completa PetLojas e automatize suas vendas hoje mesmo.</p>
-                        <button onclick="clicouCTA('${artigo.id}')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded transition-colors flex justify-center items-center gap-2">
-                            Falar com um Consultor
-                        </button>
+                    <div class="m-5 p-6 rounded bg-blue-600 text-white text-center">
+                        <h4 class="font-black text-lg">Impulsione seu Pet Shop!</h4>
+                        <button onclick="clicouCTA('${artigo.id}')" class="mt-4 bg-white text-blue-600 font-bold py-2 px-8 rounded">Ver Planos</button>
                     </div>
                 </div>
             `;
-            mainContent.innerHTML = html;
         }
 
-        window.clicouCTA = function(origem) {
-            registrarEvento('clicou_cta_petlojas', { origem_clique: origem });
-            alert("Pixel Disparado! Redirecionando para a Landing Page ou WhatsApp de Vendas..."); 
-        }
-
-        // INICIALIZAÇÃO
-        registrarEvento('abriu_revista', { edicao: '01' });
-        renderView('home');
-
+        window.clicouCTA = (o) => registrarEvento('clicou_cta', { de: o });
+        renderHomeFeed();
     </script>
 </body>
 </html>
