@@ -3,18 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>O Código Pet - Revista Semanal - GV Conecta</title>
-    
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#2563eb">
-    <link rel="apple-touch-icon" href="/icon-192x192.png">
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>O Código Pet - Revista Semanal</title>
     
     <link rel="manifest" href="/manifest.json">
@@ -157,14 +145,14 @@
         import { getFirestore, collection, addDoc, getDocs, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        // ⚠️ ATENÇÃO ARQUITETO: PREENCHA SUAS CREDENCIAIS AQUI (Ponto 2)
+        // ✅ INTEGRADO: Credenciais reais do projeto crmpetshop (Ponto 2)
         const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            authDomain: "crmpetshop.firebaseapp.com",
-            projectId: "crmpetshop",
-            storageBucket: "crmpetshop.firebasestorage.app",
-            messagingSenderId: "381013124221",
-            appId: "1:381013124221:web:48f398a62ce40b7db6fd14"
+          apiKey: "AIzaSyBjuvcJvTWw7lMrIwej5lHbIUXe99lJDN4",
+          authDomain: "crmpetshop.firebaseapp.com",
+          projectId: "crmpetshop",
+          storageBucket: "crmpetshop.firebasestorage.app",
+          messagingSenderId: "381013124221",
+          appId: "1:381013124221:web:6a1860b4249c2939b6fd14"
         };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
@@ -185,7 +173,7 @@
         // Monitorar estado de autenticação
         window.addEventListener('load', () => {
             if(window.auth) {
-                window.auth.onAuthStateChanged(user => {
+                window.auth.onAuthStateChanged(window.auth.getAuth(), user => {
                     currentUser = user;
                     renderView(currentView); // Re-renderiza a view atual com o contexto do usuário
                 });
@@ -237,8 +225,11 @@
                     navCategorias.classList.add('hidden');
                     renderAdminPanel(mainContent);
                 } else {
-                    alert("Acesso Negado. Área restrita a Administradores.");
-                    renderView('home');
+                    // Se tentar acessar sem ser admin, abre o login
+                    btnVoltar.classList.add('hidden');
+                    navCategorias.classList.remove('hidden');
+                    renderHomeFeed(mainContent);
+                    abrirAuth('login');
                 }
             }
         }
@@ -354,20 +345,21 @@
             // Captação de e-mails (Ponto 2) -> Lógica real via Firestore stub
             let leitoresHtml = '<p class="text-xs text-gray-400">Carregando leitores...</p>';
             if(window.db) {
-                getDocs(query(collection(window.db, "leitores"), serverTimestamp())).then(snap => {
+                getDocs(query(collection(window.db, "leitores"), orderBy("dataCadastro", "desc"))).then(snap => {
                     const lista = document.getElementById('admin-leitores-lista');
                     if(snap.size === 0) { lista.innerHTML = '<p class="text-sm text-gray-500">Nenhum leitor cadastrado.</p>'; return; }
                     let html = '<ul class="space-y-2">';
                     snap.forEach(doc => {
                         const l = doc.data();
-                        html += `<li class="text-sm bg-gray-50 p-2 rounded-lg border"><strong>${l.nome}</strong> (${l.email})</li>`;
+                        const data = l.dataCadastro ? l.dataCadastro.toDate().toLocaleDateString('pt-BR') : '---';
+                        html += `<li class="text-sm bg-gray-50 p-3 rounded-lg border flex justify-between"><div><strong>${l.nome}</strong> (${l.email})</div> <span class="text-xs text-gray-400">${data}</span></li>`;
                     });
                     lista.innerHTML = html + '</ul>';
                 });
             } else { leitoresHtml = '<p class="text-xs text-red-600">Firebase offline.</p>'; }
 
             container.innerHTML = `
-                <div class="fade-in p-5 bg-gray-100 min-h-screen">
+                <div class="fade-in p-5 bg-gray-100 min-h-screen overflow-y-auto">
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-3xl font-black tracking-tighter text-gray-950">Painel Central <span class="text-red-600">BETA</span></h2>
                         <button onclick="executarLogout()" class="text-gray-600 hover:text-red-600"><i class="fa-solid fa-right-from-bracket text-lg"></i></button>
@@ -389,14 +381,14 @@
                         <div id="admin-leitores-lista">${leitoresHtml}</div>
                     </div>
 
-                    <div class="bg-white p-5 rounded-2xl shadow border border-gray-100">
+                    <div class="bg-white p-5 rounded-2xl shadow border border-gray-100 mb-20">
                         <h4 class="font-bold text-gray-900 mb-2">Ações Rápidas</h4>
                         <p class="text-sm text-gray-600 mb-4">Os módulos de autoria, disparos e CRM estarão disponíveis em breve.</p>
                         <button disabled class="w-full bg-gray-100 text-gray-400 font-bold py-3 rounded-xl mb-3">Gerar Nova Edição (Bloqueado)</button>
                         <button disabled class="w-full bg-gray-100 text-gray-400 font-bold py-3 rounded-xl">Disparo WhatsApp (Bloqueado)</button>
                     </div>
 
-                     <footer class="mt-10 bg-gray-900 text-white p-6 text-center">
+                     <footer class="mt-10 bg-gray-900 text-white p-6 text-center rounded-2xl">
                         <div class="text-[10px] text-gray-500 uppercase tracking-[0.3em] font-bold mb-2">Produzido por</div>
                         <h3 class="text-xl font-black tracking-tighter text-blue-400">GV CONECTA</h3>
                         <p class="text-[9px] text-gray-400 mt-1 uppercase tracking-widest">Marketing para Negócios Locais</p>
@@ -448,7 +440,11 @@
                 logoClicks = 0;
                 clearTimeout(logoTimer);
                 // Hierarquia: Programador/Admin devem fazer login (Ponto 2)
-                renderView('admin'); 
+                if(currentUser && window.ADMIN_EMAILS && window.ADMIN_EMAILS.includes(currentUser.email)) {
+                    renderView('admin'); 
+                } else {
+                    abrirAuth('login'); // Força login administrativo
+                }
             }
         }
 
@@ -484,7 +480,7 @@
 
             window.auth.signInWithEmailAndPassword(window.auth.getAuth(), email, pass)
                 .then(() => { fecharAuth(); })
-                .catch(err => { errorBlock.innerText = "Login falhou. Verifique e-mail/senha."; errorBlock.classList.remove('hidden'); });
+                .catch(err => { errorBlock.innerText = "Login falhou. Verifique e-mail/senha corporativa."; errorBlock.classList.remove('hidden'); });
         }
 
         function executarCadastro() {
@@ -525,422 +521,13 @@
         // Scroll para botão "UP"
         window.addEventListener('scroll', () => {
             const btnUp = document.getElementById('btn-up');
-            window.scrollY > 300 ? btnUp.classList.remove('translate-y-10', 'opacity-0') : btnUp.classList.add('translate-y-10', 'opacity-0');
-        });
-
-        // INICIALIZAÇÃO
-        renderView('home');
-    </script>
-</body>
-</html>
-    
-    <script>
-        // Configuração Tailwind
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
-                    colors: { petlojas: '#2563eb' }
-                }
-            }
-        }
-    </script>
-
-    <style>
-        body { -webkit-tap-highlight-color: transparent; }
-        .fade-in { animation: fadeIn 0.3s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .header-line { border-top: 4px solid #ef4444; }
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        /* Loader de carregamento */
-        .loader {
-            border: 4px solid #f3f3f3; border-top: 4px solid #2563eb;
-            border-radius: 50%; width: 40px; height: 40px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    </style>
-</head>
-<body class="bg-gray-100 text-gray-800 antialiased overflow-x-hidden">
-
-    <div id="side-menu" class="fixed inset-0 bg-black/60 z-[60] hidden transition-opacity opacity-0" onclick="fecharMenuClickFora(event)">
-        <div class="absolute right-0 top-0 bottom-0 w-64 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col" id="side-menu-panel">
-            <div class="p-5 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-                <h2 class="font-black text-gray-900 text-lg uppercase tracking-tighter">O Código Pet</h2>
-                <button onclick="toggleMenu()" class="text-gray-500 hover:text-red-600 text-2xl p-2"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="p-5 flex-1 overflow-y-auto">
-                <h3 class="font-bold text-gray-400 text-[10px] uppercase tracking-[0.2em] mb-4">Módulos GV Conecta</h3>
-                <ul class="space-y-4">
-                    <li><button onclick="toggleMenu(); renderView('home')" class="w-full flex items-center justify-between font-black text-blue-700 border border-blue-200 bg-blue-50 p-3 rounded-lg">Módulo 0 - Revista <span class="bg-blue-600 text-white text-[9px] px-2 py-1 rounded uppercase">Atual</span></button></li>
-                </ul>
-            </div>
-            <div class="p-5 border-t border-gray-100">
-                <p class="text-[9px] text-gray-400 text-center uppercase tracking-widest font-bold">Uma iniciativa GV Conecta</p>
-            </div>
-        </div>
-    </div>
-
-    <div id="app-container" class="max-w-md mx-auto bg-white min-h-screen shadow-2xl relative flex flex-col">
-        
-        <header class="bg-white sticky top-0 z-40 shadow-md header-line w-full">
-            <div class="px-4 py-3 flex justify-between items-center">
-                <div class="flex flex-col cursor-pointer" onclick="renderView('home')">
-                    <h1 class="text-2xl font-black tracking-tighter text-blue-700 uppercase leading-none">O CÓDIGO PET</h1>
-                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Revista GV Conecta - Beta</span>
-                </div>
-                <div class="flex items-center gap-3">
-                    <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded uppercase">Ed. 01</span>
-                    <button onclick="toggleMenu()" class="text-gray-700 focus:outline-none p-1"><i class="fa-solid fa-bars text-2xl"></i></button>
-                </div>
-            </div>
-            
-            <nav id="nav-categorias" class="bg-gray-50 border-b border-gray-200 px-4 py-2 overflow-x-auto whitespace-nowrap text-[11px] font-bold text-gray-500 uppercase tracking-wide flex gap-5 scrollbar-hide">
-                </nav>
-        </header>
-
-        <main id="main-content" class="flex-1 pb-16 bg-white"></main>
-
-        <footer class="bg-gray-900 text-white p-6 text-center">
-            <div class="text-[10px] text-gray-500 uppercase tracking-[0.3em] font-bold mb-2">Produzido por</div>
-            <h3 class="text-xl font-black tracking-tighter text-blue-400">GV CONECTA</h3>
-            <p class="text-[9px] text-gray-400 mt-1 uppercase tracking-widest">Marketing para Negócios Locais</p>
-        </footer>
-
-        <div class="fixed bottom-6 left-0 right-0 max-w-md mx-auto z-30 pointer-events-none h-12">
-            <button id="btn-voltar" onclick="renderView('home')" class="hidden absolute left-5 pointer-events-auto w-12 h-12 bg-black/60 backdrop-blur-md border border-white/20 rounded-full text-white flex items-center justify-center shadow-2xl hover:bg-black/80 active:scale-90 transition-all duration-300"><i class="fa-solid fa-arrow-left text-lg"></i></button>
-            <button id="btn-up" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="absolute right-5 pointer-events-auto w-12 h-12 bg-black/60 backdrop-blur-md border border-white/20 rounded-full text-white flex items-center justify-center shadow-2xl hover:bg-black/80 active:scale-90 transition-all duration-300 translate-y-10 opacity-0"><i class="fa-solid fa-arrow-up text-lg"></i></button>
-        </div>
-    </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, getDoc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        // CONFIGURAÇÃO FIREBASE (PROJETO BETA - INJECTADO PELO ARQUITETO)
-        const firebaseConfig = {
-            apiKey: "AIzaSyBjuvcJvTWw7lMrIwej5lHbIUXe99lJDN4", // Exemplo, substituir pelo real
-            authDomain: "crmpetshop.firebaseapp.com",
-            projectId: "crmpetshop",
-            storageBucket: "crmpetshop.firebasestorage.app",
-            messagingSenderId: "381013124221",
-            appId: "1:381013124221:web:48f398a62ce40b7db6fd14"
-        };
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        // STUBS PARA ANALYTICS (Módulos 2/3)
-        window.registrarEvento = async function(tipo, detalhes) {
-            console.log(`[GV Tracking] Evento: ${tipo}`, detalhes);
-            // Lógica de injeção no Firebase collection 'revista_eventos' futura
-        }
-
-        window.qualificarLead = async function(dados) {
-            console.log("[GV CRM] Qualificando Lead:", dados);
-            alert("Interesse registrado! Nossa equipe entrará em contato.");
-        }
-
-        // MAPA DE ESTILOS DAS CATEGORIAS (HARDCODED VISUAL APROVADO)
-        const CAT_MAP = {
-            varejo: { nome: 'Pet Shop', color: 'text-blue-700', bg: 'bg-blue-50' },
-            clinica: { nome: 'Clínica Veterinária', color: 'text-teal-700', bg: 'bg-teal-50' },
-            estetica: { nome: 'Banho & Tosa', color: 'text-pink-700', bg: 'bg-pink-50' },
-            comportamento: { nome: 'Adestramento', color: 'text-orange-700', bg: 'bg-orange-50' },
-            hotelzinho: { nome: 'Hotelzinho Pet', color: 'text-indigo-700', bg: 'bg-indigo-50' },
-            dinamico: { nome: 'Conteúdo GV', color: 'text-gray-700', bg: 'bg-gray-50' } // Fallback para categorias novas via CMS
-        };
-
-        // VARIÁVEIS DE ESTADO
-        let currentRoute = 'home';
-
-        // MOTOR DE ROTAS E RENDERIZAÇÃO
-        window.renderView = async function(view, param = null) {
-            currentRoute = view;
-            const mainContent = document.getElementById('main-content');
-            const btnVoltar = document.getElementById('btn-voltar');
-            const navCategorias = document.getElementById('nav-categorias');
-            
-            mainContent.innerHTML = ''; 
-            window.scrollTo(0, 0);
-
-            // Interface do Artigo
-            if (view === 'artigo') {
-                btnVoltar.classList.remove('hidden');
-                navCategorias.classList.add('hidden'); // Oculta nav na leitura
-                registrarEvento('leitura_artigo_open', { artigo_id: param.artigo.id, titulo: param.artigo.titulo });
-                renderArtigo(mainContent, param.artigo);
-                
-                // Atualiza URL com Deep Link (sem recarregar) para copiar
-                const newUrl = window.location.origin + window.location.pathname + '?artigo_id=' + param.artigo.id;
-                window.history.replaceState({path: newUrl}, '', newUrl);
-            } 
-            // Interface da Home (Feed)
-            else {
-                btnVoltar.classList.add('hidden');
-                navCategorias.classList.remove('hidden');
-                // Limpa URL deep link se voltar pra home
-                const homeUrl = window.location.origin + window.location.pathname;
-                window.history.replaceState({path: homeUrl}, '', homeUrl);
-                
-                mainContent.innerHTML = '<div class="flex justify-center p-10"><div class="loader"></div></div>';
-                
-                // CARREGAMENTO DINÂMICO DO FIREBASE (Exigência 1)
-                const artigosAgrupados = await carregarArtigosDinamicos();
-                
-                if (artigosAgrupados) {
-                    registrarEvento('home_feed_load', { total: Object.keys(artigosAgrupados).length });
-                    renderHomeFeed(mainContent, artigosAgrupados);
-                    renderNavCategorias(Object.keys(artigosAgrupados));
-                } else {
-                    mainContent.innerHTML = '<div class="p-10 text-center text-gray-500 text-sm">Falha ao carregar conteúdo. Tente novamente.</div>';
-                }
-            }
-        };
-
-        // EXIGÊNCIA 1: MIGRAÇÃO PARA FIRESTORE (Leitura Dinâmica)
-        async function carregarArtigosDinamicos() {
-            try {
-                // Lê da coleção 'revista_artigos' Beta, ordenado por data
-                const q = query(collection(db, "revista_artigos"), orderBy("dataPublicacao", "desc"));
-                const querySnapshot = await getDocs(q);
-                
-                // Agrupa artigos por categoriaId em JavaScript
-                const agrupamento = {};
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const artigo = { id: doc.id, ...data };
-                    const catId = data.categoriaId || 'dinamico';
-
-                    if (!agrupamento[catId]) agrupamento[catId] = [];
-                    agrupamento[catId].push(artigo);
-                });
-
-                return agrupamento;
-            } catch (error) {
-                console.error("[GV Firestore Error] carregarArtigosDinamicos:", error);
-                return null;
-            }
-        }
-
-        // RENDERIZADORES DE INTERFACE (Hardcoded Visual mantido)
-
-        function renderNavCategorias(listaCatIds) {
-            const nav = document.getElementById('nav-categorias');
-            nav.innerHTML = '';
-            listaCatIds.forEach(id => {
-                const meta = CAT_MAP[id] || CAT_MAP.dinamico;
-                nav.innerHTML += `<span onclick="goToCategory('sec-${id}')" class="cursor-pointer hover:text-blue-600 transition">${meta.nome}</span>`;
-            });
-        }
-
-        function renderHomeFeed(container, dadosAgrupados) {
-            container.innerHTML = `<div class="p-5 border-b border-gray-100"><p class="text-xs text-gray-600">Edição Semanal para o Profissional Pet.</p></div>`;
-            
-            // Renderiza seções dinamicamente baseadas nos dados do Firebase
-            let countSection = 0;
-            for (const catId in dadosAgrupados) {
-                countSection++;
-                const meta = CAT_MAP[catId] || CAT_MAP.dinamico;
-                const artigos = dadosAgrupados[catId];
-                
-                let sectionHtml = `
-                    <section id="sec-${catId}" class="${meta.bg} py-8 px-4 border-t border-gray-200">
-                        <h3 class="${meta.color} text-sm font-black uppercase tracking-[0.2em] mb-5 border-l-4 border-current pl-3">${meta.nome}</h3>
-                        <div class="flex flex-col gap-6">
-                `;
-
-                artigos.forEach((artigo, idx) => {
-                    const badge = artigo.premium ? `<span class="text-[9px] text-yellow-700 font-bold bg-yellow-200 px-2 py-0.5 rounded ml-2 inline-flex items-center gap-1 shrink-0"><i class="fa-solid fa-lock text-[8px]"></i> Premium Gestão</span>` : '';
-                    
-                    // Primeiro artigo da seção é destaque
-                    if (idx === 0) {
-                        sectionHtml += `
-                            <div class="cursor-pointer group" onclick="tratarCliqueArtigo(${JSON.stringify(artigo).replace(/"/g, '&quot;')})">
-                                <img src="${artigo.img}" class="w-full h-48 object-cover rounded shadow-sm mb-3 group-hover:opacity-90 transition">
-                                <h4 class="font-bold text-lg text-gray-900 group-hover:text-blue-700 flex items-center">${artigo.titulo} ${badge}</h4>
-                                <p class="text-gray-500 text-sm mt-1 line-clamp-2">${artigo.resumo}</p>
-                            </div>
-                        `;
-                    } else {
-                        sectionHtml += `
-                            <div class="flex items-start gap-3 cursor-pointer group border-t border-gray-100 pt-4" onclick="tratarCliqueArtigo(${JSON.stringify(artigo).replace(/"/g, '&quot;')})">
-                                <div class="flex-1"><h4 class="font-bold text-sm text-gray-800 leading-tight group-hover:text-blue-700 inline">${artigo.titulo}</h4> ${badge}</div>
-                                <img src="${artigo.img}" class="w-16 h-12 object-cover rounded shrink-0">
-                            </div>
-                        `;
-                    }
-                });
-
-                sectionHtml += `</div></section>`;
-                container.innerHTML += sectionHtml;
-
-                // Insere banner Nativo aprovado após 1ª seção
-                if(countSection === 1) {
-                    container.innerHTML += `
-                        <div class="my-6 px-4">
-                            <div class="rounded-lg bg-blue-700 text-white p-5 flex items-center gap-4 cursor-pointer shadow-lg hover:bg-blue-800" onclick="window.open('https://petlojas.vercel.app/', '_blank'); registrarEvento('native_ad_revista', {destino: 'petlojas_home'})">
-                                <i class="fa-solid fa-store text-3xl opacity-60"></i>
-                                <div>
-                                    <h5 class="font-bold text-lg leading-tight">O CRM que a sua PetLojas merece.</h5>
-                                    <p class="text-xs text-blue-100">Teste 7 dias grátis a plataforma GV Conecta.</p>
-                                </div>
-                                <i class="fa-solid fa-chevron-right ml-auto opacity-50"></i>
-                            </div>
-                        </div>
-                    `;
-                }
-            }
-        }
-
-        function renderArtigo(container, artigo) {
-            const meta = CAT_MAP[artigo.categoriaId] || CAT_MAP.dinamico;
-            
-            // Geração da URL Deep Link para compartilhamento
-            const shareUrl = window.location.origin + window.location.pathname + '?artigo_id=' + artigo.id;
-            
-            container.innerHTML = `
-                <div class="fade-in bg-white pb-10">
-                    <img src="${artigo.img}" class="w-full h-64 object-cover shadow-inner">
-                    
-                    <div class="px-5 py-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <span class="${meta.color} ${meta.bg} text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">${meta.nome}</span>
-                            ${artigo.premium ? '<span class="text-xs text-yellow-700 font-bold flex items-center gap-1.5"><i class="fa-solid fa-lock text-[10px]"></i> Conteúdo Gestão Premium</span>' : ''}
-                        </div>
-                        
-                        <h1 class="text-3xl font-black text-gray-950 leading-tight tracking-tighter mb-4">${artigo.titulo}</h1>
-                        <p class="text-gray-500 italic mb-6 border-l-2 border-gray-200 pl-4">${artigo.resumo}</p>
-                        
-                        <div class="mb-6 border-y border-gray-100 py-3 flex items-center gap-3">
-                            <span class="text-xs text-gray-400 font-medium">Compartilhar Artigo:</span>
-                            <button onclick="copiarLinkWhatsApp('${shareUrl}', '${artigo.titulo.replace(/'/g, "\\'")}')" class="bg-green-600 text-white text-xs font-bold px-4 py-2 rounded-full flex items-center gap-2 hover:bg-green-700 active:scale-95 transition">
-                                <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp
-                            </button>
-                            <button onclick="copiarLinkGenérico('${shareUrl}')" class="bg-gray-100 text-gray-600 text-xs px-4 py-2 rounded-full flex items-center gap-2 hover:bg-gray-200 active:scale-95 transition">
-                                <i class="fa-solid fa-link text-xs"></i> Link
-                            </button>
-                        </div>
-
-                        <div class="prose prose-sm prose-slate max-w-none text-gray-800 leading-relaxed space-y-4">
-                            ${artigo.conteudo}
-                        </div>
-                        
-                        ${artigo.premium ? `
-                            <div class="mt-10 p-6 rounded-xl bg-gray-50 border border-gray-100 text-center">
-                                <i class="fa-solid fa-lock text-3xl text-yellow-500 mb-4"></i>
-                                <h4 class="font-bold text-gray-900 mb-1">Acesso Premium GV Conecta</h4>
-                                <p class="text-sm text-gray-600 mb-4">Estratégias avançadas exclusivas para nossos lojistas parceiros.</p>
-                                <button onclick="qualificarLead({interesse: 'premium_leitura', artigo_id: '${artigo.id}'})" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg text-sm hover:bg-blue-700 active:scale-95 transition">Tenha Acesso Completo</button>
-                            </div>
-                        ` : ''}
-                    </div>
-                </div>
-            `;
-        }
-
-        // LÓGICA DE AÇÃO
-        window.tratarCliqueArtigo = function(artigo) {
-            window.registrarEvento('home_artigo_click', { artigo_id: artigo.id });
-            renderView('artigo', { artigo: artigo });
-        }
-
-        window.goToCategory = function(secId) {
-            toggleMenu(false); // Fecha menu se aberto
-            window.registrarEvento('nav_cat_click', { secId });
-            document.getElementById(secId).scrollIntoView({ behavior: 'smooth' });
-        }
-
-        // UTILITÁRIOS
-        window.toggleMenu = function(forceClose) {
-            const menu = document.getElementById('side-menu');
-            const panel = document.getElementById('side-menu-panel');
-            const show = forceClose === false ? false : menu.classList.contains('hidden');
-
-            if (show) {
-                menu.classList.remove('hidden');
-                setTimeout(() => { menu.classList.remove('opacity-0'); panel.classList.remove('translate-x-full'); }, 10);
-            } else {
-                panel.classList.add('translate-x-full'); menu.classList.add('opacity-0');
-                setTimeout(() => menu.classList.add('hidden'), 300);
-            }
-        }
-        window.fecharMenuClickFora = function(event) { if(event.target.id === 'side-menu') toggleMenu(false); }
-
-        // EXIGÊNCIA 2: COMPARTILHAMENTO (Lógica de Deep Link)
-        window.copiarLinkWhatsApp = function(url, titulo) {
-            // Texto para WhatsApp: Título + Link
-            const texto = encodeURIComponent(`*O Código Pet:* _${titulo}_\nLeia completo aqui: ${url}`);
-            window.open(`https://wa.me/?text=${texto}`, '_blank');
-            window.registrarEvento('artigo_share_wa', { url });
-        }
-
-        window.copiarLinkGenérico = function(url) {
-            // Fallback para área de transferência
-            navigator.clipboard.writeText(url).then(() => {
-                alert("Link copiado para a área de transferência!");
-                window.registrarEvento('artigo_share_link', { url });
-            });
-        }
-
-        // Scroll para botão "UP"
-        window.addEventListener('scroll', () => {
-            const btnUp = document.getElementById('btn-up');
             if(btnUp) {
                 window.scrollY > 300 ? btnUp.classList.remove('translate-y-10', 'opacity-0') : btnUp.classList.add('translate-y-10', 'opacity-0');
             }
         });
 
-        // ==========================================
-        // INICIALIZAÇÃO E DEEP LINKING (Exigência 2)
-        // ==========================================
-        async function handleDeepLinking() {
-            const mainContent = document.getElementById('main-content');
-            // Verifica se há artigo_id na URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const artigoId = urlParams.get('artigo_id');
-
-            if (artigoId) {
-                mainContent.innerHTML = '<div class="flex justify-center p-10"><div class="loader"></div></div>';
-                console.log(`[GV DeepLink] Verificando artigo: ${artigoId}`);
-                
-                try {
-                    const docRef = doc(db, "revista_artigos", artigoId);
-                    const docSnap = await getDoc(docRef);
-
-                    if (docSnap.exists()) {
-                        console.log(`[GV DeepLink] Artigo encontrado. Abrindo.`);
-                        const data = docSnap.data();
-                        const artigo = { id: docSnap.id, ...data };
-                        
-                        registrarEvento('deeplink_hit_success', { artigo_id: artigoId });
-                        // Carrega a Nav dinamicamente mesmo no artigo (necessário se usuário voltar pra home)
-                        const q = query(collection(db, "revista_artigos"), orderBy("dataPublicacao", "desc"), limit(1));
-                        const quickSnap = await getDocs(q); // Lê só 1 só pra pegar categorias se houver
-                        const agrupamentoStub = {}; quickSnap.forEach(d => { agrupamentoStub[d.data().categoriaId] = true; });
-                        renderNavCategorias(Object.keys(agrupamentoStub));
-
-                        renderView('artigo', { artigo: artigo });
-                        return; // Impede carregamento da home
-                    } else {
-                        console.log(`[GV DeepLink] Artigo ${artigoId} não existe.`);
-                        alert("O artigo solicitado não foi encontrado. Carregando a revista.");
-                        registrarEvento('deeplink_hit_fail_notfound', { artigo_id: artigoId });
-                    }
-                } catch (error) {
-                    console.error("[GV DeepLink Error]", error);
-                    registrarEvento('deeplink_hit_fail_error', { artigo_id: artigoId, error: error.message });
-                }
-            }
-
-            // Se não houver ID ou falhar, carrega a Home padrão
-            renderView('home');
-        }
-
-        // Executa ao carregar
-        window.onload = handleDeepLinking;
-
+        // INICIALIZAÇÃO
+        renderView('home');
     </script>
 </body>
 </html>
