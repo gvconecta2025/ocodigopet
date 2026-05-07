@@ -30,7 +30,9 @@
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
         .blur-content { filter: blur(6px); user-select: none; pointer-events: none; }
-        .tf-option { @apply w-full bg-gray-50 border-2 border-gray-200 text-gray-800 font-bold text-left p-4 rounded-xl mb-3 hover:border-blue-500 hover:bg-blue-50 active:scale-95 transition-all; }
+        
+        /* UX Mobile Aprimorada: Botões maiores e mais espaçados */
+        .tf-option { @apply w-full bg-gray-50 border-2 border-gray-200 text-gray-800 font-bold text-left p-5 text-lg rounded-xl mb-4 hover:border-blue-500 hover:bg-blue-50 active:scale-95 transition-all; }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans antialiased overflow-x-hidden">
@@ -82,43 +84,46 @@
 
         <div id="typeform-modal" class="fixed inset-0 bg-white z-[100] hidden flex-col max-w-md mx-auto h-screen">
             <div class="w-full bg-gray-200 h-1"><div id="tf-progress" class="bg-blue-600 h-1 w-1/3 transition-all duration-300"></div></div>
-            <div class="p-5 flex justify-between items-center border-b border-gray-100">
-                <span class="text-xs font-bold text-gray-400 uppercase tracking-widest"><i class="fa-solid fa-lock text-blue-600"></i> Acesso Premium</span>
+            <div class="p-5 flex justify-between items-center border-b border-gray-100 bg-white">
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-widest"><i class="fa-solid fa-lock text-blue-600"></i> Tenha acesso Premium</span>
                 <button onclick="fecharTypeform()" class="text-gray-400 hover:text-gray-800 text-xl"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
-            <div class="flex-1 overflow-y-auto p-6 flex flex-col justify-center relative">
+            <div class="flex-1 overflow-y-auto p-6 flex flex-col pt-10">
+                
                 <div id="step-1" class="tf-step slide-up w-full">
                     <span class="text-blue-600 font-bold mb-2 block">1 de 3</span>
-                    <h2 class="text-2xl font-black text-gray-900 mb-6 leading-tight">Para personalizar a sua leitura, qual é a sua função no negócio?</h2>
-                    <button onclick="tfNext(2, 'cargo', 'Dono / Sócio')" class="tf-option">A. Sou Dono(a) / Sócio(a)</button>
-                    <button onclick="tfNext(2, 'cargo', 'Gerente / Administrador')" class="tf-option">B. Sou Gerente / Administrador</button>
-                    <button onclick="tfNext(2, 'cargo', 'Veterinário')" class="tf-option">C. Médico Veterinário</button>
-                    <button onclick="tfNext(2, 'cargo', 'Operacional')" class="tf-option">D. Operacional (Atendimento, Banho, etc)</button>
+                    <h2 class="text-2xl font-black text-gray-900 mb-2 leading-tight">Qual a sua função na empresa?</h2>
+                    <p class="text-sm text-gray-500 mb-8 border-l-4 border-yellow-400 pl-3">⚠️ Este conteúdo estratégico é restrito a decisores e gestores do mercado Pet.</p>
+                    
+                    <button onclick="tfNext(2, 'cargo', 'Dono / Sócio')" class="tf-option">Dono(a) / Sócio(a)</button>
+                    <button onclick="tfNext(2, 'cargo', 'Gerente / Administrador')" class="tf-option">Gerente / Administrador(a)</button>
+                    <button onclick="tfNext(2, 'cargo', 'Médico Veterinário')" class="tf-option">Médico(a) Veterinário(a)</button>
+                    <button onclick="tfNext(2, 'cargo', 'Coordenador Operacional')" class="tf-option">Coordenador(a)</button>
                 </div>
 
                 <div id="step-2" class="tf-step slide-up w-full hidden">
                     <span class="text-blue-600 font-bold mb-2 block">2 de 3</span>
-                    <h2 class="text-2xl font-black text-gray-900 mb-6 leading-tight">Qual é o maior desafio na sua operação hoje?</h2>
-                    <button onclick="tfNext(3, 'desafio', 'Atrair clientes')" class="tf-option">A. Atrair novos clientes</button>
-                    <button onclick="tfNext(3, 'desafio', 'Tempo e Organização')" class="tf-option">B. Falta de tempo e desorganização</button>
-                    <button onclick="tfNext(3, 'desafio', 'Margem de Lucro')" class="tf-option">C. Margem de lucro muito baixa</button>
-                    <button onclick="tfNext(3, 'desafio', 'Gestão de Equipe')" class="tf-option">D. Problemas com funcionários/equipe</button>
+                    <h2 class="text-2xl font-black text-gray-900 mb-8 leading-tight">Qual é o maior desafio na sua operação hoje?</h2>
+                    <button onclick="tfNext(3, 'desafio', 'Atrair clientes')" class="tf-option">Atrair novos clientes</button>
+                    <button onclick="tfNext(3, 'desafio', 'Tempo e Organização')" class="tf-option">Falta de tempo e desorganização</button>
+                    <button onclick="tfNext(3, 'desafio', 'Margem de Lucro')" class="tf-option">Margem de lucro baixa</button>
+                    <button onclick="tfNext(3, 'desafio', 'Gestão de Equipe')" class="tf-option">Problemas com a equipe</button>
                 </div>
 
                 <div id="step-3" class="tf-step slide-up w-full hidden">
                     <span class="text-blue-600 font-bold mb-2 block">3 de 3</span>
-                    <h2 class="text-2xl font-black text-gray-900 mb-2 leading-tight">Último passo!</h2>
-                    <p class="text-gray-500 mb-6 text-sm">Insira o seu contato para desbloquear imediatamente o conteúdo completo.</p>
+                    <h2 class="text-2xl font-black text-gray-900 mb-2 leading-tight">Desbloqueio Imediato</h2>
+                    <p class="text-gray-500 mb-8 text-sm">Insira os seus dados de contacto empresarial para libertar o artigo.</p>
                     
-                    <input type="text" id="tf-nome" placeholder="Seu Nome" class="w-full bg-gray-50 border-2 border-gray-200 text-gray-900 font-bold rounded-xl focus:border-blue-500 focus:bg-white outline-none p-4 mb-4 transition-all">
-                    <input type="tel" id="tf-whatsapp" placeholder="WhatsApp (com DDD)" class="w-full bg-gray-50 border-2 border-gray-200 text-gray-900 font-bold rounded-xl focus:border-blue-500 focus:bg-white outline-none p-4 mb-6 transition-all">
+                    <input type="text" id="tf-nome" placeholder="Seu Nome" class="w-full bg-gray-50 border-2 border-gray-200 text-gray-900 font-bold rounded-xl focus:border-blue-500 focus:bg-white outline-none p-5 mb-4 transition-all text-lg">
+                    <input type="tel" id="tf-whatsapp" placeholder="WhatsApp (com DDD)" class="w-full bg-gray-50 border-2 border-gray-200 text-gray-900 font-bold rounded-xl focus:border-blue-500 focus:bg-white outline-none p-5 mb-8 transition-all text-lg">
                     
-                    <button onclick="tfSubmit()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black text-lg py-4 rounded-xl shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2">
-                        Desbloquear Artigo <i class="fa-solid fa-unlock"></i>
+                    <button onclick="tfSubmit()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black text-lg py-5 rounded-xl shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2">
+                        Ler Artigo Agora <i class="fa-solid fa-unlock"></i>
                     </button>
-                    <p class="text-center text-[10px] text-gray-400 mt-4"><i class="fa-solid fa-lock"></i> Seus dados estão seguros e não enviamos spam.</p>
                 </div>
+
             </div>
         </div>
     </div>
@@ -216,7 +221,7 @@
             let html = `<div class="fade-in">
                 <div class="px-5 pt-6 pb-4 bg-white border-b border-gray-100">
                     <p class="text-sm text-gray-600 leading-relaxed">
-                        Conteúdo prático para a linha de frente (<strong class="text-gray-900">funcionários</strong>) e estratégias avançadas de gestão e finanças exclusivas para <strong class="text-gray-900">donos de negócios Pet</strong>.
+                        Conteúdo prático para a linha de frente (<strong class="text-gray-900">funcionários</strong>) e estratégias avançadas de gestão e finanças exclusivas para <strong class="text-gray-900">decisores de negócios Pet</strong>.
                     </p>
                 </div>
             `;
@@ -323,7 +328,6 @@
             const { catId, artigo } = dados;
             const cat = bancoDeArtigos[catId];
             
-            // Lógica de Retenção: Puxar outros artigos da mesma categoria
             const sugestoes = cat.artigos.filter(a => a.id !== artigo.id).slice(0, 3);
             
             let html = `
