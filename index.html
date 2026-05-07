@@ -3,38 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>O Código Pet - Revista Semanal</title>
+    <title>O Código Pet - Revista Semanal - GV Conecta</title>
     
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#2563eb">
     <link rel="apple-touch-icon" href="/icon-192x192.png">
 
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js').catch(() => {});
-            });
-        }
-    </script>
-
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <script>
+        // Configuração Tailwind
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { petlojas: '#2563eb' }
+                }
+            }
+        }
+    </script>
+
     <style>
         body { -webkit-tap-highlight-color: transparent; }
-        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
-        .slide-up { animation: slideUp 0.4s ease-out forwards; }
+        .fade-in { animation: fadeIn 0.3s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .header-line { border-top: 4px solid #ef4444; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-        .blur-content { filter: blur(6px); user-select: none; pointer-events: none; }
-        .tf-option { @apply w-full bg-white border-2 border-gray-100 text-gray-700 font-bold text-left px-6 py-4 text-[16px] rounded-full mb-3 shadow-sm hover:border-blue-400 hover:bg-blue-50 active:scale-95 transition-all flex items-center justify-between; }
-        .btn-gradient { background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); }
+        
+        /* Loader de carregamento */
+        .loader {
+            border: 4px solid #f3f3f3; border-top: 4px solid #2563eb;
+            border-radius: 50%; width: 40px; height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans antialiased overflow-x-hidden">
+<body class="bg-gray-100 text-gray-800 antialiased overflow-x-hidden">
 
     <div id="side-menu" class="fixed inset-0 bg-black/60 z-[60] hidden transition-opacity opacity-0" onclick="fecharMenuClickFora(event)">
         <div class="absolute right-0 top-0 bottom-0 w-64 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col" id="side-menu-panel">
@@ -43,9 +50,9 @@
                 <button onclick="toggleMenu()" class="text-gray-500 hover:text-red-600 text-2xl p-2"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="p-5 flex-1 overflow-y-auto">
-                <h3 class="font-bold text-gray-400 text-[10px] uppercase tracking-[0.2em] mb-4">Acervo de Edições</h3>
+                <h3 class="font-bold text-gray-400 text-[10px] uppercase tracking-[0.2em] mb-4">Módulos GV Conecta</h3>
                 <ul class="space-y-4">
-                    <li><button onclick="toggleMenu(); renderView('home')" class="w-full flex items-center justify-between font-black text-blue-700 border border-blue-200 bg-blue-50 p-3 rounded-lg">Edição 01 <span class="bg-blue-600 text-white text-[9px] px-2 py-1 rounded uppercase">Atual</span></button></li>
+                    <li><button onclick="toggleMenu(); renderView('home')" class="w-full flex items-center justify-between font-black text-blue-700 border border-blue-200 bg-blue-50 p-3 rounded-lg">Módulo 0 - Revista <span class="bg-blue-600 text-white text-[9px] px-2 py-1 rounded uppercase">Atual</span></button></li>
                 </ul>
             </div>
             <div class="p-5 border-t border-gray-100">
@@ -58,9 +65,9 @@
         
         <header class="bg-white sticky top-0 z-40 shadow-md header-line w-full">
             <div class="px-4 py-3 flex justify-between items-center">
-                <div class="flex flex-col cursor-pointer group" onclick="handleLogoClick()">
+                <div class="flex flex-col cursor-pointer" onclick="renderView('home')">
                     <h1 class="text-2xl font-black tracking-tighter text-blue-700 uppercase leading-none">O CÓDIGO PET</h1>
-                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Revista do Profissional</span>
+                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Revista GV Conecta - Beta</span>
                 </div>
                 <div class="flex items-center gap-3">
                     <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded uppercase">Ed. 01</span>
@@ -68,18 +75,13 @@
                 </div>
             </div>
             
-            <div id="nav-categorias" class="bg-gray-50 border-b border-gray-200 px-4 py-2 overflow-x-auto whitespace-nowrap text-[11px] font-bold text-gray-500 uppercase tracking-wide flex gap-5 scrollbar-hide">
-                <span onclick="goToCategory('varejo')" class="cursor-pointer hover:text-blue-600 transition">Pet Shop</span>
-                <span onclick="goToCategory('clinica')" class="cursor-pointer hover:text-teal-600 transition">Clínica Vet</span>
-                <span onclick="goToCategory('estetica')" class="cursor-pointer hover:text-blue-600 transition">Estética</span>
-                <span onclick="goToCategory('adestramento')" class="cursor-pointer hover:text-blue-600 transition">Adestramento</span>
-                <span onclick="goToCategory('hotelzinho')" class="cursor-pointer hover:text-blue-600 transition">Hotelzinho</span>
-            </div>
+            <nav id="nav-categorias" class="bg-gray-50 border-b border-gray-200 px-4 py-2 overflow-x-auto whitespace-nowrap text-[11px] font-bold text-gray-500 uppercase tracking-wide flex gap-5 scrollbar-hide">
+                </nav>
         </header>
 
         <main id="main-content" class="flex-1 pb-16 bg-white"></main>
 
-        <footer class="bg-gray-900 text-white p-6 text-center mt-10" id="main-footer">
+        <footer class="bg-gray-900 text-white p-6 text-center">
             <div class="text-[10px] text-gray-500 uppercase tracking-[0.3em] font-bold mb-2">Produzido por</div>
             <h3 class="text-xl font-black tracking-tighter text-blue-400">GV CONECTA</h3>
             <p class="text-[9px] text-gray-400 mt-1 uppercase tracking-widest">Marketing para Negócios Locais</p>
@@ -89,176 +91,252 @@
             <button id="btn-voltar" onclick="renderView('home')" class="hidden absolute left-5 pointer-events-auto w-12 h-12 bg-black/60 backdrop-blur-md border border-white/20 rounded-full text-white flex items-center justify-center shadow-2xl hover:bg-black/80 active:scale-90 transition-all duration-300"><i class="fa-solid fa-arrow-left text-lg"></i></button>
             <button id="btn-up" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="absolute right-5 pointer-events-auto w-12 h-12 bg-black/60 backdrop-blur-md border border-white/20 rounded-full text-white flex items-center justify-center shadow-2xl hover:bg-black/80 active:scale-90 transition-all duration-300 translate-y-10 opacity-0"><i class="fa-solid fa-arrow-up text-lg"></i></button>
         </div>
-
-        <div id="typeform-modal" class="fixed inset-0 bg-white z-[100] hidden flex-col max-w-md mx-auto h-screen">
-            <div class="w-full bg-gray-200 h-1"><div id="tf-progress" class="bg-blue-600 h-1 w-0 transition-all duration-300"></div></div>
-            <div class="p-5 flex justify-between items-center border-b border-gray-100">
-                <span id="tf-title" class="text-xs font-bold text-gray-400 uppercase tracking-widest">Tenha acesso Premium</span>
-                <button onclick="fecharTypeform()" class="text-gray-400 hover:text-gray-800 text-xl"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            
-            <div class="flex-1 overflow-y-auto p-6 flex flex-col pt-6" id="tf-content-body">
-                </div>
-        </div>
-
-        <div id="login-modal" class="fixed inset-0 bg-black/80 z-[110] hidden items-center justify-center backdrop-blur-sm p-4">
-            <div class="bg-white rounded-2xl p-8 w-full max-w-sm shadow-2xl slide-up relative">
-                <button onclick="fecharLogin()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-900"><i class="fa-solid fa-xmark text-xl"></i></button>
-                <div class="flex flex-col items-center mb-8">
-                    <h1 class="text-2xl font-black tracking-tighter text-blue-700 uppercase leading-none">O CÓDIGO PET</h1>
-                    <span class="text-sm font-bold text-gray-500 uppercase mb-2">Login da Gestão GV Conecta</span>
-                </div>
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">E-mail Corporativo</label>
-                        <input type="email" id="login-email" class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-3 outline-none focus:border-blue-500 transition-colors">
-                    </div>
-                    <div class="relative">
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Senha</label>
-                        <input type="password" id="login-pass" class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-3 pr-10 outline-none focus:border-blue-500 transition-colors">
-                        <button type="button" onclick="togglePassword()" class="absolute right-3 top-8 text-gray-400 hover:text-gray-700"><i id="eye-icon" class="fa-solid fa-eye"></i></button>
-                    </div>
-                    <button onclick="executarLoginEmail()" id="btn-login-mail" class="w-full bg-blue-600 text-white font-black py-3.5 rounded-lg shadow-md hover:bg-blue-700 active:scale-95 transition-transform mt-2">Entrar no Painel</button>
-                    
-                    <div class="flex items-center my-5">
-                        <div class="flex-1 border-t border-gray-200"></div>
-                        <span class="px-3 text-xs text-gray-400 font-bold uppercase">Ou</span>
-                        <div class="flex-1 border-t border-gray-200"></div>
-                    </div>
-                    
-                    <button onclick="executarLoginGoogle()" class="w-full bg-white border-2 border-gray-100 text-gray-700 font-bold py-3.5 rounded-lg shadow-sm hover:border-gray-300 active:scale-95 transition-transform flex iter flex items-center justify-center gap-2">
-                        <i class="fa-brands fa-google text-red-500"></i> Continuar com Google
-                    </button>
-                </div>
-            </div>
-        </div>
-
     </div>
 
-    <script>
-        window.registrarEvento = function() {};
-        window.qualificarLead = async function() {};
-        window.fetchAdminData = async function() { return null; };
-        window.executarLoginEmail = function() { alert("Firebase offline."); };
-        window.executarLoginGoogle = function() { alert("Firebase offline."); };
-        window.executarLogout = function() { alert("Firebase offline."); };
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, getDoc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // SISTEMA DE VISITANTE ÚNICO (analytics style V2)
-        let visitorId = localStorage.getItem('petlojas_visitor_id');
-        if(!visitorId) {
-            visitorId = 'vis_' + Date.now() + Math.random().toString(36).substr(2, 5);
-            localStorage.setItem('petlojas_visitor_id', visitorId);
+        // CONFIGURAÇÃO FIREBASE (PROJETO BETA - INJECTADO PELO ARQUITETO)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBjuvcJvTWw7lMrIwej5lHbIUXe99lJDN4", // Exemplo, substituir pelo real
+            authDomain: "crmpetshop.firebaseapp.com",
+            projectId: "crmpetshop",
+            storageBucket: "crmpetshop.firebasestorage.app",
+            messagingSenderId: "381013124221",
+            appId: "1:381013124221:web:48f398a62ce40b7db6fd14"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // STUBS PARA ANALYTICS (Módulos 2/3)
+        window.registrarEvento = async function(tipo, detalhes) {
+            console.log(`[GV Tracking] Evento: ${tipo}`, detalhes);
+            // Lógica de injeção no Firebase collection 'revista_eventos' futura
         }
 
-        let routeEntryTime = Date.now();
-        let maxScrollDepth = 0;
-        let currentRouteName = 'home';
-
-        window.addEventListener('scroll', () => {
-            const h = document.documentElement;
-            const scrollPercent = (h.scrollTop + h.clientHeight) / h.scrollHeight * 100;
-            if(scrollPercent > maxScrollDepth) maxScrollDepth = Math.round(scrollPercent);
-            
-            const btnUp = document.getElementById('btn-up');
-            if(btnUp) window.scrollY > 300 ? btnUp.classList.remove('translate-y-10', 'opacity-0') : btnUp.classList.add('translate-y-10', 'opacity-0');
-        });
-
-        function fecharCicloPagina() {
-            const timeSpentSeconds = Math.round((Date.now() - routeEntryTime) / 1000);
-            window.registrarEvento('leave_page', { 
-                pagina: currentRouteName, 
-                tempo_segundos: timeSpentSeconds,
-                scroll_percentual: maxScrollDepth
-            });
-            // Reset timers
-            routeEntryTime = Date.now();
-            maxScrollDepth = 0;
+        window.qualificarLead = async function(dados) {
+            console.log("[GV CRM] Qualificando Lead:", dados);
+            alert("Interesse registrado! Nossa equipe entrará em contato.");
         }
 
-        let tfData = { cargo: '', desafio: '', interesses: [], nome: '', whatsapp: '', email: '', tipo: 'gestor' };
-        let pendingArticle = null;
-        let currentView = 'home';
-        
-        let logoClicks = 0;
-        let logoTimer = null;
-        window.handleLogoClick = function() {
-            if (currentView !== 'home' && currentView !== 'admin') renderView('home');
-            logoClicks++;
-            if (logoClicks >= 5) { 
-                logoClicks = 0; 
-                abrirLogin(); // Abre o modal de login seguro (NÃO entra direto)
-            }
-            clearTimeout(logoTimer);
-            logoTimer = setTimeout(() => { logoClicks = 0; }, 1500);
-        }
-
-        function abrirLogin() {
-            const modal = document.getElementById('login-modal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            document.body.style.overflow = 'hidden';
-        }
-        function fecharLogin() {
-            const modal = document.getElementById('login-modal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-            document.body.style.overflow = '';
-        }
-        window.togglePassword = function() {
-            const input = document.getElementById('login-pass');
-            const icon = document.getElementById('eye-icon');
-            if(input.type === 'password') { input.type = 'text'; icon.classList.remove('fa-eye'); icon.classList.add('fa-eye-slash'); } 
-            else { input.type = 'password'; icon.classList.add('fa-eye'); icon.classList.remove('fa-eye-slash'); }
-        }
-
-        // RESTAURAÇÃO TOTAL DOS DADOS (BANCO INTEGRAL DAS 5 CATEGORIAS COM FOTOS UN SPLASH)
-        const bancoDeArtigos = {
-            varejo: { id: 'varejo', nome: 'Pet Shop', tagColor: 'text-blue-700', bgColor: 'bg-blue-50', artigos: [
-                { id: 'v1', premium: false, titulo: '5 técnicas de vitrinismo para aumentar a venda de brinquedos', img: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&q=80', resumo: 'Como organizar as prateleiras de forma que o cliente compre por impulso.' },
-                { id: 'v2', premium: false, titulo: 'O roteiro de atendimento perfeito no balcão', img: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=600&q=80', resumo: 'O que o seu atendente deve dizer para fechar vendas mais rápidas.' },
-                { id: 'v3', premium: false, titulo: 'Como identificar produtos vencidos mais rápido', img: 'https://images.unsplash.com/photo-1553688738-a278b9f063e0?w=600&q=80', resumo: 'Um método visual simples para evitar prejuízos no estoque.' },
-                { id: 'v4', premium: true, titulo: 'Gestão de Estoque: A matemática oculta que devora o seu caixa', img: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&q=80', resumo: 'Planilha prática de giro de estoque para não imobilizar capital.' },
-                { id: 'v5', premium: true, titulo: 'Como precificar Rações Premium e manter a margem', img: 'https://images.unsplash.com/photo-1629905925292-3e2849b2b528?w=600&q=80', resumo: 'Estratégia de markup vs margem de contribuição.' },
-                { id: 'v6', premium: true, titulo: 'Funil de Vendas no WhatsApp para Donos de Pet Shop', img: 'https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=600&q=80', resumo: 'Automação de mensagens para vender acessórios sem esforço.' }
-            ]},
-            clinica: { id: 'clinica', nome: 'Clínica Veterinária', tagColor: 'text-teal-700', bgColor: 'bg-teal-50', artigos: [
-                { id: 'c1', premium: false, titulo: 'Técnicas de contenção cat-friendly na triagem', img: 'https://images.unsplash.com/photo-1628009368231-7bb7cb192fb6?w=600&q=80', resumo: 'Como evitar o estresse dos felinos na sala de espera.' },
-                { id: 'c2', premium: false, titulo: 'Protocolo de assepsia rápida de consultórios', img: 'https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=600&q=80', resumo: 'O checklist de limpeza entre atendimentos.' },
-                { id: 'c3', premium: false, titulo: 'Como comunicar o diagnóstico preliminar ao tutor', img: 'https://images.unsplash.com/photo-1584820927498-cafe6c1c953a?w=600&q=80', resumo: 'Empatia e clareza na recepção clínica.' },
-                { id: 'c4', premium: true, titulo: 'Derrubando o "No-Show": Gestão de Agendamentos', img: 'https://images.unsplash.com/photo-1551076805-e1869043e560?w=600&q=80', resumo: 'O fluxo de mensagens que reduz as faltas em 80%.' },
-                { id: 'c5', premium: true, titulo: 'Calculando a hora clínica: Custo Fixo vs Hora Útil', img: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=600&q=80', resumo: 'Descubra qual é o custo real para manter o consultório de portas abertas.' },
-                { id: 'c6', premium: true, titulo: 'Planos de Saúde Preventiva: Receita Recorrente', img: 'https://images.unsplash.com/photo-1606425271394-c3ca9aa1fc06?w=600&q=80', resumo: 'Como criar e vender pacotes anuais de vacina e check-up.' }
-            ]},
-            estetica: { id: 'estetica', nome: 'Estética Pet', tagColor: 'text-pink-700', bgColor: 'bg-pink-50', artigos: [
-                { id: 'e1', premium: false, titulo: 'Secagem rápida: Regulagem de soprador para cães medrosos', img: 'https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?w=600&q=80', resumo: 'Otimização do tempo de secagem sem gerar trauma.' },
-                { id: 'e2', premium: false, titulo: 'Dicas de enquadramento para fotos do "Antes e Depois"', img: 'https://images.unsplash.com/photo-1583337260546-28b6bf66d004?w=600&q=80', resumo: 'Como o banhista pode gerar o conteúdo para as redes sociais.' },
-                { id: 'e3', premium: false, titulo: 'Lidando com pelagens emboladas sem machucar', img: 'https://images.unsplash.com/photo-1527526029430-319f10814151?w=600&q=80', resumo: 'Técnicas de desembaraço e uso de fluidos.' },
-                { id: 'e4', premium: true, titulo: 'A Matemática das Assinaturas de Banho', img: 'https://images.unsplash.com/photo-1556740738-b6a63e27c4df?w=600&q=80', resumo: 'Como criar planos mensais para pagar os custos fixos no dia 1º.' },
-                { id: 'e5', premium: true, titulo: 'Comissionamento Inteligente de Tosadores', img: 'https://images.unsplash.com/photo-1573164713988-8665fc963095?w=600&q=80', resumo: 'Formatos de remuneração que evitam passivos trabalhistas.' },
-                { id: 'e6', premium: true, titulo: 'Técnicas de Upsell: Como vender hidratação no checkout', img: 'https://images.unsplash.com/photo-1560421683-6856ea585c78?w=600&q=80', resumo: 'Aumente o ticket médio treinando a recepção.' }
-            ]},
-            adestramento: { id: 'adestramento', nome: 'Adestramento', tagColor: 'text-orange-700', bgColor: 'bg-orange-50', artigos: [
-                { id: 'a1', premium: false, titulo: 'O timing do reforço positivo', img: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80', resumo: 'A janela de segundos necessária para o cão associar o prêmio.' },
-                { id: 'a2', premium: false, titulo: 'Linguagem corporal do adestrador', img: 'https://images.unsplash.com/photo-1537151608804-ea6f1103d82f?w=600&q=80', resumo: 'Como a sua postura influencia o respeito do animal.' },
-                { id: 'a3', premium: false, titulo: 'Equipamentos seguros vs Ferramentas punitivas', img: 'https://images.unsplash.com/photo-1554692911-37d363b2f8a4?w=600&q=80', resumo: 'Guia básico sobre coleiras e guias.' },
-                { id: 'a4', premium: true, titulo: 'Vendendo Pacotes High-Ticket de Adestramento', img: 'https://images.unsplash.com/photo-1556740758-90de374c12ad?w=600&q=80', resumo: 'Como fechar consultorias anuais ao invés de aulas avulsas.' },
-                { id: 'a5', premium: true, titulo: 'Estruturação de Parcerias B2B com Clínicas', img: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80', resumo: 'Transforme veterinários na sua principal fonte de indicação.' },
-                { id: 'a6', premium: true, titulo: 'Escalabilidade: Aulas em grupo vs EAD', img: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&q=80', resumo: 'Desvinculando o seu ganho financeiro das suas horas de trabalho.' }
-            ]},
-            hospedagem: { id: 'hospedagem', nome: 'Hotelzinho Pet', tagColor: 'text-indigo-700', bgColor: 'bg-indigo-50', artigos: [
-                { id: 'h1', premium: false, titulo: 'Enriquecimento Ambiental na Prática', img: 'https://images.unsplash.com/photo-1601758174114-e711c0cbaa69?w=600&q=80', resumo: 'Atividades baratas para manter os cães ocupados.' },
-                { id: 'h2', premium: false, titulo: 'Rotina de higienização de áreas comuns', img: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&q=80', resumo: 'Prevenção de transmissão de doenças em hotéis pet.' },
-                { id: 'h3', premium: false, titulo: 'Sinais de estresse em matilha', img: 'https://images.unsplash.com/photo-1541599540903-216a46ca1dc0?w=600&q=80', resumo: 'Como identificar e separar cães antes que uma briga aconteça.' },
-                { id: 'h4', premium: true, titulo: 'Precificação Dinâmica: Feriados e Alta Temporada', img: 'https://images.unsplash.com/photo-1556742044-3c52d6e88c62?w=600&q=80', resumo: 'Modelos de negócio para maximizar o lucro em dezembo/janeiro.' },
-                { id: 'h5', premium: true, titulo: 'Transformando Hóspedes de Férias em Daycare Mensal', img: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=600&q=80', resumo: 'A estratégia comercial para bater metas na baixa temporada.' },
-                { id: 'h6', premium: true, titulo: 'Triagem Comportamental Digital', img: 'https://images.unsplash.com/photo-1517048676732-d65af93c5f22?w=600&q=80', resumo: 'O termo de responsabilidade e formulário que blinda sua empresa de processos.' }
-            ]}
+        // MAPA DE ESTILOS DAS CATEGORIAS (HARDCODED VISUAL APROVADO)
+        const CAT_MAP = {
+            varejo: { nome: 'Pet Shop', color: 'text-blue-700', bg: 'bg-blue-50' },
+            clinica: { nome: 'Clínica Veterinária', color: 'text-teal-700', bg: 'bg-teal-50' },
+            estetica: { nome: 'Banho & Tosa', color: 'text-pink-700', bg: 'bg-pink-50' },
+            comportamento: { nome: 'Adestramento', color: 'text-orange-700', bg: 'bg-orange-50' },
+            hotelzinho: { nome: 'Hotelzinho Pet', color: 'text-indigo-700', bg: 'bg-indigo-50' },
+            dinamico: { nome: 'Conteúdo GV', color: 'text-gray-700', bg: 'bg-gray-50' } // Fallback para categorias novas via CMS
         };
 
-        window.toggleMenu = function() {
+        // VARIÁVEIS DE ESTADO
+        let currentRoute = 'home';
+
+        // MOTOR DE ROTAS E RENDERIZAÇÃO
+        window.renderView = async function(view, param = null) {
+            currentRoute = view;
+            const mainContent = document.getElementById('main-content');
+            const btnVoltar = document.getElementById('btn-voltar');
+            const navCategorias = document.getElementById('nav-categorias');
+            
+            mainContent.innerHTML = ''; 
+            window.scrollTo(0, 0);
+
+            // Interface do Artigo
+            if (view === 'artigo') {
+                btnVoltar.classList.remove('hidden');
+                navCategorias.classList.add('hidden'); // Oculta nav na leitura
+                registrarEvento('leitura_artigo_open', { artigo_id: param.artigo.id, titulo: param.artigo.titulo });
+                renderArtigo(mainContent, param.artigo);
+                
+                // Atualiza URL com Deep Link (sem recarregar) para copiar
+                const newUrl = window.location.origin + window.location.pathname + '?artigo_id=' + param.artigo.id;
+                window.history.replaceState({path: newUrl}, '', newUrl);
+            } 
+            // Interface da Home (Feed)
+            else {
+                btnVoltar.classList.add('hidden');
+                navCategorias.classList.remove('hidden');
+                // Limpa URL deep link se voltar pra home
+                const homeUrl = window.location.origin + window.location.pathname;
+                window.history.replaceState({path: homeUrl}, '', homeUrl);
+                
+                mainContent.innerHTML = '<div class="flex justify-center p-10"><div class="loader"></div></div>';
+                
+                // CARREGAMENTO DINÂMICO DO FIREBASE (Exigência 1)
+                const artigosAgrupados = await carregarArtigosDinamicos();
+                
+                if (artigosAgrupados) {
+                    registrarEvento('home_feed_load', { total: Object.keys(artigosAgrupados).length });
+                    renderHomeFeed(mainContent, artigosAgrupados);
+                    renderNavCategorias(Object.keys(artigosAgrupados));
+                } else {
+                    mainContent.innerHTML = '<div class="p-10 text-center text-gray-500 text-sm">Falha ao carregar conteúdo. Tente novamente.</div>';
+                }
+            }
+        };
+
+        // EXIGÊNCIA 1: MIGRAÇÃO PARA FIRESTORE (Leitura Dinâmica)
+        async function carregarArtigosDinamicos() {
+            try {
+                // Lê da coleção 'revista_artigos' Beta, ordenado por data
+                const q = query(collection(db, "revista_artigos"), orderBy("dataPublicacao", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                // Agrupa artigos por categoriaId em JavaScript
+                const agrupamento = {};
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const artigo = { id: doc.id, ...data };
+                    const catId = data.categoriaId || 'dinamico';
+
+                    if (!agrupamento[catId]) agrupamento[catId] = [];
+                    agrupamento[catId].push(artigo);
+                });
+
+                return agrupamento;
+            } catch (error) {
+                console.error("[GV Firestore Error] carregarArtigosDinamicos:", error);
+                return null;
+            }
+        }
+
+        // RENDERIZADORES DE INTERFACE (Hardcoded Visual mantido)
+
+        function renderNavCategorias(listaCatIds) {
+            const nav = document.getElementById('nav-categorias');
+            nav.innerHTML = '';
+            listaCatIds.forEach(id => {
+                const meta = CAT_MAP[id] || CAT_MAP.dinamico;
+                nav.innerHTML += `<span onclick="goToCategory('sec-${id}')" class="cursor-pointer hover:text-blue-600 transition">${meta.nome}</span>`;
+            });
+        }
+
+        function renderHomeFeed(container, dadosAgrupados) {
+            container.innerHTML = `<div class="p-5 border-b border-gray-100"><p class="text-xs text-gray-600">Edição Semanal para o Profissional Pet.</p></div>`;
+            
+            // Renderiza seções dinamicamente baseadas nos dados do Firebase
+            let countSection = 0;
+            for (const catId in dadosAgrupados) {
+                countSection++;
+                const meta = CAT_MAP[catId] || CAT_MAP.dinamico;
+                const artigos = dadosAgrupados[catId];
+                
+                let sectionHtml = `
+                    <section id="sec-${catId}" class="${meta.bg} py-8 px-4 border-t border-gray-200">
+                        <h3 class="${meta.color} text-sm font-black uppercase tracking-[0.2em] mb-5 border-l-4 border-current pl-3">${meta.nome}</h3>
+                        <div class="flex flex-col gap-6">
+                `;
+
+                artigos.forEach((artigo, idx) => {
+                    const badge = artigo.premium ? `<span class="text-[9px] text-yellow-700 font-bold bg-yellow-200 px-2 py-0.5 rounded ml-2 inline-flex items-center gap-1 shrink-0"><i class="fa-solid fa-lock text-[8px]"></i> Premium Gestão</span>` : '';
+                    
+                    // Primeiro artigo da seção é destaque
+                    if (idx === 0) {
+                        sectionHtml += `
+                            <div class="cursor-pointer group" onclick="tratarCliqueArtigo(${JSON.stringify(artigo).replace(/"/g, '&quot;')})">
+                                <img src="${artigo.img}" class="w-full h-48 object-cover rounded shadow-sm mb-3 group-hover:opacity-90 transition">
+                                <h4 class="font-bold text-lg text-gray-900 group-hover:text-blue-700 flex items-center">${artigo.titulo} ${badge}</h4>
+                                <p class="text-gray-500 text-sm mt-1 line-clamp-2">${artigo.resumo}</p>
+                            </div>
+                        `;
+                    } else {
+                        sectionHtml += `
+                            <div class="flex items-start gap-3 cursor-pointer group border-t border-gray-100 pt-4" onclick="tratarCliqueArtigo(${JSON.stringify(artigo).replace(/"/g, '&quot;')})">
+                                <div class="flex-1"><h4 class="font-bold text-sm text-gray-800 leading-tight group-hover:text-blue-700 inline">${artigo.titulo}</h4> ${badge}</div>
+                                <img src="${artigo.img}" class="w-16 h-12 object-cover rounded shrink-0">
+                            </div>
+                        `;
+                    }
+                });
+
+                sectionHtml += `</div></section>`;
+                container.innerHTML += sectionHtml;
+
+                // Insere banner Nativo aprovado após 1ª seção
+                if(countSection === 1) {
+                    container.innerHTML += `
+                        <div class="my-6 px-4">
+                            <div class="rounded-lg bg-blue-700 text-white p-5 flex items-center gap-4 cursor-pointer shadow-lg hover:bg-blue-800" onclick="window.open('https://petlojas.vercel.app/', '_blank'); registrarEvento('native_ad_revista', {destino: 'petlojas_home'})">
+                                <i class="fa-solid fa-store text-3xl opacity-60"></i>
+                                <div>
+                                    <h5 class="font-bold text-lg leading-tight">O CRM que a sua PetLojas merece.</h5>
+                                    <p class="text-xs text-blue-100">Teste 7 dias grátis a plataforma GV Conecta.</p>
+                                </div>
+                                <i class="fa-solid fa-chevron-right ml-auto opacity-50"></i>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function renderArtigo(container, artigo) {
+            const meta = CAT_MAP[artigo.categoriaId] || CAT_MAP.dinamico;
+            
+            // Geração da URL Deep Link para compartilhamento
+            const shareUrl = window.location.origin + window.location.pathname + '?artigo_id=' + artigo.id;
+            
+            container.innerHTML = `
+                <div class="fade-in bg-white pb-10">
+                    <img src="${artigo.img}" class="w-full h-64 object-cover shadow-inner">
+                    
+                    <div class="px-5 py-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="${meta.color} ${meta.bg} text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">${meta.nome}</span>
+                            ${artigo.premium ? '<span class="text-xs text-yellow-700 font-bold flex items-center gap-1.5"><i class="fa-solid fa-lock text-[10px]"></i> Conteúdo Gestão Premium</span>' : ''}
+                        </div>
+                        
+                        <h1 class="text-3xl font-black text-gray-950 leading-tight tracking-tighter mb-4">${artigo.titulo}</h1>
+                        <p class="text-gray-500 italic mb-6 border-l-2 border-gray-200 pl-4">${artigo.resumo}</p>
+                        
+                        <div class="mb-6 border-y border-gray-100 py-3 flex items-center gap-3">
+                            <span class="text-xs text-gray-400 font-medium">Compartilhar Artigo:</span>
+                            <button onclick="copiarLinkWhatsApp('${shareUrl}', '${artigo.titulo.replace(/'/g, "\\'")}')" class="bg-green-600 text-white text-xs font-bold px-4 py-2 rounded-full flex items-center gap-2 hover:bg-green-700 active:scale-95 transition">
+                                <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp
+                            </button>
+                            <button onclick="copiarLinkGenérico('${shareUrl}')" class="bg-gray-100 text-gray-600 text-xs px-4 py-2 rounded-full flex items-center gap-2 hover:bg-gray-200 active:scale-95 transition">
+                                <i class="fa-solid fa-link text-xs"></i> Link
+                            </button>
+                        </div>
+
+                        <div class="prose prose-sm prose-slate max-w-none text-gray-800 leading-relaxed space-y-4">
+                            ${artigo.conteudo}
+                        </div>
+                        
+                        ${artigo.premium ? `
+                            <div class="mt-10 p-6 rounded-xl bg-gray-50 border border-gray-100 text-center">
+                                <i class="fa-solid fa-lock text-3xl text-yellow-500 mb-4"></i>
+                                <h4 class="font-bold text-gray-900 mb-1">Acesso Premium GV Conecta</h4>
+                                <p class="text-sm text-gray-600 mb-4">Estratégias avançadas exclusivas para nossos lojistas parceiros.</p>
+                                <button onclick="qualificarLead({interesse: 'premium_leitura', artigo_id: '${artigo.id}'})" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg text-sm hover:bg-blue-700 active:scale-95 transition">Tenha Acesso Completo</button>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // LÓGICA DE AÇÃO
+        window.tratarCliqueArtigo = function(artigo) {
+            window.registrarEvento('home_artigo_click', { artigo_id: artigo.id });
+            renderView('artigo', { artigo: artigo });
+        }
+
+        window.goToCategory = function(secId) {
+            toggleMenu(false); // Fecha menu se aberto
+            window.registrarEvento('nav_cat_click', { secId });
+            document.getElementById(secId).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // UTILITÁRIOS
+        window.toggleMenu = function(forceClose) {
             const menu = document.getElementById('side-menu');
             const panel = document.getElementById('side-menu-panel');
-            if (menu.classList.contains('hidden')) {
+            const show = forceClose === false ? false : menu.classList.contains('hidden');
+
+            if (show) {
                 menu.classList.remove('hidden');
                 setTimeout(() => { menu.classList.remove('opacity-0'); panel.classList.remove('translate-x-full'); }, 10);
             } else {
@@ -266,454 +344,81 @@
                 setTimeout(() => menu.classList.add('hidden'), 300);
             }
         }
-        window.fecharMenuClickFora = function(event) { if(event.target.id === 'side-menu') toggleMenu(); }
+        window.fecharMenuClickFora = function(event) { if(event.target.id === 'side-menu') toggleMenu(false); }
 
-        window.goToCategory = function(catId) {
-            if (currentView !== 'home') renderView('home');
-            setTimeout(() => {
-                const section = document.getElementById('sec-' + catId);
-                if(section) window.scrollTo({top: section.getBoundingClientRect().top + window.scrollY - 100, behavior: 'smooth'});
-            }, 50);
+        // EXIGÊNCIA 2: COMPARTILHAMENTO (Lógica de Deep Link)
+        window.copiarLinkWhatsApp = function(url, titulo) {
+            // Texto para WhatsApp: Título + Link
+            const texto = encodeURIComponent(`*O Código Pet:* _${titulo}_\nLeia completo aqui: ${url}`);
+            window.open(`https://wa.me/?text=${texto}`, '_blank');
+            window.registrarEvento('artigo_share_wa', { url });
         }
 
-        window.renderView = function(view, param = null) {
-            fecharCicloPagina();
-            currentView = view;
-            if(param && param.id) currentRouteName = param.id;
-            else currentRouteName = view;
+        window.copiarLinkGenérico = function(url) {
+            // Fallback para área de transferência
+            navigator.clipboard.writeText(url).then(() => {
+                alert("Link copiado para a área de transferência!");
+                window.registrarEvento('artigo_share_link', { url });
+            });
+        }
 
+        // Scroll para botão "UP"
+        window.addEventListener('scroll', () => {
+            const btnUp = document.getElementById('btn-up');
+            if(btnUp) {
+                window.scrollY > 300 ? btnUp.classList.remove('translate-y-10', 'opacity-0') : btnUp.classList.add('translate-y-10', 'opacity-0');
+            }
+        });
+
+        // ==========================================
+        // INICIALIZAÇÃO E DEEP LINKING (Exigência 2)
+        // ==========================================
+        async function handleDeepLinking() {
             const mainContent = document.getElementById('main-content');
-            const btnVoltar = document.getElementById('btn-voltar');
-            const navCategorias = document.getElementById('nav-categorias');
-            const footer = document.getElementById('main-footer');
-            mainContent.innerHTML = ''; window.scrollTo(0, 0);
-            if (view === 'home') { btnVoltar.classList.add('hidden'); navCategorias.classList.remove('hidden'); footer.classList.remove('hidden'); renderHomeFeed(mainContent); }
-            else if (view === 'artigo') { btnVoltar.classList.remove('hidden'); navCategorias.classList.remove('hidden'); footer.classList.remove('hidden'); renderArtigo(mainContent, param); }
-            else if (view === 'admin') { btnVoltar.classList.remove('hidden'); navCategorias.classList.add('hidden'); footer.classList.add('hidden'); renderAdminPanel(mainContent); }
-        };
+            // Verifica se há artigo_id na URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const artigoId = urlParams.get('artigo_id');
 
-        function renderHomeFeed(container) {
-            let html = `<div class="fade-in">
-                <div class="px-5 pt-6 pb-4 bg-white border-b border-gray-100">
-                    <p class="text-sm text-gray-600 leading-relaxed">
-                        Conteúdo prático para a linha de frente (<strong class="text-gray-900">funcionários</strong>) e estratégias avançadas de gestão e finanças exclusivas para <strong class="text-gray-900">decisores de negócios Pet</strong>.
-                    </p>
-                </div>
-            `;
-
-            let sectionCount = 0;
-            for (const key in bancoDeArtigos) {
-                const cat = bancoDeArtigos[key];
-                html += `
-                    <section id="sec-${cat.id}" class="${cat.bgColor} py-8 px-4 border-t border-gray-200">
-                        <h3 class="${cat.tagColor} text-sm font-black uppercase tracking-[0.2em] mb-5 border-l-4 border-current pl-3">${cat.nome}</h3>
-                        <div class="flex flex-col gap-6">
-                `;
+            if (artigoId) {
+                mainContent.innerHTML = '<div class="flex justify-center p-10"><div class="loader"></div></div>';
+                console.log(`[GV DeepLink] Verificando artigo: ${artigoId}`);
                 
-                cat.artigos.forEach((artigo, idx) => {
-                    const badge = artigo.premium ? `<span class="text-[10px] text-yellow-700 font-bold bg-yellow-200 px-2 py-0.5 rounded ml-2 inline-flex items-center gap-1 shrink-0"><i class="fa-solid fa-lock text-[9px]"></i> Premium Gestão</span>` : '';
-                    if (idx === 0 || idx === 3) {
-                        html += `
-                            <div class="cursor-pointer group relative" onclick="tratarCliqueArtigo('${key}', '${artigo.id}')">
-                                <img src="${artigo.img}" class="w-full h-48 object-cover rounded shadow-sm mb-3 group-hover:opacity-90 transition">
-                                <h4 class="font-bold text-xl text-gray-900 leading-tight group-hover:text-blue-700 transition flex flex-wrap items-center gap-y-2">${artigo.titulo} ${badge}</h4>
-                                <p class="text-gray-500 text-sm mt-1 line-clamp-2">${artigo.resumo}</p>
-                            </div>
-                        `;
-                    } else {
-                        html += `
-                            <div class="flex items-start gap-4 cursor-pointer group border-t border-gray-200/50 pt-4" onclick="tratarCliqueArtigo('${key}', '${artigo.id}')">
-                                <div class="flex-1 pt-1"><h4 class="font-bold text-base text-gray-800 leading-tight group-hover:text-blue-700 transition inline-block">${artigo.titulo} ${badge}</h4></div>
-                                <img src="${artigo.img}" class="w-24 h-16 object-cover rounded shadow-sm group-hover:opacity-90 shrink-0">
-                            </div>
-                        `;
-                    }
-                });
-                html += `</div></section>`;
-
-                // 🧲 BANNER PETLOJAS VERBATIM (MODELO 1 COM FALLBACK DE FOTO)
-                if (sectionCount === 0) {
-                    html += `
-                        <div class="my-8 px-4">
-                            <div class="rounded-3xl overflow-hidden shadow-2xl border-2 border-blue-600 cursor-pointer" onclick="window.open('https://petlojas.vercel.app/', '_blank'); window.registrarEvento('clique_ad_petlojas', {});">
-                                
-                                <div class="bg-gray-200 h-40 flex items-center justify-center text-gray-500 font-bold uppercase tracking-widest text-xs relative overflow-hidden">
-                                    <img src="petlojas-retangular.png" onerror="this.src='https://images.unsplash.com/photo-1522204523234-8729aa6e3d5f?w=800&q=80'; window.registrarEvento('promo_image_error', { path: 'petlojas-retangular.png' });" class="absolute inset-0 w-full h-full object-cover" title="Padrão PetLojas">
-                                    
-                                    <span class="absolute top-2 right-2 bg-gray-900/60 backdrop-blur-sm text-white text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-widest z-10">Iniciativa GV Conecta</span>
-                                </div>
-
-                                <div class="p-6 bg-blue-600 text-white text-center">
-                                    <h4 class="font-black text-2xl mb-2 leading-tight tracking-tight">Venda para toda a cidade com uma de nossas PetLojas.</h4>
-                                    
-                                    <span class="inline-block bg-white text-blue-700 font-black text-base px-10 py-3 rounded-full uppercase tracking-widest shadow-md mt-2">Saiba como.</span>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }
-                sectionCount++;
-            }
-            container.innerHTML = html + `</div>`;
-        }
-
-        window.tratarCliqueArtigo = function(catId, artigoId) {
-            const artigo = bancoDeArtigos[catId].artigos.find(a => a.id === artigoId);
-            const isQualificado = localStorage.getItem('petlojas_lead_qualificado') === 'true';
-            if (artigo.premium && !isQualificado) { 
-                pendingArticle = { catId, artigoId }; 
-                window.registrarEvento('regwall_open', { artigo_id: artigoId });
-                abrirTypeform(); 
-            }
-            else { 
-                window.registrarEvento('leu_artigo', { categoria: catId, artigo_id: artigoId }); 
-                renderView('artigo', { catId, artigo }); 
-            }
-        }
-
-        window.abrirTypeform = function() {
-            tfData.tipo = 'gestor';
-            document.getElementById('typeform-modal').classList.remove('hidden');
-            document.getElementById('typeform-modal').classList.add('flex');
-            document.body.style.overflow = 'hidden'; 
-            renderStep1();
-        }
-
-        window.abrirCadastroLeitor = function() {
-            tfData.tipo = 'leitor';
-            document.getElementById('typeform-modal').classList.remove('hidden');
-            document.getElementById('typeform-modal').classList.add('flex');
-            document.body.style.overflow = 'hidden';
-            window.registrarEvento('newsletter_open', {});
-            renderStepInteresses();
-        }
-
-        window.fecharTypeform = function() {
-            document.getElementById('typeform-modal').classList.add('hidden');
-            document.getElementById('typeform-modal').classList.remove('flex');
-            document.body.style.overflow = '';
-        }
-
-        function updateProgress(step, total) { document.getElementById('tf-progress').style.width = ((step / total) * 100) + '%'; }
-
-        function renderStep1() {
-            updateProgress(1, 4);
-            document.getElementById('tf-content-body').innerHTML = `
-                <div class="tf-step slide-up w-full">
-                    <span class="text-blue-600 font-bold mb-2 block">1 de 4</span>
-                    <h2 class="text-2xl font-black text-gray-900 mb-4 leading-tight">Qual a sua função na empresa?</h2>
-                    <button onclick="tfNextStep('cargo', 'Dono / Sócio', 2)" class="tf-option"><span>Dono(a) / Sócio(a)</span> <i class="fa-solid fa-chevron-right text-blue-400"></i></button>
-                    <button onclick="tfNextStep('cargo', 'Gerente', 2)" class="tf-option"><span>Gerente / Adm</span> <i class="fa-solid fa-chevron-right text-blue-400"></i></button>
-                    <button onclick="tfNextStep('cargo', 'Veterinário', 2)" class="tf-option"><span>Médico Veterinário</span> <i class="fa-solid fa-chevron-right text-blue-400"></i></button>
-                    <button onclick="tfNextStep('cargo', 'Coordenador', 2)" class="tf-option"><span>Coordenador Operacional</span> <i class="fa-solid fa-chevron-right text-blue-400"></i></button>
-                </div>
-            `;
-        }
-
-        function renderStep2() {
-            updateProgress(2, 4);
-            document.getElementById('tf-content-body').innerHTML = `
-                <div class="tf-step slide-up w-full">
-                    <span class="text-blue-600 font-bold mb-2 block">2 de 4</span>
-                    <h2 class="text-2xl font-black text-gray-900 mb-8 leading-tight">Qual é o maior desafio hoje?</h2>
-                    <button onclick="tfNextStep('desafio', 'Atrair clientes', 'interesses')" class="tf-option"><span>Atrair novos clientes</span> <i class="fa-solid fa-chevron-right text-blue-400"></i></button>
-                    <button onclick="tfNextStep('desafio', 'Tempo/Organização', 'interesses')" class="tf-option"><span>Falta de tempo</span> <i class="fa-solid fa-chevron-right text-blue-400"></i></button>
-                    <button onclick="tfNextStep('desafio', 'Lucro Baixo', 'interesses')" class="tf-option"><span>Margem de lucro baixa</span> <i class="fa-solid fa-chevron-right text-blue-400"></i></button>
-                    <button onclick="tfNextStep('desafio', 'Gestão Equipe', 'interesses')" class="tf-option"><span>Problemas com a equipe</span> <i class="fa-solid fa-chevron-right text-blue-400"></i></button>
-                </div>
-            `;
-        }
-
-        function renderStepInteresses() {
-            const stepNum = tfData.tipo === 'gestor' ? 3 : 1;
-            const totalSteps = tfData.tipo === 'gestor' ? 4 : 2;
-            updateProgress(stepNum, totalSteps);
-            document.getElementById('tf-content-body').innerHTML = `
-                <div class="tf-step slide-up w-full">
-                    <span class="text-blue-600 font-bold mb-2 block">${stepNum} de ${totalSteps}</span>
-                    <h2 class="text-2xl font-black text-gray-900 mb-2 leading-tight">O que quer ler no futuro?</h2>
-                    <div class="flex flex-wrap gap-2 mb-8 mt-4">
-                        ${['Gestão Financeira', 'Precificação', 'Vendas WhatsApp', 'Gestão Estoque', 'Contratação', 'Marketing Instagram', 'Fidelização', 'Automação'].map(t => 
-                            `<button type="button" onclick="toggleTag(this, '${t}')" class="border-2 border-gray-200 bg-white text-gray-600 px-4 py-2 rounded-full text-[11px] font-bold transition-all">${t}</button>`
-                        ).join('')}
-                    </div>
-                    <button onclick="renderStepFinal()" class="w-full bg-gray-900 text-white font-black py-4 rounded-full shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2">Continuar <i class="fa-solid fa-arrow-right"></i></button>
-                </div>
-            `;
-        }
-
-        function renderStepFinal() {
-            const stepNum = tfData.tipo === 'gestor' ? 4 : 2;
-            const totalSteps = tfData.tipo === 'gestor' ? 4 : 2;
-            updateProgress(stepNum, totalSteps);
-            document.getElementById('tf-content-body').innerHTML = `
-                <div class="tf-step slide-up w-full">
-                    <span class="text-blue-600 font-bold mb-2 block">${stepNum} de ${totalSteps}</span>
-                    <h2 class="text-2xl font-black text-gray-900 mb-2 leading-tight">Último passo!</h2>
-                    <p class="text-sm text-gray-500 mb-8 leading-relaxed">Inscreva-se na lista para acessar. <strong class="text-gray-800">100% Gratuito.</strong></p>
-                    <input type="text" id="tf-nome" placeholder="Seu Nome" class="w-full bg-gray-50 border border-gray-300 text-gray-900 font-bold rounded-full outline-none px-6 py-4 mb-3 transition-all text-lg shadow-sm">
-                    <input type="email" id="tf-email" placeholder="E-mail principal" class="w-full bg-gray-50 border border-gray-300 text-gray-900 font-bold rounded-full outline-none px-6 py-4 mb-3 transition-all text-lg shadow-sm">
-                    <input type="tel" id="tf-whatsapp" placeholder="WhatsApp" class="w-full bg-gray-50 border border-gray-300 text-gray-900 font-bold rounded-full outline-none px-6 py-4 mb-8 transition-all text-lg shadow-sm">
-                    <button onclick="tfSubmit()" class="w-full bg-blue-600 text-white font-black text-lg py-5 rounded-full shadow-lg active:scale-95 transition-transform">Finalizar <i class="fa-solid fa-check ml-2"></i></button>
-                </div>
-            `;
-        }
-
-        window.tfNextStep = function(chave, valor, next) {
-            if(chave && valor) tfData[chave] = valor;
-            if(next === 2) renderStep2();
-            if(next === 'interesses') renderStepInteresses();
-        }
-
-        window.toggleTag = function(btn, tema) {
-            if(tfData.interesses.includes(tema)) { tfData.interesses = tfData.interesses.filter(t => t !== tema); btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600'); } 
-            else { tfData.interesses.push(tema); btn.classList.add('bg-blue-600', 'text-white', 'border-blue-600'); }
-        }
-
-        window.tfSubmit = function() {
-            tfData.nome = document.getElementById('tf-nome').value.trim();
-            tfData.whatsapp = document.getElementById('tf-whatsapp').value.trim();
-            tfData.email = document.getElementById('tf-email').value.trim();
-            if (!tfData.nome || tfData.whatsapp.length < 10 || !tfData.email.includes('@')) { alert("Por favor, preencha todos os campos."); return; }
-            
-            localStorage.setItem('petlojas_lead_qualificado', 'true');
-            window.qualificarLead(tfData);
-            window.registrarEvento('regwall_submit', { tipo: tfData.tipo });
-            fecharTypeform();
-            
-            if (pendingArticle) {
-                const artigo = bancoDeArtigos[pendingArticle.catId].artigos.find(a => a.id === pendingArticle.artigoId);
-                renderView('artigo', { catId: pendingArticle.catId, artigo: artigo });
-            } else {
-                renderView('home'); alert("Inscrição realizada com sucesso!");
-            }
-        }
-
-        function renderArtigo(container, dados) {
-            const { catId, artigo } = dados;
-            container.innerHTML = `
-                <div class="fade-in bg-white min-h-screen">
-                    <div class="px-5 pt-8 pb-6">
-                        ${artigo.premium ? '<span class="bg-yellow-100 text-yellow-700 text-[10px] font-bold px-2 py-1 rounded uppercase mb-3 inline-block tracking-widest border border-yellow-200"><i class="fa-solid fa-lock text-[9px]"></i> Premium Gestão</span>' : ''}
-                        <h1 class="text-3xl font-black text-gray-900 leading-tight tracking-tight">${artigo.titulo}</h1>
-                    </div>
-                    <img src="${artigo.img}" class="w-full h-64 object-cover shadow-inner">
-                    <div class="px-6 py-8 text-gray-800 leading-relaxed text-lg font-serif">
-                        <p><span class="float-left text-6xl font-black mr-3 mt-2 text-blue-600 font-sans leading-none">O</span> conteúdo estratégico deste material foca no crescimento do seu negócio pet.</p>
-                        <p class="mt-4">Nós da <strong class="text-blue-600">GV Conecta</strong> criamos o <strong class="text-gray-900">PetLojas</strong> para resolver a sua operação de vendas online de forma definitiva.</p>
-                    </div>
-                    <div class="m-5 p-8 rounded-3xl bg-blue-600 text-white text-center shadow-xl">
-                        <h4 class="font-black text-xl mb-4 leading-tight">Quer automatizar suas vendas?</h4>
-                        <button onclick="window.open('https://petlojas.vercel.app/', '_blank'); window.registrarEvento('clique_ad_petlojas', {});" class="w-full bg-white text-blue-700 font-black py-4 rounded-full shadow-lg active:scale-95 transition-transform">Conhecer o PetLojas</button>
-                    </div>
-                </div>`;
-        }
-
-        // ==========================================
-        // PAINEL CENTRAL (ADMINISTRADOR) - RESTAURADO
-        // ==========================================
-        window.switchAdminTab = function(tabName) {
-            document.querySelectorAll('.admin-tab').forEach(el => { el.classList.remove('border-blue-600', 'text-blue-600'); el.classList.add('border-transparent', 'text-gray-500'); });
-            document.getElementById('tab-btn-' + tabName).classList.remove('border-transparent', 'text-gray-500');
-            document.getElementById('tab-btn-' + tabName).classList.add('border-blue-600', 'text-blue-600');
-            document.querySelectorAll('.admin-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById('content-' + tabName).classList.remove('hidden');
-        }
-
-        function renderAdminPanel(container) {
-            container.innerHTML = `
-                <div class="bg-gray-100 min-h-screen fade-in">
-                    <div class="bg-gray-900 text-white p-6 pt-10 flex justify-between items-center">
-                        <div>
-                            <h1 class="text-2xl font-black uppercase tracking-tight">Painel Central</h1>
-                            <p class="text-sm text-gray-400 mt-1"><i class="fa-solid fa-chart-line text-blue-500"></i> Métricas em Tempo Real</p>
-                        </div>
-                        <button onclick="executarLogout()" class="text-gray-400 hover:text-white p-2 text-xl"><i class="fa-solid fa-right-from-bracket"></i></button>
-                    </div>
-                    
-                    <div class="flex border-b border-gray-300 bg-white sticky top-0 z-10 shadow-sm">
-                        <button id="tab-btn-insights" onclick="switchAdminTab('insights')" class="admin-tab flex-1 py-4 font-bold border-b-2 border-blue-600 text-blue-600 text-sm">insights</button>
-                        <button id="tab-btn-leads" onclick="switchAdminTab('leads')" class="admin-tab flex-1 py-4 font-bold border-b-2 border-transparent text-gray-500 text-sm">Leads CRM</button>
-                    </div>
-                    
-                    <div id="content-insights" class="admin-content p-4 space-y-4">
-                        <div class="grid grid-cols-2 gap-3">
-                            <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-                                <span class="text-[10px] text-gray-500 font-bold uppercase block mb-1">Visitantes Únicos</span>
-                                <span id="dash-unique" class="text-2xl font-black text-blue-600">--</span>
-                            </div>
-                            <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-                                <span class="text-[10px] text-gray-500 font-bold uppercase block mb-1">Acessos Totais</span>
-                                <span id="dash-eventos" class="text-2xl font-black text-gray-900">--</span>
-                            </div>
-                            <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm col-span-2 flex justify-between items-center overflow-hidden">
-                                <span class="text-[10px] text-gray-500 font-bold uppercase">Tempo Médio de Sessão</span>
-                                <span id="dash-avgtime" class="text-2xl font-black text-green-600">--s</span>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-3 mt-4">
-                            <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm text-center">
-                                <span class="text-[10px] text-gray-500 font-bold uppercase block mb-1">Conversão Form</span>
-                                <span id="dash-conv" class="text-3xl font-black text-orange-600">--%</span>
-                            </div>
-                            <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm text-center overflow-hidden">
-                                <span class="text-[10px] text-gray-500 font-bold uppercase block mb-1">CTR Anúncios</span>
-                                <span id="dash-cta" class="text-3xl font-black text-red-600">--</span>
-                            </div>
-                        </div>
-
-                        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm mt-4 overflow-hidden">
-                            <h4 class="font-bold text-gray-800 text-sm mb-3">Páginas Mais Visitadas e Engajamento</h4>
-                            <div id="dash-pages" class="space-y-2 text-sm text-gray-600">Carregando métricas...</div>
-                        </div>
-
-                        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm mt-4">
-                            <h4 class="font-bold text-gray-800 text-sm mb-3">Mapa de Interesses (Top 5)</h4>
-                            <div id="dash-interesses" class="space-y-2 text-sm text-gray-600">Carregando métricas...</div>
-                        </div>
-                    </div>
-                    
-                    <div id="content-leads" class="admin-content p-4 hidden overflow-y-auto">
-                        <h3 class="font-black text-gray-900 text-lg mb-4">Últimos Gestores Qualificados (CRM)</h3>
-                        <div id="dash-lista-leads" class="space-y-3 pb-20">Carregando leads...</div>
-                    </div>
-                </div>
-            `;
-            
-            setTimeout(() => {
-                window.fetchAdminData().then(dados => {
-                    if(!dados) return;
-                    document.getElementById('dash-unique').innerText = dados.visitantesUnicos;
-                    document.getElementById('dash-eventos').innerText = dados.totalEventos;
-                    document.getElementById('dash-avgtime').innerText = dados.avgTime > 0 ? dados.avgTime + 's' : '--s';
-                    document.getElementById('dash-cta').innerText = dados.ctaClicks;
-                    
-                    const convRate = dados.formOpens > 0 ? Math.round((dados.formCompletes / dados.formOpens) * 100) : 0;
-                    document.getElementById('dash-conv').innerText = convRate + '%';
-                    
-                    // Páginas mais visitadas
-                    const pArr = Object.keys(dados.pathMap).map(k => ({ p: k, v: dados.pathMap[k].views, s: dados.pathMap[k].scrollAcc/dados.pathMap[k].views })).sort((a,b)=>b.v-a.v).slice(0,5);
-                    document.getElementById('dash-pages').innerHTML = pArr.map(x => `<div class="flex justify-between border-b border-gray-100 pb-1"><span class="truncate pr-2">${x.p}</span> <span class="font-bold text-blue-600">${x.v}v (${Math.round(x.s)}%)</span></div>`).join('');
-                    
-                    // Interesses
-                    const intArr = Object.keys(dados.intMap).map(k => ({ i: k, c: dados.intMap[k] })).sort((a,b)=>b.c-a.c);
-                    document.getElementById('dash-interesses').innerHTML = intArr.map(x => `<div class="flex justify-between border-b border-gray-100 pb-1"><span>${x.i}</span> <span class="font-bold text-green-600">${x.c}</span></div>`).join('');
-
-                    if(dados.leadsList && dados.leadsList.length > 0) {
-                        document.getElementById('dash-lista-leads').innerHTML = dados.leadsList.map(l => 
-                            `<div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm"><h5 class="font-bold text-gray-900">${l.nome}</h5><p class="text-xs text-gray-500 mt-1 mb-2">${l.cargo || 'Leitor'}</p><a href="https://wa.me/${(l.telefone || '').replace(/\D/g,'')}" class="text-xs text-green-700 font-bold bg-green-50 px-3 py-1.5 rounded-full inline-block"><i class="fa-brands fa-whatsapp"></i> ${l.telefone}</a></div>`
-                        ).join('');
-                    } else {
-                        document.getElementById('dash-lista-leads').innerHTML = "<p class='text-gray-400 text-sm'>Nenhum lead qualificado ainda.</p>";
-                    }
-                });
-            }, 500);
-        }
-
-        renderView('home');
-    </script>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, orderBy, query, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-        try {
-            const firebaseConfig = {
-                apiKey: "AIzaSyBjuvcJvTWw7lMrIwej5lHbIUXe99lJDN4",
-                authDomain: "crmpetshop.firebaseapp.com",
-                projectId: "crmpetshop",
-                storageBucket: "crmpetshop.firebasestorage.app",
-                messagingSenderId: "381013124221",
-                appId: "1:381013124221:web:48f398a62ce40b7db6fd14"
-            };
-            const app = initializeApp(firebaseConfig);
-            const db = getFirestore(app);
-            const auth = getAuth(app);
-            const provider = new GoogleAuthProvider();
-
-            window.registrarEvento = async function(tipo, detalhes) {
-                try { await addDoc(collection(db, "eventos_tracking"), { visitor_id: visitorId, origem: "revista", tipo_evento: tipo, detalhes, timestamp: Date.now() }); } catch (e) {}
-            }
-
-            window.qualificarLead = async function(dados) {
-                try { await addDoc(collection(db, "lista_gestores"), { ...dados, origem: "regwall_typeform", data_captura: serverTimestamp() }); } catch (e) {}
-            }
-
-            // LÓGICA DE AGREGAÇÃO PARA O PAINEL DE ADMINISTRAÇÃO (CAPRICHADO)
-            window.fetchAdminData = async function() {
-                let report = { totalEventos: 0, totalLeads: 0, visitantesUnicos: 0, leadsList: [], intMap: {}, pathMap: {}, maxTime: 0, avgTime: 0, ctaClicks: 0, formOpens: 0, formCompletes: 0 };
                 try {
-                    const snapLeads = await getDocs(query(collection(db, "lista_gestores"), limit(50)));
-                    report.totalLeads = snapLeads.size;
-                    snapLeads.forEach(doc => { 
-                        const d = doc.data();
-                        report.leadsList.push(d); 
-                        if(d.interesses) d.interesses.forEach(i => { report.intMap[i] = (report.intMap[i] || 0) + 1; });
-                    });
+                    const docRef = doc(db, "revista_artigos", artigoId);
+                    const docSnap = await getDoc(docRef);
 
-                    const snapEventos = await getDocs(query(collection(db, "eventos_tracking"), limit(500)));
-                    report.totalEventos = snapEventos.size; 
-                    let vIds = new Set();
-                    let timeSum = 0;
-                    let timeCount = 0;
-
-                    snapEventos.forEach(doc => {
-                        const d = doc.data();
-                        if(d.visitor_id) vIds.add(d.visitor_id);
-                        if(d.tipo_evento === 'clique_ad_petlojas') report.ctaClicks++;
-                        if(d.tipo_evento === 'regwall_open') report.formOpens++;
-                        if(d.tipo_evento === 'regwall_submit') report.formCompletes++;
+                    if (docSnap.exists()) {
+                        console.log(`[GV DeepLink] Artigo encontrado. Abrindo.`);
+                        const data = docSnap.data();
+                        const artigo = { id: docSnap.id, ...data };
                         
-                        if(d.tipo_evento === 'leave_page' && d.detalhes) {
-                            const p = d.detalhes.pagina;
-                            const t = Number(d.detalhes.tempo_segundos) || 0;
-                            const s = Number(d.detalhes.scroll_percentual) || 0;
-                            
-                            if(!report.pathMap[p]) report.pathMap[p] = { views: 0, scrollAcc: 0 };
-                            report.pathMap[p].views++;
-                            report.pathMap[p].scrollAcc += s;
+                        registrarEvento('deeplink_hit_success', { artigo_id: artigoId });
+                        // Carrega a Nav dinamicamente mesmo no artigo (necessário se usuário voltar pra home)
+                        const q = query(collection(db, "revista_artigos"), orderBy("dataPublicacao", "desc"), limit(1));
+                        const quickSnap = await getDocs(q); // Lê só 1 só pra pegar categorias se houver
+                        const agrupamentoStub = {}; quickSnap.forEach(d => { agrupamentoStub[d.data().categoriaId] = true; });
+                        renderNavCategorias(Object.keys(agrupamentoStub));
 
-                            if(t > 0 && t < 3600) { // Ignora sessões de mais de 1h (provável aba esquecida aberta)
-                                timeSum += t;
-                                timeCount++;
-                            }
-                        }
-                    });
-                    report.visitantesUnicos = vIds.size;
-                    if(timeCount > 0) report.avgTime = Math.round(timeSum / timeCount);
-
-                } catch(e) { console.error("Erro banco:", e); }
-                return report;
+                        renderView('artigo', { artigo: artigo });
+                        return; // Impede carregamento da home
+                    } else {
+                        console.log(`[GV DeepLink] Artigo ${artigoId} não existe.`);
+                        alert("O artigo solicitado não foi encontrado. Carregando a revista.");
+                        registrarEvento('deeplink_hit_fail_notfound', { artigo_id: artigoId });
+                    }
+                } catch (error) {
+                    console.error("[GV DeepLink Error]", error);
+                    registrarEvento('deeplink_hit_fail_error', { artigo_id: artigoId, error: error.message });
+                }
             }
 
-            // SISTEMA DE LOGIN
-            window.executarLoginEmail = function() {
-                const e = document.getElementById('login-email').value;
-                const p = document.getElementById('login-pass').value;
-                const btn = document.getElementById('btn-login-mail');
-                if(!e || !p) return alert('Preencha os dados.');
-                btn.innerText = "Autenticando...";
-                btn.disabled = true;
-                signInWithEmailAndPassword(auth, e, p)
-                    .then((cr) => { fecharLogin(); renderView('admin'); })
-                    .catch((er) => { alert('Falha no login: ' + er.message); })
-                    .finally(() => { btn.innerText = "Entrar no Painel"; btn.disabled = false; });
-            }
+            // Se não houver ID ou falhar, carrega a Home padrão
+            renderView('home');
+        }
 
-            window.executarLoginGoogle = function() {
-                signInWithPopup(auth, provider).then((cr) => {
-                    fecharLogin(); renderView('admin');
-                }).catch((er) => { alert('Erro Google: ' + er.message); });
-            }
+        // Executa ao carregar
+        window.onload = handleDeepLinking;
 
-            window.executarLogout = function() {
-                signOut(auth).then(() => { renderView('home'); alert('Sessão encerrada.'); });
-            }
-
-            window.registrarEvento('abriu_revista', { edicao: '01' });
-        } catch(err) { console.warn("Firebase offline."); }
     </script>
 </body>
 </html>
