@@ -30,7 +30,6 @@
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
         .blur-content { filter: blur(6px); user-select: none; pointer-events: none; }
-        .tf-option { @apply w-full bg-blue-50/50 border border-blue-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-[0_2px_10px_-3px_rgba(0,0,0,0.1)] hover:border-blue-400 hover:bg-blue-100 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between; }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans antialiased overflow-x-hidden">
@@ -105,18 +104,34 @@
                     <span class="text-blue-600 font-bold mb-2 block">1 de 4</span>
                     <h2 class="text-2xl font-black text-gray-900 mb-4 leading-tight">Qual a sua função na empresa?</h2>
                     <p class="text-sm text-gray-500 mb-6 border-l-4 border-yellow-400 pl-3">⚠️ Conteúdo restrito a decisores do mercado Pet. <strong class="text-gray-800">O acesso é 100% gratuito</strong>.</p>
-                    <button onclick="tfNext(2, 'cargo', 'Dono / Sócio')" class="tf-option"><span>Dono(a) / Sócio(a)</span> <i class="fa-solid fa-chevron-right text-blue-400"></i></button>
-                    <button onclick="tfNext(2, 'cargo', 'Gerente / Administrador')" class="tf-option"><span>Gerente / Administrador(a)</span> <i class="fa-solid fa-chevron-right text-blue-400"></i></button>
-                    <button onclick="tfNext(2, 'cargo', 'Médico Veterinário')" class="tf-option"><span>Médico(a) Veterinário(a)</span> <i class="fa-solid fa-chevron-right text-blue-400"></i></button>
-                    <button onclick="tfNext(2, 'cargo', 'Coordenador Operacional')" class="tf-option"><span>Coordenador(a)</span> <i class="fa-solid fa-chevron-right text-blue-400"></i></button>
+                    <button onclick="tfNext(2, 'cargo', 'Dono / Sócio')" class="w-full bg-white border-2 border-gray-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between">
+                        <span>Dono(a) / Sócio(a)</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
+                    </button>
+                    <button onclick="tfNext(2, 'cargo', 'Gerente / Administrador')" class="w-full bg-white border-2 border-gray-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between">
+                        <span>Gerente / Administrador(a)</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
+                    </button>
+                    <button onclick="tfNext(2, 'cargo', 'Médico Veterinário')" class="w-full bg-white border-2 border-gray-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between">
+                        <span>Médico(a) Veterinário(a)</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
+                    </button>
+                    <button onclick="tfNext(2, 'cargo', 'Coordenador Operacional')" class="w-full bg-white border-2 border-gray-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between">
+                        <span>Coordenador(a)</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
+                    </button>
                 </div>
                 <div id="step-2" class="tf-step slide-up w-full hidden">
                     <span class="text-blue-600 font-bold mb-2 block">2 de 4</span>
                     <h2 class="text-2xl font-black text-gray-900 mb-8 leading-tight">Qual é o maior desafio na sua operação hoje?</h2>
-                    <button onclick="tfNext(3, 'desafio', 'Atrair clientes')" class="tf-option"><span>Atrair novos clientes</span> <i class="fa-solid fa-chevron-right text-blue-400"></i></button>
-                    <button onclick="tfNext(3, 'desafio', 'Tempo e Organização')" class="tf-option"><span>Falta de tempo e desorganização</span> <i class="fa-solid fa-chevron-right text-blue-400"></i></button>
-                    <button onclick="tfNext(3, 'desafio', 'Margem de Lucro')" class="tf-option"><span>Margem de lucro baixa</span> <i class="fa-solid fa-chevron-right text-blue-400"></i></button>
-                    <button onclick="tfNext(3, 'desafio', 'Gestão de Equipe')" class="tf-option"><span>Problemas com a equipe</span> <i class="fa-solid fa-chevron-right text-blue-400"></i></button>
+                    <button onclick="tfNext(3, 'desafio', 'Atrair clientes')" class="w-full bg-white border-2 border-gray-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between">
+                        <span>Atrair novos clientes</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
+                    </button>
+                    <button onclick="tfNext(3, 'desafio', 'Tempo e Organização')" class="w-full bg-white border-2 border-gray-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between">
+                        <span>Falta de tempo e desorganização</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
+                    </button>
+                    <button onclick="tfNext(3, 'desafio', 'Margem de Lucro')" class="w-full bg-white border-2 border-gray-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between">
+                        <span>Margem de lucro baixa</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
+                    </button>
+                    <button onclick="tfNext(3, 'desafio', 'Gestão de Equipe')" class="w-full bg-white border-2 border-gray-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between">
+                        <span>Problemas com a equipe</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
+                    </button>
                 </div>
                 <div id="step-3" class="tf-step slide-up w-full hidden">
                     <span class="text-blue-600 font-bold mb-2 block">3 de 4</span>
@@ -156,13 +171,12 @@
     <script>
         window.registrarEvento = function(tipo, detalhes) {};
         window.qualificarLead = async function(dados) {};
-        window.fetchAdminData = async function() { return { eventos: 0, leads: 0 }; }; // Fallback
+        window.fetchAdminData = async function() { return { totalEventos: 0, totalLeads: 0, leadsList: [] }; }; 
 
         let tfData = { cargo: '', desafio: '', interesses: [], nome: '', whatsapp: '' };
         let pendingArticle = null;
         let currentView = 'home';
         
-        // Gatilho do Painel Central
         let logoClicks = 0;
         let logoTimer = null;
         window.handleLogoClick = function() {
@@ -262,7 +276,7 @@
                 renderArtigo(mainContent, param);
             } else if (view === 'admin') {
                 btnVoltar.classList.remove('hidden');
-                navCategorias.classList.add('hidden'); // Oculta barra de categorias no painel
+                navCategorias.classList.add('hidden');
                 renderAdminPanel(mainContent);
             }
         };
@@ -451,6 +465,7 @@
         }
 
         function renderAdminPanel(container) {
+            // FIX: Aspas simples utilizadas corretamente na string HTML
             container.innerHTML = `
                 <div class="bg-gray-100 min-h-screen fade-in">
                     <div class="bg-gray-900 text-white p-6 pt-10">
@@ -477,19 +492,18 @@
                         </div>
                         
                         <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm mt-4">
-                            <h4 class="font-bold text-gray-800 border-b border-gray-100 pb-2 mb-4">Interesses do Público (Top 5)</h4>
-                            <div id="dash-interesses" class="text-sm text-gray-500">A carregar métricas do Firebase...</div>
+                            <h4 class="font-bold text-gray-800 border-b border-gray-100 pb-2 mb-4">Interesses do Público</h4>
+                            <div id="dash-interesses" class="text-sm text-gray-500">A carregar métricas...</div>
                         </div>
                     </div>
                     
                     <div id="content-leads" class="admin-content p-5 hidden">
                         <h3 class="font-black text-gray-900 text-lg mb-4">Últimos Gestores Capturados</h3>
-                        <div id="dash-lista-leads" class="space-y-3">A carregar leads do Firebase...</div>
+                        <div id="dash-lista-leads" class="space-y-3">A carregar leads...</div>
                     </div>
                 </div>
             `;
             
-            // Invoca a extração de dados do motor 2 (se conectado)
             setTimeout(() => {
                 window.fetchAdminData().then(dados => {
                     document.getElementById('dash-leads').innerText = dados.totalLeads;
@@ -500,14 +514,15 @@
                             `<div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
                                 <h5 class="font-bold text-gray-900">${l.nome}</h5>
                                 <p class="text-xs text-gray-500 mt-1 mb-2"><i class="fa-solid fa-briefcase"></i> ${l.cargo}</p>
-                                <a href="https://wa.me/${l.telefone.replace(/\D/g,'')}" target="_blank" class="bg-green-50 text-green-700 text-xs font-bold px-3 py-1.5 rounded-full inline-block"><i class="fa-brands fa-whatsapp"></i> ${l.telefone}</a>
+                                <a href="https://wa.me/${(l.telefone || '').replace(/\\D/g,'')}" target="_blank" class="bg-green-50 text-green-700 text-xs font-bold px-3 py-1.5 rounded-full inline-block"><i class="fa-brands fa-whatsapp"></i> ${l.telefone}</a>
                             </div>`
                         ).join('');
                     } else {
-                        document.getElementById('dash-lista-leads').innerHTML = "<p class="text-gray-400 text-sm">Nenhum lead qualificado ainda.</p>";
+                        // FIX: Utilização de aspas simples para não quebrar a string do JavaScript
+                        document.getElementById('dash-lista-leads').innerHTML = "<p class='text-gray-400 text-sm'>Nenhum lead qualificado ainda.</p>";
                     }
                     
-                    document.getElementById('dash-interesses').innerHTML = "<p class='text-green-600 font-bold'><i class='fa-solid fa-check'></i> Módulo conectado. Implementação de gráficos agregados no próximo sprint.</p>";
+                    document.getElementById('dash-interesses').innerHTML = "<p class='text-green-600 font-bold'><i class='fa-solid fa-check'></i> Módulo conectado.</p>";
                 });
             }, 500);
         }
@@ -523,7 +538,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, query, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         try {
             const firebaseConfig = {
@@ -565,10 +580,9 @@
                         data_captura: serverTimestamp()
                     });
                     window.registrarEvento('lead_qualificado', { cargo: dados.cargo });
-                } catch (e) { console.error("Erro BD:", e); }
+                } catch (e) {}
             }
 
-            // FUNÇÃO DO PAINEL DE ADMINISTRAÇÃO (EXTRAÇÃO)
             window.fetchAdminData = async function() {
                 let report = { totalLeads: 0, totalEventos: 0, leadsList: [] };
                 try {
@@ -577,9 +591,9 @@
                     snapLeads.forEach(doc => { report.leadsList.push(doc.data()); });
 
                     const snapEventos = await getDocs(query(collection(db, "eventos_tracking"), limit(50)));
-                    report.totalEventos = snapEventos.size; // Em MVP, limite baixo para não onerar
+                    report.totalEventos = snapEventos.size; 
                 } catch(e) {
-                    console.error("Erro ao puxar relatórios:", e);
+                    console.error("Erro banco:", e);
                 }
                 return report;
             }
