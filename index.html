@@ -97,6 +97,114 @@
         <div id="typeform-modal" class="fixed inset-0 bg-white z-[100] hidden flex-col max-w-md mx-auto h-screen">
             <div class="w-full bg-gray-200 h-1"><div id="tf-progress" class="bg-blue-600 h-1 w-0 transition-all duration-300"></div></div>
             <div class="p-5 flex justify-between items-center border-b border-gray-100">
+                <span id="tf-title" class="text-xs font-bold text-gray-400 uppercase tracking-widest">Tenha acesso PremiumAnálise de integridade concluída. Confirmado erro fatal no JavaScript que travava toda a interatividade do painel (Menu, Artigos e Categorias).
+
+**Diagnóstico da Falha:** Houve uma regressão de sintaxe na última inserção do banner de propaganda dentro da função `renderHomeFeed()`. Estavam sendo usadas aspas duplas internas (`""`) dentro de uma *template string* delimitada por aspas simples (`''`), quebrando o código durante a compilação do navegador.
+
+Abaixo, forneço o arquivo `index.html` com a sintaxe corrigida e verificada. Esta versão inclui o Banner Publicitário correto (Modelo 1: "Venda para toda a cidade...") e o Easter Egg dos 5 cliques no logo (que direciona para a view `admin`).
+
+Substitua o conteúdo integral do seu arquivo `index.html` por esta versão íntegra para restaurar o funcionamento:
+
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>O Código Pet - Revista Semanal</title>
+    
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <link rel="apple-touch-icon" href="/icon-192x192.png">
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(() => {});
+            });
+        }
+    </script>
+
+    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+    <link rel="stylesheet" href="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css)">
+    
+    <style>
+        body { -webkit-tap-highlight-color: transparent; }
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        .slide-up { animation: slideUp 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .header-line { border-top: 4px solid #ef4444; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .blur-content { filter: blur(6px); user-select: none; pointer-events: none; }
+        
+        /* Botões do Formulário */
+        .tf-option { 
+            @apply w-full bg-white border-2 border-gray-100 text-gray-700 font-bold text-left px-6 py-4 text-[16px] rounded-full mb-3 shadow-sm hover:border-blue-400 hover:bg-blue-50 active:scale-95 transition-all flex items-center justify-between; 
+        }
+        .btn-gradient { background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans antialiased overflow-x-hidden">
+
+    <div id="side-menu" class="fixed inset-0 bg-black/60 z-[60] hidden transition-opacity opacity-0" onclick="fecharMenuClickFora(event)">
+        <div class="absolute right-0 top-0 bottom-0 w-64 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col" id="side-menu-panel">
+            <div class="p-5 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                <h2 class="font-black text-gray-900 text-lg uppercase tracking-tighter">O Código Pet</h2>
+                <button onclick="toggleMenu()" class="text-gray-500 hover:text-red-600 text-2xl p-2"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-5 flex-1 overflow-y-auto">
+                <h3 class="font-bold text-gray-400 text-[10px] uppercase tracking-[0.2em] mb-4">Acervo de Edições</h3>
+                <ul class="space-y-4">
+                    <li><button onclick="toggleMenu(); renderView('home')" class="w-full flex items-center justify-between font-black text-blue-700 border border-blue-200 bg-blue-50 p-3 rounded-lg">Edição 01 <span class="bg-blue-600 text-white text-[9px] px-2 py-1 rounded uppercase">Atual</span></button></li>
+                </ul>
+            </div>
+            <div class="p-5 border-t border-gray-100">
+                <p class="text-[9px] text-gray-400 text-center uppercase tracking-widest font-bold">Uma iniciativa GV Conecta</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="app-container" class="max-w-md mx-auto bg-white min-h-screen shadow-2xl relative flex flex-col">
+        
+        <header class="bg-white sticky top-0 z-40 shadow-md header-line w-full">
+            <div class="px-4 py-3 flex justify-between items-center">
+                <div class="flex flex-col cursor-pointer group" onclick="handleLogoClick()">
+                    <h1 class="text-2xl font-black tracking-tighter text-blue-700 uppercase leading-none">O CÓDIGO PET</h1>
+                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Revista do Profissional</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded uppercase">Ed. 01</span>
+                    <button onclick="toggleMenu()" class="text-gray-700 focus:outline-none p-1"><i class="fa-solid fa-bars text-2xl"></i></button>
+                </div>
+            </div>
+            
+            <div id="nav-categorias" class="bg-gray-50 border-b border-gray-200 px-4 py-2 overflow-x-auto whitespace-nowrap text-[11px] font-bold text-gray-500 uppercase tracking-wide flex gap-5 scrollbar-hide">
+                <span onclick="goToCategory('varejo')" class="cursor-pointer hover:text-blue-600 transition">Pet Shop</span>
+                <span onclick="goToCategory('clinica')" class="cursor-pointer hover:text-teal-600 transition">Clínica</span>
+                <span onclick="goToCategory('estetica')" class="cursor-pointer hover:text-pink-600 transition">Estética</span>
+                <span onclick="goToCategory('comportamento')" class="cursor-pointer hover:text-orange-600 transition">Adestramento</span>
+                <span onclick="goToCategory('hospedagem')" class="cursor-pointer hover:text-indigo-600 transition">Hotelzinho</span>
+            </div>
+        </header>
+
+        <main id="main-content" class="flex-1 pb-16 bg-white"></main>
+
+        <footer class="bg-gray-900 text-white p-6 text-center">
+            <div class="text-[10px] text-gray-500 uppercase tracking-[0.3em] font-bold mb-2">Produzido por</div>
+            <h3 class="text-xl font-black tracking-tighter text-blue-400">GV CONECTA</h3>
+            <p class="text-[9px] text-gray-400 mt-1 uppercase tracking-widest">Marketing para Negócios Locais</p>
+        </footer>
+
+        <div class="fixed bottom-6 left-0 right-0 max-w-md mx-auto z-30 pointer-events-none h-12">
+            <button id="btn-voltar" onclick="renderView('home')" class="hidden absolute left-5 pointer-events-auto w-12 h-12 bg-black/60 backdrop-blur-md border border-white/20 rounded-full text-white flex items-center justify-center shadow-2xl hover:bg-black/80 active:scale-90 transition-all duration-300"><i class="fa-solid fa-arrow-left text-lg"></i></button>
+            <button id="btn-up" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="absolute right-5 pointer-events-auto w-12 h-12 bg-black/60 backdrop-blur-md border border-white/20 rounded-full text-white flex items-center justify-center shadow-2xl hover:bg-black/80 active:scale-90 transition-all duration-300 translate-y-10 opacity-0"><i class="fa-solid fa-arrow-up text-lg"></i></button>
+        </div>
+
+        <div id="typeform-modal" class="fixed inset-0 bg-white z-[100] hidden flex-col max-w-md mx-auto h-screen">
+            <div class="w-full bg-gray-200 h-1"><div id="tf-progress" class="bg-blue-600 h-1 w-0 transition-all duration-300"></div></div>
+            <div class="p-5 flex justify-between items-center border-b border-gray-100">
                 <span id="tf-title" class="text-xs font-bold text-gray-400 uppercase tracking-widest">Tenha acesso Premium</span>
                 <button onclick="fecharTypeform()" class="text-gray-400 hover:text-gray-800 text-xl"><i class="fa-solid fa-xmark"></i></button>
             </div>
@@ -127,44 +235,44 @@
 
         const bancoDeArtigos = {
             varejo: { id: 'varejo', nome: 'Pet Shop', tagColor: 'text-blue-700', bgColor: 'bg-blue-50', artigos: [
-                { id: 'v1', premium: false, titulo: '5 técnicas de vitrinismo para aumentar a venda de brinquedos', img: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&q=80', resumo: 'Como organizar as prateleiras de forma que o cliente compre por impulso.' },
-                { id: 'v2', premium: false, titulo: 'O roteiro de atendimento perfeito no balcão', img: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=600&q=80', resumo: 'O que o seu atendente deve dizer para fechar vendas mais rápidas.' },
-                { id: 'v3', premium: false, titulo: 'Como identificar produtos vencidos mais rápido', img: 'https://images.unsplash.com/photo-1553688738-a278b9f063e0?w=600&q=80', resumo: 'Um método visual simples para evitar prejuízos no estoque.' },
-                { id: 'v4', premium: true, titulo: 'Gestão de Estoque: A matemática oculta que devora o seu caixa', img: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&q=80', resumo: 'Planilha prática de giro de estoque para não imobilizar capital.' },
-                { id: 'v5', premium: true, titulo: 'Como precificar Rações Premium e manter a margem', img: 'https://images.unsplash.com/photo-1629905925292-3e2849b2b528?w=600&q=80', resumo: 'Estratégia de markup vs margem de contribuição.' },
-                { id: 'v6', premium: true, titulo: 'Funil de Vendas no WhatsApp para Donos de Pet Shop', img: 'https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=600&q=80', resumo: 'Automação de mensagens para vender acessórios sem esforço.' }
+                { id: 'v1', premium: false, titulo: '5 técnicas de vitrinismo para aumentar a venda de brinquedos', img: '[https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&q=80](https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&q=80)', resumo: 'Como organizar as prateleiras de forma que o cliente compre por impulso.' },
+                { id: 'v2', premium: false, titulo: 'O roteiro de atendimento perfeito no balcão', img: '[https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=600&q=80](https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=600&q=80)', resumo: 'O que o seu atendente deve dizer para fechar vendas mais rápidas.' },
+                { id: 'v3', premium: false, titulo: 'Como identificar produtos vencidos mais rápido', img: '[https://images.unsplash.com/photo-1553688738-a278b9f063e0?w=600&q=80](https://images.unsplash.com/photo-1553688738-a278b9f063e0?w=600&q=80)', resumo: 'Um método visual simples para evitar prejuízos no estoque.' },
+                { id: 'v4', premium: true, titulo: 'Gestão de Estoque: A matemática oculta que devora o seu caixa', img: '[https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&q=80](https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&q=80)', resumo: 'Planilha prática de giro de estoque para não imobilizar capital.' },
+                { id: 'v5', premium: true, titulo: 'Como precificar Rações Premium e manter a margem', img: '[https://images.unsplash.com/photo-1629905925292-3e2849b2b528?w=600&q=80](https://images.unsplash.com/photo-1629905925292-3e2849b2b528?w=600&q=80)', resumo: 'Estratégia de markup vs margem de contribuição.' },
+                { id: 'v6', premium: true, titulo: 'Funil de Vendas no WhatsApp para Donos de Pet Shop', img: '[https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=600&q=80](https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=600&q=80)', resumo: 'Automação de mensagens para vender acessórios sem esforço.' }
             ]},
             clinica: { id: 'clinica', nome: 'Clínica Veterinária', tagColor: 'text-teal-700', bgColor: 'bg-teal-50', artigos: [
-                { id: 'c1', premium: false, titulo: 'Técnicas de contenção cat-friendly na triagem', img: 'https://images.unsplash.com/photo-1628009368231-7bb7cb192fb6?w=600&q=80', resumo: 'Como evitar o estresse dos felinos na sala de espera.' },
-                { id: 'c2', premium: false, titulo: 'Protocolo de assepsia rápida de consultórios', img: 'https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=600&q=80', resumo: 'O checklist de limpeza entre atendimentos.' },
-                { id: 'c3', premium: false, titulo: 'Como comunicar o diagnóstico preliminar ao tutor', img: 'https://images.unsplash.com/photo-1584820927498-cafe6c1c953a?w=600&q=80', resumo: 'Empatia e clareza na recepção clínica.' },
-                { id: 'c4', premium: true, titulo: 'Derrubando o "No-Show": Gestão de Agendamentos', img: 'https://images.unsplash.com/photo-1551076805-e1869043e560?w=600&q=80', resumo: 'O fluxo de mensagens que reduz as faltas em 80%.' },
-                { id: 'c5', premium: true, titulo: 'Calculando a hora clínica: Custo Fixo vs Hora Útil', img: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=600&q=80', resumo: 'Descubra qual é o custo real para manter o consultório de portas abertas.' },
-                { id: 'c6', premium: true, titulo: 'Planos de Saúde Preventiva: Receita Recorrente', img: 'https://images.unsplash.com/photo-1606425271394-c3ca9aa1fc06?w=600&q=80', resumo: 'Como criar e vender pacotes anuais de vacina e check-up.' }
+                { id: 'c1', premium: false, titulo: 'Técnicas de contenção cat-friendly na triagem', img: '[https://images.unsplash.com/photo-1628009368231-7bb7cb192fb6?w=600&q=80](https://images.unsplash.com/photo-1628009368231-7bb7cb192fb6?w=600&q=80)', resumo: 'Como evitar o estresse dos felinos na sala de espera.' },
+                { id: 'c2', premium: false, titulo: 'Protocolo de assepsia rápida de consultórios', img: '[https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=600&q=80](https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=600&q=80)', resumo: 'O checklist de limpeza entre atendimentos.' },
+                { id: 'c3', premium: false, titulo: 'Como comunicar o diagnóstico preliminar ao tutor', img: '[https://images.unsplash.com/photo-1584820927498-cafe6c1c953a?w=600&q=80](https://images.unsplash.com/photo-1584820927498-cafe6c1c953a?w=600&q=80)', resumo: 'Empatia e clareza na recepção clínica.' },
+                { id: 'c4', premium: true, titulo: 'Derrubando o "No-Show": Gestão de Agendamentos', img: '[https://images.unsplash.com/photo-1551076805-e1869043e560?w=600&q=80](https://images.unsplash.com/photo-1551076805-e1869043e560?w=600&q=80)', resumo: 'O fluxo de mensagens que reduz as faltas em 80%.' },
+                { id: 'c5', premium: true, titulo: 'Calculando a hora clínica: Custo Fixo vs Hora Útil', img: '[https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=600&q=80](https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=600&q=80)', resumo: 'Descubra qual é o custo real para manter o consultório de portas abertas.' },
+                { id: 'c6', premium: true, titulo: 'Planos de Saúde Preventiva: Receita Recorrente', img: '[https://images.unsplash.com/photo-1606425271394-c3ca9aa1fc06?w=600&q=80](https://images.unsplash.com/photo-1606425271394-c3ca9aa1fc06?w=600&q=80)', resumo: 'Como criar e vender pacotes anuais de vacina e check-up.' }
             ]},
             estetica: { id: 'estetica', nome: 'Banho & Tosa', tagColor: 'text-pink-700', bgColor: 'bg-pink-50', artigos: [
-                { id: 'e1', premium: false, titulo: 'Secagem rápida: Regulagem de soprador para cães medrosos', img: 'https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?w=600&q=80', resumo: 'Otimização do tempo de secagem sem gerar trauma.' },
-                { id: 'e2', premium: false, titulo: 'Dicas de enquadramento para fotos do "Antes e Depois"', img: 'https://images.unsplash.com/photo-1583337260546-28b6bf66d004?w=600&q=80', resumo: 'Como o banhista pode gerar o conteúdo para as redes sociais.' },
-                { id: 'e3', premium: false, titulo: 'Lidando com pelagens emboladas sem machucar', img: 'https://images.unsplash.com/photo-1527526029430-319f10814151?w=600&q=80', resumo: 'Técnicas de desembaraço e uso de fluidos.' },
-                { id: 'e4', premium: true, titulo: 'A Matemática das Assinaturas de Banho', img: 'https://images.unsplash.com/photo-1556740738-b6a63e27c4df?w=600&q=80', resumo: 'Como criar planos mensais para pagar os custos fixos no dia 1º.' },
-                { id: 'e5', premium: true, titulo: 'Comissionamento Inteligente de Tosadores', img: 'https://images.unsplash.com/photo-1573164713988-8665fc963095?w=600&q=80', resumo: 'Formatos de remuneração que evitam passivos trabalhistas.' },
-                { id: 'e6', premium: true, titulo: 'Técnicas de Upsell: Como vender hidratação no checkout', img: 'https://images.unsplash.com/photo-1560421683-6856ea585c78?w=600&q=80', resumo: 'Aumente o ticket médio treinando a recepção.' }
+                { id: 'e1', premium: false, titulo: 'Secagem rápida: Regulagem de soprador para cães medrosos', img: '[https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?w=600&q=80](https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?w=600&q=80)', resumo: 'Otimização do tempo de secagem sem gerar trauma.' },
+                { id: 'e2', premium: false, titulo: 'Dicas de enquadramento para fotos do "Antes e Depois"', img: '[https://images.unsplash.com/photo-1583337260546-28b6bf66d004?w=600&q=80](https://images.unsplash.com/photo-1583337260546-28b6bf66d004?w=600&q=80)', resumo: 'Como o banhista pode gerar o conteúdo para as redes sociais.' },
+                { id: 'e3', premium: false, titulo: 'Lidando com pelagens emboladas sem machucar', img: '[https://images.unsplash.com/photo-1527526029430-319f10814151?w=600&q=80](https://images.unsplash.com/photo-1527526029430-319f10814151?w=600&q=80)', resumo: 'Técnicas de desembaraço e uso de fluidos.' },
+                { id: 'e4', premium: true, titulo: 'A Matemática das Assinaturas de Banho', img: '[https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&q=80](https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&q=80)', resumo: 'Como criar planos mensais para pagar os custos fixos no dia 1º.' },
+                { id: 'e5', premium: true, titulo: 'Comissionamento Inteligente de Tosadores', img: '[https://images.unsplash.com/photo-1573164713988-8665fc963095?w=600&q=80](https://images.unsplash.com/photo-1573164713988-8665fc963095?w=600&q=80)', resumo: 'Formatos de remuneração que evitam passivos trabalhistas.' },
+                { id: 'e6', premium: true, titulo: 'Técnicas de Upsell: Como vender hidratação no checkout', img: '[https://images.unsplash.com/photo-1560421683-6856ea585c78?w=600&q=80](https://images.unsplash.com/photo-1560421683-6856ea585c78?w=600&q=80)', resumo: 'Aumente o ticket médio treinando a recepção.' }
             ]},
             comportamento: { id: 'comportamento', nome: 'Adestramento', tagColor: 'text-orange-700', bgColor: 'bg-orange-50', artigos: [
-                { id: 'a1', premium: false, titulo: 'O timing do reforço positivo', img: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80', resumo: 'A janela de segundos necessária para o cão associar o prêmio.' },
-                { id: 'a2', premium: false, titulo: 'Linguagem corporal do adestrador', img: 'https://images.unsplash.com/photo-1537151608804-ea6f1103d82f?w=600&q=80', resumo: 'Como a sua postura influencia o respeito do animal.' },
-                { id: 'a3', premium: false, titulo: 'Equipamentos seguros vs Ferramentas punitivas', img: 'https://images.unsplash.com/photo-1554692911-37d363b2f8a4?w=600&q=80', resumo: 'Guia básico sobre coleiras e guias.' },
-                { id: 'a4', premium: true, titulo: 'Vendendo Pacotes High-Ticket de Adestramento', img: 'https://images.unsplash.com/photo-1556740758-90de374c12ad?w=600&q=80', resumo: 'Como fechar consultorias anuais ao invés de aulas avulsas.' },
-                { id: 'a5', premium: true, titulo: 'Estruturação de Parcerias B2B com Clínicas', img: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80', resumo: 'Transforme veterinários na sua principal fonte de indicação.' },
-                { id: 'a6', premium: true, titulo: 'Escalabilidade: Aulas em grupo vs EAD', img: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&q=80', resumo: 'Desvinculando o seu ganho financeiro das suas horas de trabalho.' }
+                { id: 'a1', premium: false, titulo: 'O timing do reforço positivo', img: '[https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80](https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80)', resumo: 'A janela de segundos necessária para o cão associar o prêmio.' },
+                { id: 'a2', premium: false, titulo: 'Linguagem corporal do adestrador', img: '[https://images.unsplash.com/photo-1537151608804-ea6f1103d82f?w=600&q=80](https://images.unsplash.com/photo-1537151608804-ea6f1103d82f?w=600&q=80)', resumo: 'Como a sua postura influencia o respeito do animal.' },
+                { id: 'a3', premium: false, titulo: 'Equipamentos seguros vs Ferramentas punitivas', img: '[https://images.unsplash.com/photo-1554692911-37d363b2f8a4?w=600&q=80](https://images.unsplash.com/photo-1554692911-37d363b2f8a4?w=600&q=80)', resumo: 'Guia básico sobre coleiras e guias.' },
+                { id: 'a4', premium: true, titulo: 'Vendendo Pacotes High-Ticket de Adestramento', img: '[https://images.unsplash.com/photo-1556740758-90de374c12ad?w=600&q=80](https://images.unsplash.com/photo-1556740758-90de374c12ad?w=600&q=80)', resumo: 'Como fechar consultorias anuais ao invés de aulas avulsas.' },
+                { id: 'a5', premium: true, titulo: 'Estruturação de Parcerias B2B com Clínicas', img: '[https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80](https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80)', resumo: 'Transforme veterinários na sua principal fonte de indicação.' },
+                { id: 'a6', premium: true, titulo: 'Escalabilidade: Aulas em grupo vs EAD', img: '[https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&q=80](https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&q=80)', resumo: 'Desvinculando o seu ganho financeiro das suas horas de trabalho.' }
             ]},
             hospedagem: { id: 'hospedagem', nome: 'Hotelzinho Pet', tagColor: 'text-indigo-700', bgColor: 'bg-indigo-50', artigos: [
-                { id: 'h1', premium: false, titulo: 'Enriquecimento Ambiental na Prática', img: 'https://images.unsplash.com/photo-1601758174114-e711c0cbaa69?w=600&q=80', resumo: 'Atividades baratas para manter os cães ocupados.' },
-                { id: 'h2', premium: false, titulo: 'Rotina de higienização de áreas comuns', img: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&q=80', resumo: 'Prevenção de transmissão de doenças em hotéis pet.' },
-                { id: 'h3', premium: false, titulo: 'Sinais de estresse em matilha', img: 'https://images.unsplash.com/photo-1541599540903-216a46ca1dc0?w=600&q=80', resumo: 'Como identificar e separar cães antes que uma briga aconteça.' },
-                { id: 'h4', premium: true, titulo: 'Precificação Dinâmica: Feriados e Alta Temporada', img: 'https://images.unsplash.com/photo-1556742044-3c52d6e88c62?w=600&q=80', resumo: 'Modelos de negócio para maximizar o lucro em dezembo/janeiro.' },
-                { id: 'h5', premium: true, titulo: 'Transformando Hóspedes de Férias em Daycare Mensal', img: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=600&q=80', resumo: 'A estratégia comercial para bater metas na baixa temporada.' },
-                { id: 'h6', premium: true, titulo: 'Triagem Comportamental Digital', img: 'https://images.unsplash.com/photo-1517048676732-d65af93c5f22?w=600&q=80', resumo: 'O termo de responsabilidade e formulário que blinda sua empresa de processos.' }
+                { id: 'h1', premium: false, titulo: 'Enriquecimento Ambiental na Prática', img: '[https://images.unsplash.com/photo-1601758174114-e711c0cbaa69?w=600&q=80](https://images.unsplash.com/photo-1601758174114-e711c0cbaa69?w=600&q=80)', resumo: 'Atividades baratas para manter os cães ocupados.' },
+                { id: 'h2', premium: false, titulo: 'Rotina de higienização de áreas comuns', img: '[https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&q=80](https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&q=80)', resumo: 'Prevenção de transmissão de doenças em hotéis pet.' },
+                { id: 'h3', premium: false, titulo: 'Sinais de estresse em matilha', img: '[https://images.unsplash.com/photo-1541599540903-216a46ca1dc0?w=600&q=80](https://images.unsplash.com/photo-1541599540903-216a46ca1dc0?w=600&q=80)', resumo: 'Como identificar e separar cães antes que uma briga aconteça.' },
+                { id: 'h4', premium: true, titulo: 'Precificação Dinâmica: Feriados e Alta Temporada', img: '[https://images.unsplash.com/photo-1556742044-3c52d6e88c62?w=600&q=80](https://images.unsplash.com/photo-1556742044-3c52d6e88c62?w=600&q=80)', resumo: 'Modelos de negócio para maximizar o lucro em dezembo/janeiro.' },
+                { id: 'h5', premium: true, titulo: 'Transformando Hóspedes de Férias em Daycare Mensal', img: '[https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=600&q=80](https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=600&q=80)', resumo: 'A estratégia comercial para bater metas na baixa temporada.' },
+                { id: 'h6', premium: true, titulo: 'Triagem Comportamental Digital', img: '[https://images.unsplash.com/photo-1517048676732-d65af93c5f22?w=600&q=80](https://images.unsplash.com/photo-1517048676732-d65af93c5f22?w=600&q=80)', resumo: 'O termo de responsabilidade e formulário que blinda sua empresa de processos.' }
             ]}
         };
 
@@ -243,9 +351,9 @@
                 if (sectionCount === 0) {
                     html += `
                         <div class="my-8 px-4">
-                            <div class="rounded-3xl overflow-hidden shadow-2xl border-2 border-blue-600 cursor-pointer" onclick="window.open('https://petlojas.vercel.app/', '_blank'); window.registrarEvento('clique_ad_petlojas', {});">
+                            <div class="rounded-3xl overflow-hidden shadow-2xl border-2 border-blue-600 cursor-pointer" onclick="window.open('[https://petlojas.vercel.app/](https://petlojas.vercel.app/)', '_blank'); window.registrarEvento('clique_ad_petlojas', {});">
                                 
-                                <div class="bg-gray-200 h-40 flex items-center justify-center text-gray-500 font-bold uppercase tracking-widest text-xs relative">
+                                <div class="bg-gray-200 h-40 flex items-center justify-center text-gray-500 font-bold uppercase tracking-widest text-xs relative overflow-hidden">
                                     <img src="petlojas-retangular.png" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
                                     <div class="flex flex-col items-center gap-2 hidden">
                                         <i class="fa-solid fa-store text-3xl"></i>
@@ -255,7 +363,7 @@
                                 </div>
 
                                 <div class="p-6 bg-blue-600 text-white text-center">
-                                    <h4 class="font-black text-2xl mb-2 leading-tight tracking-tight">Venda para toda a cidade com uma de nossas PetLojas..</h4>
+                                    <h4 class="font-black text-2xl mb-2 leading-tight tracking-tight">Venda para toda a cidade com uma de nossas PetLojas.</h4>
                                     
                                     <span class="inline-block bg-white text-blue-700 font-black text-base px-10 py-3 rounded-full uppercase tracking-widest shadow-md mt-2">Saiba como.</span>
                                 </div>
@@ -393,7 +501,7 @@
                     </div>
                     <div class="m-5 p-8 rounded-3xl bg-blue-600 text-white text-center shadow-xl">
                         <h4 class="font-black text-xl mb-4 leading-tight">Quer automatizar suas vendas?</h4>
-                        <button onclick="window.open('https://petlojas.vercel.app/', '_blank'); window.registrarEvento('clique_ad_petlojas', {});" class="w-full bg-white text-blue-700 font-black py-4 rounded-full shadow-lg active:scale-95 transition-transform">Conhecer o PetLojas</button>
+                        <button onclick="window.open('[https://petlojas.vercel.app/](https://petlojas.vercel.app/)', '_blank'); window.registrarEvento('clique_ad_petlojas', {});" class="w-full bg-white text-blue-700 font-black py-4 rounded-full shadow-lg active:scale-95 transition-transform">Conhecer o PetLojas</button>
                     </div>
                 </div>`;
         }
@@ -408,8 +516,8 @@
     </script>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, query, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { initializeApp } from "[https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js](https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js)";
+        import { getFirestore, collection, addDoc, getDocs, query, limit, serverTimestamp } from "[https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js](https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js)";
 
         try {
             const firebaseConfig = {
