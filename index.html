@@ -29,7 +29,7 @@
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans antialiased">
+<body class="bg-gray-100 text-gray-800 font-sans antialiased overflow-x-hidden">
 
     <div id="side-menu" class="fixed inset-0 bg-black/60 z-[60] hidden transition-opacity opacity-0" onclick="fecharMenuClickFora(event)">
         <div class="absolute right-0 top-0 bottom-0 w-64 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col" id="side-menu-panel">
@@ -60,9 +60,9 @@
         </div>
     </div>
 
-    <div id="app-container" class="max-w-md mx-auto bg-white min-h-screen shadow-2xl relative overflow-x-hidden flex flex-col">
+    <div id="app-container" class="max-w-md mx-auto bg-white min-h-screen shadow-2xl relative flex flex-col">
         
-        <header class="bg-white sticky top-0 z-40 shadow-sm header-line">
+        <header class="bg-white sticky top-0 z-40 shadow-md header-line w-full">
             <div class="px-4 py-3 flex justify-between items-center">
                 <div class="flex flex-col cursor-pointer group" onclick="renderView('home')">
                     <h1 class="text-2xl font-black tracking-tighter text-blue-700 uppercase leading-none group-hover:text-blue-800 transition">O CÓDIGO PET</h1>
@@ -77,7 +77,7 @@
             </div>
             
             <div class="bg-gray-50 border-b border-gray-200 px-4 py-2 overflow-x-auto whitespace-nowrap text-[11px] font-bold text-gray-500 uppercase tracking-wide flex gap-5 scrollbar-hide">
-                <span onclick="goToCategory('varejo')" class="cursor-pointer hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition">Varejo</span>
+                <span onclick="goToCategory('varejo')" class="cursor-pointer hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition">Pet Shop</span>
                 <span onclick="goToCategory('clinica')" class="cursor-pointer hover:text-teal-600 border-b-2 border-transparent hover:border-teal-600 transition">Clínica</span>
                 <span onclick="goToCategory('estetica')" class="cursor-pointer hover:text-pink-600 border-b-2 border-transparent hover:border-pink-600 transition">Estética</span>
                 <span onclick="goToCategory('comportamento')" class="cursor-pointer hover:text-orange-600 border-b-2 border-transparent hover:border-orange-600 transition">Adestramento</span>
@@ -85,21 +85,27 @@
             </div>
         </header>
 
-        <main id="main-content" class="flex-1 pb-10 bg-white">
+        <main id="main-content" class="flex-1 pb-16 bg-white">
             </main>
 
-        <button id="btn-voltar" onclick="renderView('home')" class="hidden fixed bottom-6 left-6 w-14 h-14 bg-black/50 backdrop-blur-md border border-white/20 rounded-full text-white flex items-center justify-center shadow-2xl z-50 hover:bg-black/70 active:scale-90 transition-transform">
-            <i class="fa-solid fa-arrow-left text-xl"></i>
-        </button>
+        <div class="fixed bottom-6 left-0 right-0 max-w-md mx-auto z-50 pointer-events-none h-12">
+            <button id="btn-voltar" onclick="renderView('home')" class="hidden absolute left-5 pointer-events-auto w-12 h-12 bg-black/60 backdrop-blur-md border border-white/20 rounded-full text-white flex items-center justify-center shadow-2xl hover:bg-black/80 active:scale-90 transition-all duration-300">
+                <i class="fa-solid fa-arrow-left text-lg"></i>
+            </button>
+
+            <button id="btn-up" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="absolute right-5 pointer-events-auto w-12 h-12 bg-black/60 backdrop-blur-md border border-white/20 rounded-full text-white flex items-center justify-center shadow-2xl hover:bg-black/80 active:scale-90 transition-all duration-300 translate-y-10 opacity-0">
+                <i class="fa-solid fa-arrow-up text-lg"></i>
+            </button>
+        </div>
 
     </div>
 
     <script>
-        // Função fantasma caso o Firebase seja bloqueado pelo celular
         window.registrarEvento = function(tipo, detalhes) { console.log('Evento Local:', tipo); };
 
         const bancoDeArtigos = {
-            varejo: { id: 'varejo', nome: 'Varejo (Pet Shop)', tagColor: 'text-blue-700', bgColor: 'bg-blue-50', artigos: [
+            // Alterado Nome de Varejo para Pet Shop internamente e no display
+            varejo: { id: 'varejo', nome: 'Pet Shop', tagColor: 'text-blue-700', bgColor: 'bg-blue-50', artigos: [
                 { id: 'v1', titulo: 'Como aumentar a margem de lucro na venda de rações premium', img: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&q=80', resumo: 'Descubra a matemática por trás da prateleira e como o estoque parado devora seu caixa.' },
                 { id: 'v2', titulo: 'Vitrine no WhatsApp: Venda sem o cliente pisar na loja', img: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=600&q=80', resumo: 'Estratégias de fotos e mensagens para conversão direta no chat.' },
                 { id: 'v3', titulo: 'A técnica do "Leva e Traz" inteligente', img: 'https://images.unsplash.com/photo-1553688738-a278b9f063e0?w=600&q=80', resumo: 'Logística barata que dobra a conversão no balcão físico.' }
@@ -128,6 +134,7 @@
 
         let currentView = 'home';
 
+        // LÓGICA DO MENU
         window.toggleMenu = function() {
             const menu = document.getElementById('side-menu');
             const panel = document.getElementById('side-menu-panel');
@@ -140,17 +147,19 @@
                 setTimeout(() => menu.classList.add('hidden'), 300);
             }
         }
-
         window.fecharMenuClickFora = function(event) { if(event.target.id === 'side-menu') toggleMenu(); }
 
+        // NAVEGAÇÃO ENTRE SEGMENTOS (Scroll suave)
         window.goToCategory = function(catId) {
             if (currentView !== 'home') renderView('home');
             setTimeout(() => {
                 const section = document.getElementById('sec-' + catId);
+                // 100px de desconto para compensar o cabeçalho que agora é super fixo
                 if(section) window.scrollTo({top: section.getBoundingClientRect().top + window.scrollY - 100, behavior: 'smooth'});
             }, 50);
         }
 
+        // MOTOR DE RENDERIZAÇÃO
         window.renderView = function(view, param = null) {
             currentView = view;
             const mainContent = document.getElementById('main-content');
@@ -170,6 +179,17 @@
 
         function renderHomeFeed(container) {
             let html = `<div class="fade-in">`;
+            
+            // NOVO: AVISO DE POSICIONAMENTO DA REVISTA
+            html += `
+                <div class="px-5 pt-6 pb-4 bg-white text-center">
+                    <h2 class="text-[11px] font-black text-blue-600 uppercase tracking-[0.2em] mb-2 border-b border-gray-100 inline-block pb-1">Para quem vive do mercado Pet</h2>
+                    <p class="text-sm text-gray-500 leading-relaxed mt-1">
+                        Conteúdo estratégico e prático para donos de <strong class="text-gray-800">Pet Shops, Clínicas, Estética, Adestramento e Hotelzinho</strong>.
+                    </p>
+                </div>
+            `;
+
             const destaque = bancoDeArtigos.varejo.artigos[0];
             html += `
                 <div class="cursor-pointer bg-white mb-2 relative group" onclick="abrirArtigo('varejo', '${destaque.id}')">
@@ -237,7 +257,7 @@
         function renderArtigo(container, dados) {
             const { artigo } = dados;
             container.innerHTML = `
-                <div class="fade-in bg-white min-h-screen">
+                <div class="fade-in bg-white min-h-screen pb-10">
                     <div class="px-5 pt-8 pb-6">
                         <h1 class="text-3xl font-black text-gray-900 leading-tight tracking-tight">${artigo.titulo}</h1>
                     </div>
@@ -253,14 +273,25 @@
                         <p class="text-sm text-blue-100 mb-6">Pare de apagar incêndios e comece a gerenciar seu fluxo com inteligência.</p>
                         <button onclick="clicouCTA('${artigo.id}')" class="w-full bg-white text-blue-700 font-black py-3 px-8 rounded-full shadow-lg">Falar com Consultor</button>
                     </div>
-                    <div class="h-10"></div>
                 </div>
             `;
         }
 
         window.clicouCTA = (o) => window.registrarEvento('clicou_cta', { de: o });
 
-        // INICIALIZA A UI IMEDIATAMENTE (GARANTE QUE NÃO FIQUE BRANCO)
+        // LÓGICA DO BOTÃO DE SUBIR (Aparece ao fazer scroll)
+        window.addEventListener('scroll', () => {
+            const btnUp = document.getElementById('btn-up');
+            if(btnUp) {
+                if (window.scrollY > 300) {
+                    btnUp.classList.remove('translate-y-10', 'opacity-0');
+                } else {
+                    btnUp.classList.add('translate-y-10', 'opacity-0');
+                }
+            }
+        });
+
+        // Inicia a aplicação
         renderView('home');
     </script>
 
@@ -285,7 +316,6 @@
             const urlParams = new URLSearchParams(window.location.search);
             const leadId = urlParams.get('lead_id') || 'anonimo';
 
-            // Sobrescreve a função fantasma com o rastreio real
             window.registrarEvento = async function(tipoEvento, detalhes = {}) {
                 try {
                     await addDoc(collection(db, "eventos_tracking"), {
@@ -299,11 +329,10 @@
                 } catch (e) { console.error("Erro no rastreio:", e); }
             }
 
-            // Registra a abertura inicial (já que a UI abriu primeiro)
             window.registrarEvento('abriu_revista', { edicao: '01' });
 
         } catch(err) {
-            console.warn("⚠️ Firebase bloqueado pelo navegador/AdBlock. Revista segue funcionando 100% offline.");
+            console.warn("⚠️ Firebase bloqueado. Revista offline funcionando.");
         }
     </script>
 </body>
