@@ -30,10 +30,6 @@
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
         .blur-content { filter: blur(6px); user-select: none; pointer-events: none; }
-        
-        .tf-option { 
-            @apply w-full bg-blue-50/50 border border-blue-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-[0_2px_10px_-3px_rgba(0,0,0,0.1)] hover:border-blue-400 hover:bg-blue-100 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between; 
-        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans antialiased overflow-x-hidden">
@@ -111,16 +107,16 @@
                     <h2 class="text-2xl font-black text-gray-900 mb-4 leading-tight">Qual a sua função na empresa?</h2>
                     <p class="text-sm text-gray-500 mb-8 border-l-4 border-yellow-400 pl-3">⚠️ Conteúdo restrito a decisores do mercado Pet. <strong class="text-gray-800">O acesso é 100% gratuito</strong>, basta preencher abaixo.</p>
                     
-                    <button onclick="tfNext(2, 'cargo', 'Dono / Sócio')" class="tf-option">
+                    <button onclick="tfNext(2, 'cargo', 'Dono / Sócio')" class="w-full bg-white border-2 border-gray-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between">
                         <span>Dono(a) / Sócio(a)</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
                     </button>
-                    <button onclick="tfNext(2, 'cargo', 'Gerente / Administrador')" class="tf-option">
+                    <button onclick="tfNext(2, 'cargo', 'Gerente / Administrador')" class="w-full bg-white border-2 border-gray-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between">
                         <span>Gerente / Administrador(a)</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
                     </button>
-                    <button onclick="tfNext(2, 'cargo', 'Médico Veterinário')" class="tf-option">
+                    <button onclick="tfNext(2, 'cargo', 'Médico Veterinário')" class="w-full bg-white border-2 border-gray-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between">
                         <span>Médico(a) Veterinário(a)</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
                     </button>
-                    <button onclick="tfNext(2, 'cargo', 'Coordenador Operacional')" class="tf-option">
+                    <button onclick="tfNext(2, 'cargo', 'Coordenador Operacional')" class="w-full bg-white border-2 border-gray-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between">
                         <span>Coordenador(a)</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
                     </button>
                 </div>
@@ -129,16 +125,16 @@
                     <span class="text-blue-600 font-bold mb-2 block">2 de 4</span>
                     <h2 class="text-2xl font-black text-gray-900 mb-8 leading-tight">Qual é o maior desafio na sua operação hoje?</h2>
                     
-                    <button onclick="tfNext(3, 'desafio', 'Atrair clientes')" class="tf-option">
+                    <button onclick="tfNext(3, 'desafio', 'Atrair clientes')" class="w-full bg-white border-2 border-gray-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between">
                         <span>Atrair novos clientes</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
                     </button>
-                    <button onclick="tfNext(3, 'desafio', 'Tempo e Organização')" class="tf-option">
+                    <button onclick="tfNext(3, 'desafio', 'Tempo e Organização')" class="w-full bg-white border-2 border-gray-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between">
                         <span>Falta de tempo e desorganização</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
                     </button>
-                    <button onclick="tfNext(3, 'desafio', 'Margem de Lucro')" class="tf-option">
+                    <button onclick="tfNext(3, 'desafio', 'Margem de Lucro')" class="w-full bg-white border-2 border-gray-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between">
                         <span>Margem de lucro baixa</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
                     </button>
-                    <button onclick="tfNext(3, 'desafio', 'Gestão de Equipe')" class="tf-option">
+                    <button onclick="tfNext(3, 'desafio', 'Gestão de Equipe')" class="w-full bg-white border-2 border-gray-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between">
                         <span>Problemas com a equipe</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
                     </button>
                 </div>
@@ -147,16 +143,16 @@
                     <span class="text-blue-600 font-bold mb-2 block">3 de 4</span>
                     <h2 class="text-2xl font-black text-gray-900 mb-8 leading-tight">O que você gostaria de ler nas próximas edições?</h2>
                     
-                    <button onclick="tfNext(4, 'interesse', 'Gestão Financeira')" class="tf-option">
+                    <button onclick="tfNext(4, 'interesse', 'Gestão Financeira')" class="w-full bg-white border-2 border-gray-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between">
                         <span>Gestão Financeira e Precificação</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
                     </button>
-                    <button onclick="tfNext(4, 'interesse', 'Vendas pelo WhatsApp')" class="tf-option">
+                    <button onclick="tfNext(4, 'interesse', 'Vendas pelo WhatsApp')" class="w-full bg-white border-2 border-gray-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between">
                         <span>Vendas pelo WhatsApp</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
                     </button>
-                    <button onclick="tfNext(4, 'interesse', 'Contratação e Equipe')" class="tf-option">
+                    <button onclick="tfNext(4, 'interesse', 'Contratação e Equipe')" class="w-full bg-white border-2 border-gray-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between">
                         <span>Contratação e Gestão de Equipe</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
                     </button>
-                    <button onclick="tfNext(4, 'interesse', 'Automação e Ferramentas')" class="tf-option">
+                    <button onclick="tfNext(4, 'interesse', 'Automação e Ferramentas')" class="w-full bg-white border-2 border-gray-200 text-gray-700 font-bold text-left px-6 py-4 text-[17px] rounded-full mb-4 shadow-sm hover:border-blue-400 hover:bg-blue-50 hover:text-blue-800 active:scale-95 transition-all flex items-center justify-between">
                         <span>Automação e Ferramentas</span> <i class="fa-solid fa-chevron-right text-blue-400"></i>
                     </button>
                 </div>
@@ -166,8 +162,8 @@
                     <h2 class="text-2xl font-black text-gray-900 mb-2 leading-tight">Desbloqueio Gratuito</h2>
                     <p class="text-gray-500 mb-8 text-sm">Insira seus dados para liberar a leitura. <strong class="text-gray-800">Você não pagará nada por isso.</strong></p>
                     
-                    <input type="text" id="tf-nome" placeholder="Seu Nome" class="w-full bg-gray-50 border-2 border-gray-200 text-gray-900 font-bold rounded-full focus:border-blue-500 focus:bg-white outline-none px-6 py-4 mb-4 transition-all text-lg">
-                    <input type="tel" id="tf-whatsapp" placeholder="WhatsApp (com DDD)" class="w-full bg-gray-50 border-2 border-gray-200 text-gray-900 font-bold rounded-full focus:border-blue-500 focus:bg-white outline-none px-6 py-4 mb-8 transition-all text-lg">
+                    <input type="text" id="tf-nome" placeholder="Seu Nome" class="w-full bg-gray-50 border border-gray-300 text-gray-900 font-bold rounded-full focus:border-blue-500 focus:bg-white outline-none px-6 py-4 mb-4 transition-all text-lg shadow-sm">
+                    <input type="tel" id="tf-whatsapp" placeholder="WhatsApp (com DDD)" class="w-full bg-gray-50 border border-gray-300 text-gray-900 font-bold rounded-full focus:border-blue-500 focus:bg-white outline-none px-6 py-4 mb-8 transition-all text-lg shadow-sm">
                     
                     <button onclick="tfSubmit()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black text-lg py-5 rounded-full shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2">
                         Ler Artigo Agora <i class="fa-solid fa-unlock"></i>
