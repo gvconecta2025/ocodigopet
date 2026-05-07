@@ -13,7 +13,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* Correção de Fontes e Reset Estético - Design Aprovado Chameleon PWA */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
         body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         
@@ -26,8 +25,13 @@
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* Efeito de desfoque para conteúdo bloqueado (Paywall) */
         .blur-content { filter: blur(8px); user-select: none; pointer-events: none; }
+        .tf-input { @apply w-full bg-transparent border-b-2 border-gray-200 text-xl md:text-2xl font-bold p-2 outline-none focus:border-blue-600 transition; }
+        .tf-label { @apply block text-sm font-bold text-gray-400 uppercase tracking-widest mb-2; }
+
+        /* Loader */
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #2563eb; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 40px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 antialiased overflow-x-hidden">
@@ -41,11 +45,7 @@
             <div class="p-5 flex-1 overflow-y-auto space-y-3">
                 <button onclick="toggleMenu(); window.renderView('home')" class="w-full flex items-center gap-3 font-bold text-gray-700 p-3 rounded-lg hover:bg-gray-100"><i class="fa-solid fa-house text-blue-500"></i> Início</button>
                 
-                <div id="menu-conta-logado" class="hidden space-y-3 border-t border-gray-100 pt-3">
-                    <button onclick="executarLogout()" class="w-full flex items-center gap-3 font-bold text-red-600 p-3 rounded-lg hover:bg-red-50"><i class="fa-solid fa-right-from-bracket"></i> Sair</button>
-                </div>
-                
-                <h3 class="font-bold text-gray-400 text-[10px] uppercase tracking-[0.2em] mt-6 mb-4">Acervo de Edições</h3>
+                <h3 class="font-bold text-gray-400 text-[10px] uppercase tracking-[0.2em] mt-6 mb-4">Edições</h3>
                 <ul class="space-y-4">
                     <li><button onclick="toggleMenu(); window.renderView('home')" class="w-full flex items-center justify-between font-black text-blue-700 border border-blue-200 bg-blue-50 p-3 rounded-lg">Edição 01 <span class="bg-blue-600 text-white text-[9px] px-2 py-1 rounded uppercase">Atual</span></button></li>
                     <li><span class="block w-full text-left font-bold text-gray-400 p-3 rounded-lg">Edição 02 (Em breve)</span></li>
@@ -61,23 +61,18 @@
         
         <header class="bg-white sticky top-0 z-40 shadow-md header-line w-full">
             <div class="px-4 py-3 flex justify-between items-center">
-                <div class="flex flex-col cursor-pointer group" onclick="window.handleLogoClick()">
+                <div class="flex flex-col cursor-pointer" onclick="window.renderView('home')">
                     <h1 class="text-2xl font-black tracking-tighter text-blue-700 uppercase leading-none">O CÓDIGO PET</h1>
                     <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Revista Semanal</span>
                 </div>
                 <div class="flex items-center gap-3">
-                    <span id="header-edicao" class="bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded uppercase">Ed. 01</span>
+                    <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded uppercase">Ed. 01</span>
                     <button onclick="toggleMenu()" class="text-gray-700 focus:outline-none p-1"><i class="fa-solid fa-bars text-2xl"></i></button>
                 </div>
             </div>
             
             <div id="nav-categorias" class="bg-gray-50 border-b border-gray-200 px-4 py-2 overflow-x-auto whitespace-nowrap text-[11px] font-bold text-gray-500 uppercase tracking-wide flex gap-5 scrollbar-hide">
-                <span onclick="window.goToCategory('varejo')" class="cursor-pointer hover:text-blue-600 transition">Pet Shop</span>
-                <span onclick="window.goToCategory('clinica')" class="cursor-pointer hover:text-teal-600 transition">Clínica Vet</span>
-                <span onclick="window.goToCategory('estetica')" class="cursor-pointer hover:text-pink-600 transition">Estética</span>
-                <span onclick="window.goToCategory('adestramento')" class="cursor-pointer hover:text-orange-600 transition">Adestramento</span>
-                <span onclick="window.goToCategory('hospedagem')" class="cursor-pointer hover:text-indigo-600 transition">Hotelzinho</span>
-            </div>
+                </div>
         </header>
 
         <main id="main-content" class="flex-1 pb-16 bg-white"></main>
@@ -87,19 +82,62 @@
             <button id="btn-up" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="absolute right-5 pointer-events-auto w-12 h-12 bg-black/60 backdrop-blur-md border border-white/20 rounded-full text-white flex items-center justify-center shadow-2xl hover:bg-black/80 active:scale-90 transition-all duration-300 translate-y-10 opacity-0"><i class="fa-solid fa-arrow-up text-lg"></i></button>
         </div>
 
-        <div id="auth-modal" class="fixed inset-0 bg-black/80 z-[100] hidden items-center justify-center backdrop-blur-sm p-4 fade-in">
+        <div id="modal-leitor" class="fixed inset-0 bg-black/80 z-[100] hidden items-center justify-center backdrop-blur-sm p-4 fade-in">
             <div class="bg-white rounded-2xl p-8 w-full max-w-sm shadow-2xl slide-up relative">
-                <button onclick="window.fecharAuth()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-900"><i class="fa-solid fa-xmark text-xl"></i></button>
-                <div id="auth-content-login">
-                    <h3 class="text-2xl font-black tracking-tighter text-gray-950 mb-2">Painel Central</h3>
-                    <p class="text-sm text-gray-500 mb-6 font-medium">Faça login com seu e-mail corporativo para acessar.</p>
-                    <div class="space-y-4">
-                        <input type="email" id="auth-email" placeholder="Seu e-mail" class="w-full p-3 border border-gray-200 rounded-xl outline-none focus:border-blue-500 transition">
-                        <input type="password" id="auth-pass" placeholder="Sua senha" class="w-full p-3 border border-gray-200 rounded-xl outline-none focus:border-blue-500 transition">
-                        <div id="auth-error" class="text-xs text-red-600 hidden"></div>
-                        <button onclick="window.executarLogin()" class="w-full bg-blue-600 text-white font-bold py-3.5 rounded-xl hover:bg-blue-700 transition active:scale-95">Entrar no Painel</button>
-                    </div>
+                <button onclick="window.fecharModais()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-900"><i class="fa-solid fa-xmark text-xl"></i></button>
+                <div class="text-center mb-6">
+                    <i class="fa-solid fa-book-open-reader text-4xl text-blue-500 mb-4"></i>
+                    <h3 class="text-2xl font-black tracking-tighter text-gray-950 mb-2">Continue Lendo Grátis</h3>
+                    <p class="text-sm text-gray-500">Você atingiu o limite de artigos anônimos. Informe seu e-mail para continuar lendo gratuitamente.</p>
                 </div>
+                <form id="form-leitor" class="space-y-4">
+                    <input type="email" id="leitor-email" placeholder="Seu melhor e-mail" required class="w-full p-4 border border-gray-200 rounded-xl outline-none focus:border-blue-500 font-bold">
+                    <button type="submit" class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl hover:bg-blue-700 transition active:scale-95">Liberar Acesso</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="modal-gestor" class="fixed inset-0 bg-white z-[110] hidden flex-col max-w-md mx-auto h-screen fade-in">
+            <div class="p-6 flex justify-between items-center border-b border-gray-100">
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Conteúdo Premium Gestão</span>
+                <button onclick="window.fecharModais()" class="text-gray-400 hover:text-red-600 text-xl"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-8 md:p-12 flex flex-col">
+                <div class="mb-8">
+                    <h3 class="text-2xl font-black text-gray-900 mb-2 leading-tight">Estratégias Avançadas</h3>
+                    <p class="text-sm text-gray-500">Para liberar este material, preencha os dados. **Enviaremos as próximas edições diretamente no seu WhatsApp.**</p>
+                </div>
+
+                <form id="form-gestor" class="space-y-10">
+                    <div class="slide-up">
+                        <label class="tf-label">Qual o seu nome?</label>
+                        <input type="text" id="gestor-nome" placeholder="Nome completo" required class="tf-input">
+                    </div>
+                    
+                    <div class="slide-up" style="animation-delay: 0.1s">
+                        <label class="tf-label">Qual o seu e-mail?</label>
+                        <input type="email" id="gestor-email" placeholder="E-mail principal" required class="tf-input">
+                    </div>
+
+                    <div class="slide-up" style="animation-delay: 0.2s">
+                        <label class="tf-label">Seu WhatsApp (Receber edições)</label>
+                        <input type="tel" id="gestor-whatsapp" placeholder="(00) 90000-0000" required class="tf-input">
+                    </div>
+
+                    <div class="slide-up" style="animation-delay: 0.3s">
+                        <label class="tf-label">O que mais te interessa? (Selecione)</label>
+                        <div class="flex flex-wrap gap-2 mt-4" id="gestor-interesses">
+                            ${['Vendas', 'Gestão Financeira', 'Marketing', 'Liderança', 'Atendimento'].map(t => 
+                                `<button type="button" onclick="window.toggleTag(this, '${t}')" class="border-2 border-gray-200 bg-white text-gray-600 px-4 py-2 rounded-full text-xs font-medium transition-all">${t}</button>`
+                            ).join('')}
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-yellow-500 text-gray-950 font-black text-lg py-5 rounded-2xl shadow-lg hover:bg-yellow-600 transition active:scale-95 slide-up" style="animation-delay: 0.4s">
+                        Liberar Artigo Agora
+                    </button>
+                </form>
             </div>
         </div>
 
@@ -107,10 +145,9 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // ✅ Credenciais reais do projeto crmpetshop (Ponto 1)
+        // ✅ CREDENCIAIS REAIS
         const firebaseConfig = {
           apiKey: "AIzaSyBjuvcJvTWw7lMrIwej5lHbIUXe99lJDN4",
           authDomain: "crmpetshop.firebaseapp.com",
@@ -121,281 +158,387 @@
         };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const auth = getAuth(app);
 
-        // ✅ Configuração Hierarquia (Ponto 1)
-        const PROGRAMMER_EMAIL = "professoragiselle.edu2@gmail.com";
-        const ADMIN_EMAILS = [PROGRAMMER_EMAIL, "administrador@gvconecta.com.br"]; // Lista admins
+        window.GvFirebase = { db, collection, addDoc, getDocs, query, orderBy, serverTimestamp };
 
-        // ✅ VARIÁVEIS DE ESTADO GLOBAL (Módulo)
-        let currentUser = null;
-        let currentView = 'home';
-        let pendingArticle = null; // Paywall pending
+        // Inicializa a aplicação após o Firebase carregar
+        window.initApp();
+    </script>
 
+    <script>
         // ==========================================
-        // MOTOR DE AUTENTICAÇÃO REAL (Ponto 1)
+        // 1. SISTEMA DE RASTREIO E SESSÃO (Analytics)
         // ==========================================
-        onAuthStateChanged(auth, user => {
-            currentUser = user;
-            const menuLogado = document.getElementById('menu-conta-logado');
+        let visitorData = JSON.parse(localStorage.getItem('gv_visitor')) || null;
+        let routeEntryTime = Date.now();
+        let currentRoute = 'home';
+        let maxScrollDepth = 0;
+
+        // Gera ID único no primeiro acesso
+        if (!visitorData) {
+            visitorData = {
+                id: 'vis_' + Date.now() + Math.random().toString(36).substr(2, 5),
+                email: null,
+                whatsapp: null,
+                nome: null,
+                artigosLidos: 0,
+                isPremium: false, // Só vira true se preencher o form gestor
+                firstVisit: Date.now()
+            };
+            salvarSessao();
+            registrarEvento('new_visitor', { userAgent: navigator.userAgent });
+        } else {
+            registrarEvento('returning_visitor', {});
+        }
+
+        function salvarSessao() {
+            localStorage.setItem('gv_visitor', JSON.stringify(visitorData));
+        }
+
+        function registrarEvento(tipo, detalhesExtra = {}) {
+            if(!window.GvFirebase) return; // Aguarda carregamento
+            const evento = {
+                visitor_id: visitorData.id,
+                email: visitorData.email || 'anonimo',
+                tipo: tipo,
+                rota_atual: currentRoute,
+                data_hora: new Date().toISOString(),
+                timestamp: window.GvFirebase.serverTimestamp(),
+                ...detalhesExtra
+            };
             
-            if (user) {
-                menuLogado.classList.remove('hidden');
-                document.getElementById('header-edicao').innerText = isProgrammer() ? "PROG" : "Ed. 01";
-            } else {
-                menuLogado.classList.add('hidden');
-                document.getElementById('header-edicao').innerText = "Ed. 01";
+            // Grava silenciosamente
+            window.GvFirebase.addDoc(window.GvFirebase.collection(window.GvFirebase.db, "revista_tracking"), evento).catch(e => console.error("Tracking erro", e));
+        }
+
+        // Rastreio de tempo e scroll na saída da página
+        function fecharCicloPagina() {
+            const timeSpentSeconds = Math.round((Date.now() - routeEntryTime) / 1000);
+            if(timeSpentSeconds > 2) { // Só grava se ficou mais de 2s
+                registrarEvento('page_view', { 
+                    tempo_segundos: timeSpentSeconds,
+                    scroll_max_percentual: maxScrollDepth
+                });
             }
-            renderView(currentView); // Re-renderiza com contexto logado
+            routeEntryTime = Date.now();
+            maxScrollDepth = 0;
+        }
+
+        window.addEventListener('scroll', () => {
+            const h = document.documentElement;
+            const scrollPercent = (h.scrollTop + h.clientHeight) / h.scrollHeight * 100;
+            if(scrollPercent > maxScrollDepth) maxScrollDepth = Math.round(scrollPercent);
+            
+            const btnUp = document.getElementById('btn-up');
+            if(btnUp) window.scrollY > 300 ? btnUp.classList.remove('translate-y-10', 'opacity-0') : btnUp.classList.add('translate-y-10', 'opacity-0');
         });
 
-        // ✅ UTILITÁRIOS HIERARQUIA (Ponto 1)
-        const isProgrammer = () => currentUser && currentUser.email === PROGRAMMER_EMAIL;
-        const isAdmin = () => currentUser && ADMIN_EMAILS.includes(currentUser.email);
+        // ==========================================
+        // 2. BUSCA DE CONTEÚDO (CMS Dinâmico)
+        // ==========================================
+        let bancoDeArtigosCache = null;
 
-        // 🔥 FUNÇÕES FIREBASE (Expostas ao Global window)
-        window.executarLogin = () => {
-            const email = document.getElementById('auth-email').value;
-            const pass = document.getElementById('auth-pass').value;
-            const errorBlock = document.getElementById('auth-error');
-            errorBlock.classList.add('hidden');
+        const CAT_MAP = {
+            varejo: { nome: 'Pet Shop', color: 'text-blue-700', bg: 'bg-blue-50' },
+            clinica: { nome: 'Clínica Vet', color: 'text-teal-700', bg: 'bg-teal-50' },
+            estetica: { nome: 'Banho & Tosa', color: 'text-pink-700', bg: 'bg-pink-50' },
+            comportamento: { nome: 'Adestramento', color: 'text-orange-700', bg: 'bg-orange-50' },
+            hotelzinho: { nome: 'Hotelzinho', color: 'text-indigo-700', bg: 'bg-indigo-50' },
+            dinamico: { nome: 'Destaque', color: 'text-gray-700', bg: 'bg-gray-50' } 
+        };
 
-            signInWithEmailAndPassword(auth, email, pass)
-                .then(() => { window.fecharAuth(); })
-                .catch(err => { errorBlock.innerText = "Login falhou. Verifique e-mail corporativo e senha."; errorBlock.classList.remove('hidden'); });
+        async function carregarArtigos() {
+            if (bancoDeArtigosCache) return bancoDeArtigosCache;
+            
+            try {
+                const { db, collection, getDocs, query, orderBy } = window.GvFirebase;
+                const q = query(collection(db, "revista_artigos"), orderBy("dataPublicacao", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                const agrupamento = {};
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const artigo = { id: doc.id, ...data };
+                    const catId = data.categoriaId || 'dinamico';
+                    if (!agrupamento[catId]) agrupamento[catId] = [];
+                    agrupamento[catId].push(artigo);
+                });
+
+                bancoDeArtigosCache = agrupamento;
+                return agrupamento;
+            } catch (error) {
+                console.error("Erro ao carregar do CMS:", error);
+                return {}; // Retorna vazio se falhar, para não quebrar a UI inteira
+            }
         }
 
-        window.executarLogout = () => {
-            signOut(auth).then(() => {
-                alert("Você saiu do Painel.");
-                window.renderView('home');
+        // ==========================================
+        // 3. REGRAS DE NEGÓCIO E PAYWALLS
+        // ==========================================
+        let pendingArticleParams = null; // Guarda o artigo que o usuário tentou abrir
+
+        function checkAccess(artigo) {
+            // Regra 2: Premium Gestão
+            if (artigo.premium && !visitorData.isPremium) {
+                return 'modal-gestor';
+            }
+            
+            // Regra 1: Limite de Leitura Grátis Anônima
+            if (visitorData.artigosLidos >= 3 && !visitorData.email) {
+                return 'modal-leitor';
+            }
+
+            return 'livre';
+        }
+
+        // Interação com o artigo
+        window.tentarAbrirArtigo = (catId, artId) => {
+            const categoriaArtigos = bancoDeArtigosCache[catId];
+            if(!categoriaArtigos) return;
+            const artigo = categoriaArtigos.find(a => a.id === artId);
+            if(!artigo) return;
+
+            registrarEvento('click_artigo', { artigo_id: artId, titulo: artigo.titulo, premium: artigo.premium });
+
+            const status = checkAccess(artigo);
+
+            if (status === 'livre') {
+                visitorData.artigosLidos++;
+                salvarSessao();
+                renderView('artigo', artigo);
+            } else {
+                pendingArticleParams = artigo;
+                document.getElementById(status).classList.remove('hidden');
+                document.getElementById(status).classList.add('flex');
+                document.body.style.overflow = 'hidden';
+                registrarEvento('paywall_exibido', { tipo: status, artigo_id: artId });
+                
+                // Pré-preenche se já tiver email salvo
+                if(visitorData.email && status === 'modal-gestor') {
+                    document.getElementById('gestor-email').value = visitorData.email;
+                }
+            }
+        }
+
+        window.fecharModais = () => {
+            document.getElementById('modal-leitor').classList.add('hidden');
+            document.getElementById('modal-leitor').classList.remove('flex');
+            document.getElementById('modal-gestor').classList.add('hidden');
+            document.getElementById('modal-gestor').classList.remove('flex');
+            document.body.style.overflow = '';
+            pendingArticleParams = null;
+        }
+
+        // Tratamento do Form Leitor Simples
+        document.getElementById('form-leitor').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('leitor-email').value.trim();
+            
+            visitorData.email = email;
+            salvarSessao();
+            
+            // Salva lead no banco
+            window.GvFirebase.addDoc(window.GvFirebase.collection(window.GvFirebase.db, "leads_revista"), {
+                visitor_id: visitorData.id,
+                email: email,
+                tipo: "Leitor Comum",
+                dataCaptura: window.GvFirebase.serverTimestamp()
             });
-        }
 
-        // ==========================================
-        // MOTOR DE NAVEGAÇÃO & PAINEL (Ponto 1)
-        // ==========================================
-        const TreatingCliqueArtigoMod = (catId, artId) => {
-            // Lógica PWA Paywall do Turn anterior, agora conectada
-            pendingArticle = { catId, artId };
-            let lidos = parseInt(localStorage.getItem('gv_artigos_lidos') || 0);
+            registrarEvento('lead_capturado', { tipo: 'leitor' });
+            window.fecharModais();
             
-            if (!currentUser && lidos >= 2) {
-                // Abre stub de paywall (nao implementado login de usuario comum ainda)
-                alert("Acesso Premium bloqueado. Cadastre-se gratuitamente (Login de Usuário Comum será no Módulo 2).");
-                return;
+            // Abre o artigo pendente
+            if(pendingArticleParams) {
+                visitorData.artigosLidos++; salvarSessao();
+                renderView('artigo', pendingArticleParams);
             }
-            if(!currentUser) localStorage.setItem('gv_artigos_lidos', lidos + 1);
+        });
 
-            renderView('artigo', { catId, artId });
-            pendingArticle = null;
-        }
-        window.tratarCliqueArtigoGlobal = TreatingCliqueArtigoMod; // Expondo
-
-        window.goToCategory = (secId) => {
-            if(currentView !== 'home') renderView('home');
-            setTimeout(() => { document.getElementById(secId).scrollIntoView({ behavior: 'smooth' }); }, 10);
-        }
-
-        window.handleLogoClick = () => {
-            if(currentView !== 'home' && currentView !== 'admin') renderView('home');
-            
-            logoClicks++;
-            clearTimeout(logoTimer);
-            logoTimer = setTimeout(() => { logoClicks = 0; }, 1500); // 1.5s 
-
-            if (logoClicks >= 5) {
-                logoClicks = 0;
-                // Hierarquia: Apenas Admin/Prog acessam (Ponto 1)
-                if(isAdmin()) { renderView('admin'); } 
-                else { window.abrirAuth(); }
+        // Tratamento do Form Gestor Premium
+        const gestorInteressesArray = [];
+        window.toggleTag = (btn, tema) => {
+            if(gestorInteressesArray.includes(tema)) {
+                gestorInteressesArray.splice(gestorInteressesArray.indexOf(tema), 1);
+                btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+            } else {
+                gestorInteressesArray.push(tema);
+                btn.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
             }
         }
 
+        document.getElementById('form-gestor').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const nome = document.getElementById('gestor-nome').value.trim();
+            const email = document.getElementById('gestor-email').value.trim();
+            const whatsapp = document.getElementById('gestor-whatsapp').value.trim();
+
+            if(gestorInteressesArray.length === 0) { alert("Selecione pelo menos um interesse."); return; }
+
+            // Atualiza Sessão Local
+            visitorData.email = email;
+            visitorData.nome = nome;
+            visitorData.whatsapp = whatsapp;
+            visitorData.isPremium = true; // Destravou premium localmente
+            salvarSessao();
+            
+            // Salva lead Gestor Qualificado no banco
+            window.GvFirebase.addDoc(window.GvFirebase.collection(window.GvFirebase.db, "leads_revista"), {
+                visitor_id: visitorData.id,
+                email: email,
+                nome: nome,
+                whatsapp: whatsapp,
+                interesses: gestorInteressesArray,
+                tipo: "Gestor Premium",
+                dataCaptura: window.GvFirebase.serverTimestamp()
+            });
+
+            registrarEvento('lead_capturado', { tipo: 'gestor_premium' });
+            window.fecharModais();
+            
+            // Abre o artigo pendente
+            if(pendingArticleParams) {
+                renderView('artigo', pendingArticleParams);
+            }
+        });
+
         // ==========================================
-        // RENDERIZAÇÃO VIEWS (Hardcoded Design)
+        // 4. RENDERIZAÇÃO DA UI
         // ==========================================
-        const renderView = (view, param = null) => {
-            currentView = view;
+        
+        window.renderView = async (view, artigoData = null) => {
+            fecharCicloPagina(); // Salva tracking da rota anterior
+            currentRoute = view === 'artigo' ? `artigo_${artigoData.id}` : view;
+            
             const mainContent = document.getElementById('main-content');
             const btnVoltar = document.getElementById('btn-voltar');
             const navCategorias = document.getElementById('nav-categorias');
             
-            mainContent.innerHTML = ''; window.scrollTo(0, 0);
+            window.scrollTo(0, 0);
 
-            if (view === 'home') { btnVoltar.classList.add('hidden'); navCategorias.classList.remove('hidden'); renderHomeFeed(mainContent); } 
-            else if (view === 'artigo') { btnVoltar.classList.remove('hidden'); navCategorias.classList.add('hidden'); renderArtigo(mainContent, param); }
-            else if (view === 'admin') {
-                btnVoltar.classList.remove('hidden'); navCategorias.classList.add('hidden');
-                renderAdminPanel(mainContent);
+            if (view === 'home') { 
+                btnVoltar.classList.add('hidden'); 
+                navCategorias.classList.remove('hidden'); 
+                mainContent.innerHTML = '<div class="loader"></div>';
+                
+                const artigosAgrupados = await carregarArtigos();
+                
+                if (Object.keys(artigosAgrupados).length === 0) {
+                     mainContent.innerHTML = '<div class="p-10 text-center text-gray-500">Sem conteúdo. Crie artigos no Painel CMS.</div>';
+                     return;
+                }
+                
+                renderNav(Object.keys(artigosAgrupados));
+                renderHomeFeed(mainContent, artigosAgrupados); 
+            } 
+            else if (view === 'artigo') { 
+                btnVoltar.classList.remove('hidden'); 
+                navCategorias.classList.add('hidden'); 
+                renderArtigo(mainContent, artigoData); 
             }
         }
-        window.renderView = renderView; // Expondo
 
-        // ✅ View Painel Central (Design Chameleon PWA - Ponto 1)
-        function renderAdminPanel(container) {
-            container.innerHTML = `
-                <div class="fade-in p-5 bg-gray-100 min-h-screen overflow-y-auto">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-3xl font-black tracking-tighter text-gray-950 uppercase">Painel Central</h2>
-                        <span class="text-xs text-gray-400 font-medium">BETA</span>
-                    </div>
-                    
-                    <div class="grid grid-cols-2 gap-4 mb-8">
-                        <div class="bg-white p-4 rounded-xl shadow-md border border-gray-100">
-                            <span class="text-xs text-gray-400 font-bold uppercase block mb-1">Seu Nível</span>
-                            <span class="text-xl font-black text-blue-700">${isProgrammer() ? "Programador" : "Admin"}</span>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl shadow-md border border-gray-100">
-                            <span class="text-xs text-gray-400 font-bold uppercase block mb-1">Edição Atual</span>
-                            <span class="text-xl font-black text-gray-900">01</span>
-                        </div>
-                    </div>
-
-                    <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100 mb-8">
-                        <div class="flex justify-between items-center mb-5">
-                            <h4 class="font-bold text-gray-900 mb-2 flex items-center gap-2"><i class="fa-solid fa-users-gear text-blue-500"></i> Gestão de Acesso</h4>
-                            <button onclick="alert('Funcionalidade de cadastro em breve (Módulo CRM/Auth avançado).')" class="text-xs text-blue-700 font-bold flex items-center gap-1.5"><i class="fa-solid fa-user-plus text-[10px]"></i> Adicionar</button>
-                        </div>
-                        
-                        <div class="space-y-3">
-                            <div class="p-3 bg-gray-50 border rounded-lg flex items-center justify-between gap-3 overflow-hidden text-sm">
-                                <div><span class="font-bold text-gray-950">Giselle Professor</span> <p class="text-xs text-gray-500 truncate">${window.GvFirebase.PROGRAMMER_EMAIL}</p></div>
-                                <span class="bg-red-100 text-red-700 text-[9px] font-black px-2.5 py-1 rounded-full uppercase">Programador</span>
-                            </div>
-                            <div class="p-3 bg-white border rounded-lg flex items-center justify-between gap-3 overflow-hidden text-sm">
-                                <div><span class="font-medium text-gray-950">Adm GV</span> <p class="text-xs text-gray-500 truncate">administrador@gvconecta.com.br</p></div>
-                                <span class="bg-blue-100 text-blue-700 text-[9px] font-black px-2.5 py-1 rounded-full uppercase">Admin</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100 mb-8">
-                        <h4 class="font-bold text-gray-900 mb-2">Ações Rápidas</h4>
-                        <p class="text-sm text-gray-600 mb-4 leading-relaxed">Módulos de autoria e WhatsApp (Módulos 2 e 3) estarão disponíveis aqui.</p>
-                        <button disabled class="w-full bg-gray-100 text-gray-400 font-bold py-3.5 rounded-xl mb-3">Gerar Nova Edição (Módulo 2)</button>
-                        <button disabled class="w-full bg-gray-100 text-gray-400 font-bold py-3.5 rounded-xl">Disparo WhatsApp (Módulo 3)</button>
-                    </div>
-
-                     <footer class="mt-10 bg-gray-900 text-white p-6 text-center">
-                        <div class="text-[10px] text-gray-500 uppercase tracking-[0.3em] font-bold mb-2">Produzido por</div>
-                        <h3 class="text-xl font-black tracking-tighter text-blue-400">GV CONECTA</h3>
-                    </div>
-                </div>
-            `;
+        function renderNav(categoriasExistentes) {
+            const nav = document.getElementById('nav-categorias');
+            nav.innerHTML = '';
+            categoriasExistentes.forEach(catId => {
+                const meta = CAT_MAP[catId] || CAT_MAP.dinamico;
+                nav.innerHTML += `<span onclick="window.goToCategory('${catId}')" class="cursor-pointer hover:text-blue-600 transition">${meta.nome}</span>`;
+            });
         }
 
-    </script>
+        function renderHomeFeed(container, dadosAgrupados) {
+            let html = `<div class="fade-in"><div class="px-5 pt-6 pb-4 bg-white border-b border-gray-100"><p class="text-sm text-gray-600 leading-relaxed">Estratégias avançadas de gestão e marketing para decisores de negócios Pet.</p></div>`;
 
-    <script>
-        // Variáveis UI
-        let logoClicks = 0;
-        let logoTimer;
-
-        // Banco de Dados Estático (Ed. 01)
-        const bancoDeArtigos = {
-            varejo: { id: 'varejo', nome: 'Pet Shop', tagColor: 'text-blue-700', bgColor: 'bg-blue-50', artigos: [
-                { id: 'v1', premium: false, titulo: '5 técnicas de vitrinismo para aumentar a venda de brinquedos', img: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&q=80', resumo: 'Como organizar as prateleiras de forma que o cliente compre por impulso.' },
-                { id: 'v2', premium: false, titulo: 'O roteiro de atendimento perfeito no balcão', img: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=600&q=80', resumo: 'O que o seu atendente deve dizer para fechar vendas mais rápidas.' },
-                { id: 'v3', premium: true, categoriaNome: 'Gestão', titulo: 'Gestão de Estoque: A matemática oculta que devora o seu caixa', img: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&q=80', resumo: 'Planilha prática de giro de estoque para não imobilizar capital.' }
-            ]},
-            clinica: { id: 'clinica', nome: 'Clínica Veterinária', tagColor: 'text-teal-700', bgColor: 'bg-teal-50', artigos: [
-                { id: 'c1', premium: false, titulo: 'Técnicas de contenção cat-friendly na triagem', img: 'https://images.unsplash.com/photo-1628009368231-7bb7cb192fb6?w=600&q=80', resumo: 'Como evitar o estresse dos felinos na sala de espera.' },
-                { id: 'c2', premium: true, categoriaNome: 'Finanças', titulo: 'Calculando a hora clínica: Custo Fixo vs Hora Útil', img: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=600&q=80', resumo: 'Descubra qual é o custo real para manter o consultório de portas abertas.' }
-            ]}
-        };
-
-        // RENDERIZADORES UI HARDCODED (Aprovado Chameleon)
-
-        function renderHomeFeed(container) {
-            let html = `
-                <div class="fade-in">
-                    <div class="px-5 pt-6 pb-4 bg-white border-b border-gray-100">
-                        <p class="text-sm text-gray-600 leading-relaxed">
-                            Conteúdo prático para a linha de frente (<strong class="text-gray-900">funcionários</strong>) e estratégias avançadas de gestão exclusivas para <strong class="text-gray-900">decisores de negócios Pet</strong>.
-                        </p>
-                    </div>
-            `;
-
-            for (const key in bancoDeArtigos) {
-                const categoria = bancoDeArtigos[key];
+            let secCount = 0;
+            for (const catId in dadosAgrupados) {
+                secCount++;
+                const meta = CAT_MAP[catId] || CAT_MAP.dinamico;
+                const artigos = dadosAgrupados[catId];
+                
                 html += `
-                    <section id="sec-${categoria.id}" class="${categoria.bgColor} py-8 px-4 border-t border-gray-200">
-                        <h3 class="${categoria.tagColor} text-sm font-black uppercase tracking-[0.2em] mb-5 border-l-4 border-current pl-3">${categoria.nome}</h3>
+                    <section id="sec-${catId}" class="${meta.bg} py-8 px-4 border-t border-gray-200">
+                        <h3 class="${meta.color} text-sm font-black uppercase tracking-[0.2em] mb-5 border-l-4 border-current pl-3">${meta.nome}</h3>
                         <div class="flex flex-col gap-6">
                 `;
 
-                categoria.artigos.forEach((artigo, idx) => {
-                    const badge = artigo.premium ? `<span class="text-[9px] text-yellow-700 font-bold bg-yellow-200 px-2 py-0.5 rounded ml-2 inline-flex items-center gap-1 shrink-0"><i class="fa-solid fa-lock text-[8px]"></i> ${artigo.categoriaNome || 'Premium Gestão'}</span>` : '';
+                artigos.forEach((artigo, idx) => {
+                    // Badge premium
+                    const badge = artigo.premium ? `<span class="text-[9px] text-yellow-700 font-bold bg-yellow-200 px-2 py-0.5 rounded ml-2 inline-flex items-center gap-1 shrink-0"><i class="fa-solid fa-lock text-[8px]"></i> Premium Gestão</span>` : '';
                     
-                    if (idx === 0) { // Destaque da seção
+                    if (idx === 0) { // Destaque
                         html += `
-                            <div class="cursor-pointer group" onclick="window.tratarCliqueArtigoGlobal('${categoria.id}', '${artigo.id}')">
-                                <img src="${artigo.img}" class="w-full h-48 object-cover rounded shadow-sm mb-3 group-hover:opacity-90 transition">
-                                <h4 class="font-bold text-lg text-gray-900 group-hover:text-blue-700 flex items-center">${artigo.titulo} ${badge}</h4>
+                            <div class="cursor-pointer group" onclick="window.tentarAbrirArtigo('${catId}', '${artigo.id}')">
+                                <img src="${artigo.img || 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&q=80'}" class="w-full h-48 object-cover rounded shadow-sm mb-3 group-hover:opacity-90 transition">
+                                <h4 class="font-bold text-lg text-gray-900 group-hover:text-blue-700 flex flex-wrap items-center gap-1">${artigo.titulo} ${badge}</h4>
                                 <p class="text-gray-500 text-sm mt-1 line-clamp-2">${artigo.resumo}</p>
                             </div>
                         `;
                     } else { // Lista
                         html += `
-                            <div class="flex items-start gap-3 cursor-pointer group border-t border-gray-100 pt-4" onclick="window.tratarCliqueArtigoGlobal('${categoria.id}', '${artigo.id}')">
+                            <div class="flex items-start gap-3 cursor-pointer group border-t border-gray-100 pt-4" onclick="window.tentarAbrirArtigo('${catId}', '${artigo.id}')">
                                 <div class="flex-1 pt-1"><h4 class="font-bold text-sm text-gray-800 leading-tight group-hover:text-blue-700 inline">${artigo.titulo}</h4> ${badge}</div>
-                                <img src="${artigo.img}" class="w-16 h-12 object-cover rounded shrink-0">
+                                <img src="${artigo.img || 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&q=80'}" class="w-16 h-12 object-cover rounded shrink-0">
                             </div>
                         `;
                     }
                 });
                 html += `</div></section>`;
+
+                // Native Banner Promo após a 1a seção
+                if(secCount === 1) {
+                    html += `
+                        <div class="my-6 px-4">
+                            <div class="rounded-lg bg-blue-700 text-white p-5 flex items-center gap-4 cursor-pointer shadow-lg hover:bg-blue-800" onclick="window.open('https://petlojas.vercel.app/', '_blank'); window.registrarEvento('clique_ad_petlojas');">
+                                <i class="fa-solid fa-store text-3xl opacity-60"></i>
+                                <div>
+                                    <h5 class="font-bold text-lg leading-tight">O CRM que a sua PetLojas merece.</h5>
+                                    <p class="text-xs text-blue-100">Solução completa para lojistas locais.</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
             }
             container.innerHTML = html + `</div>`;
         }
 
-        function renderArtigo(container, param) {
-            const categoria = bancoDeArtigos[param.catId];
-            const artigo = categoria.artigos.find(a => a.id === param.artId);
+        function renderArtigo(container, artigo) {
+            const meta = CAT_MAP[artigo.categoriaId] || CAT_MAP.dinamico;
             
             container.innerHTML = `
                 <div class="fade-in bg-white pb-10">
-                    <img src="${artigo.img}" class="w-full h-64 object-cover shadow-inner">
+                    <img src="${artigo.img || 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&q=80'}" class="w-full h-64 object-cover shadow-inner">
                     
                     <div class="px-5 py-6">
                         <div class="flex items-center justify-between mb-4">
-                            <span class="${categoria.tagColor} ${categoria.bgColor} text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">${categoria.nome}</span>
-                            ${artigo.premium ? `<span class="text-xs text-yellow-700 font-bold flex items-center gap-1.5"><i class="fa-solid fa-lock text-[10px]"></i> ${artigo.categoriaNome || 'Premium Gestão'}</span>` : ''}
+                            <span class="${meta.color} ${meta.bg} text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">${meta.nome}</span>
+                            ${artigo.premium ? `<span class="text-xs text-yellow-700 font-bold flex items-center gap-1.5"><i class="fa-solid fa-lock text-[10px]"></i> Premium Gestão</span>` : ''}
                         </div>
                         
                         <h1 class="text-3xl font-black text-gray-950 leading-tight tracking-tighter mb-4">${artigo.titulo}</h1>
                         <p class="text-gray-500 italic mb-6 border-l-2 border-gray-200 pl-4">${artigo.resumo}</p>
                         
-                        <div class="mt-8 mb-6 border-y border-gray-100 py-3 flex items-center justify-between gap-3">
-                            <span class="text-xs text-gray-400 font-medium">Compartilhar Artigo:</span>
-                            <button onclick="window.copiarLinkWhatsApp('${artigo.id}', '${artigo.titulo.replace(/'/g, "\\'")}')" class="bg-green-600 text-white text-xs font-bold px-4 py-2 rounded-full flex items-center gap-2 hover:bg-green-700 active:scale-95 transition">
-                                <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp
-                            </button>
-                        </div>
-
-                        <div class="prose prose-sm prose-slate max-w-none text-gray-800 leading-relaxed space-y-4 font-serif pt-4">
-                            <p class="text-lg font-bold">Resumo Estratégico:</p>
-                            <p>${artigo.resumo}</p>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                        <div class="prose prose-sm prose-slate max-w-none text-gray-800 leading-relaxed space-y-4">
+                            ${artigo.conteudo}
                         </div>
                     </div>
-                    
-                     <footer class="mt-10 bg-gray-900 text-white p-6 text-center">
-                        <div class="text-[10px] text-gray-500 uppercase tracking-[0.3em] font-bold mb-2">Produzido por</div>
-                        <h3 class="text-xl font-black tracking-tighter text-blue-400">GV CONECTA</h3>
-                        <p class="text-[9px] text-gray-400 mt-1 uppercase tracking-widest">Marketing para Negócios Locais</p>
-                    </footer>
                 </div>
             `;
         }
-        
-        // UTILITÁRIOS UI (Classic)
-        function toggleMenu(forceClose) {
+
+        // ==========================================
+        // 5. UTILS UI
+        // ==========================================
+        window.goToCategory = (catId) => {
+            const sec = document.getElementById(`sec-${catId}`);
+            if(sec) sec.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        window.toggleMenu = () => {
             const menu = document.getElementById('side-menu');
             const panel = document.getElementById('side-menu-panel');
-            const show = forceClose === false ? false : menu.classList.contains('hidden');
-            if (show) {
+            if (menu.classList.contains('hidden')) {
                 menu.classList.remove('hidden');
                 setTimeout(() => { menu.classList.remove('opacity-0'); panel.classList.remove('translate-x-full'); }, 10);
             } else {
@@ -403,32 +546,12 @@
                 setTimeout(() => menu.classList.add('hidden'), 300);
             }
         }
-        function fecharMenuClickFora(event) { if(event.target.id === 'side-menu') toggleMenu(false); }
+        window.fecharMenuClickFora = (event) => { if(event.target.id === 'side-menu') window.toggleMenu(); }
 
-        function copiarLinkWhatsApp(artId, titulo) {
-            const shareUrl = window.location.origin + window.location.pathname + '?artigo_id=' + artId;
-            const texto = encodeURIComponent(`*O Código Pet:* _${titulo}_\nLeia completo aqui: ${shareUrl}`);
-            window.open(`https://wa.me/?text=${texto}`, '_blank');
-        }
-
-        function abrirAuth() {
-            document.getElementById('auth-modal').classList.remove('hidden');
-            document.getElementById('auth-modal').classList.add('flex');
-            document.body.style.overflow = 'hidden'; 
-        }
-        function fecharAuth() {
-            document.getElementById('auth-modal').classList.add('hidden');
-            document.getElementById('auth-modal').classList.remove('flex');
-            document.body.style.overflow = '';
-            document.getElementById('auth-error').classList.add('hidden');
-        }
-        window.fecharAuth = fecharAuth; window.abrirAuth = abrirAuth; // Expondo
-
-        // Scroll UP
-        window.addEventListener('scroll', () => {
-            const btnUp = document.getElementById('btn-up');
-            if(btnUp) window.scrollY > 300 ? btnUp.classList.remove('translate-y-10', 'opacity-0') : btnUp.classList.add('translate-y-10', 'opacity-0');
-        });
+        // Ponto de entrada (chamado pelo módulo Firebase lá em cima)
+        window.initApp = () => {
+            renderView('home');
+        };
 
     </script>
 </body>
