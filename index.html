@@ -29,8 +29,7 @@
         .header-line { border-top: 4px solid #ef4444; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        /* Estilos do formulário dinâmico */
+        .blur-content { filter: blur(6px); user-select: none; pointer-events: none; }
         .tf-option { @apply w-full bg-gray-50 border-2 border-gray-200 text-gray-800 font-bold text-left p-4 rounded-xl mb-3 hover:border-blue-500 hover:bg-blue-50 active:scale-95 transition-all; }
     </style>
 </head>
@@ -89,7 +88,6 @@
             </div>
             
             <div class="flex-1 overflow-y-auto p-6 flex flex-col justify-center relative">
-                
                 <div id="step-1" class="tf-step slide-up w-full">
                     <span class="text-blue-600 font-bold mb-2 block">1 de 3</span>
                     <h2 class="text-2xl font-black text-gray-900 mb-6 leading-tight">Para personalizar a sua leitura, qual é a sua função no negócio?</h2>
@@ -121,7 +119,6 @@
                     </button>
                     <p class="text-center text-[10px] text-gray-400 mt-4"><i class="fa-solid fa-lock"></i> Seus dados estão seguros e não enviamos spam.</p>
                 </div>
-
             </div>
         </div>
     </div>
@@ -130,57 +127,46 @@
         window.registrarEvento = function(tipo, detalhes) {};
         window.qualificarLead = async function(dados) {};
 
-        // Variáveis de Estado do Formulário
         let tfData = { cargo: '', desafio: '', nome: '', whatsapp: '' };
         let pendingArticle = null;
 
         const bancoDeArtigos = {
             varejo: { id: 'varejo', nome: 'Pet Shop', tagColor: 'text-blue-700', bgColor: 'bg-blue-50', artigos: [
-                // 3 ABERTOS (Gerais/Operacionais)
                 { id: 'v1', premium: false, titulo: '5 técnicas de vitrinismo para aumentar a venda de brinquedos', img: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&q=80', resumo: 'Como organizar as prateleiras de forma que o cliente compre por impulso.' },
                 { id: 'v2', premium: false, titulo: 'O roteiro de atendimento perfeito no balcão', img: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=600&q=80', resumo: 'O que o seu atendente deve dizer para fechar vendas mais rápidas.' },
                 { id: 'v3', premium: false, titulo: 'Como identificar produtos vencidos mais rápido', img: 'https://images.unsplash.com/photo-1553688738-a278b9f063e0?w=600&q=80', resumo: 'Um método visual simples para evitar prejuízos no estoque.' },
-                // 3 PREMIUM (Gestão)
                 { id: 'v4', premium: true, titulo: 'Gestão de Estoque: A matemática oculta que devora o seu caixa', img: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&q=80', resumo: 'Planilha prática de giro de estoque para não imobilizar capital.' },
                 { id: 'v5', premium: true, titulo: 'Como precificar Rações Premium e manter a margem', img: 'https://images.unsplash.com/photo-1629905925292-3e2849b2b528?w=600&q=80', resumo: 'Estratégia de markup vs margem de contribuição.' },
                 { id: 'v6', premium: true, titulo: 'Funil de Vendas no WhatsApp para Donos de Pet Shop', img: 'https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=600&q=80', resumo: 'Automação de mensagens para vender acessórios sem esforço.' }
             ]},
             clinica: { id: 'clinica', nome: 'Clínica Veterinária', tagColor: 'text-teal-700', bgColor: 'bg-teal-50', artigos: [
-                // 3 ABERTOS
                 { id: 'c1', premium: false, titulo: 'Técnicas de contenção cat-friendly na triagem', img: 'https://images.unsplash.com/photo-1628009368231-7bb7cb192fb6?w=600&q=80', resumo: 'Como evitar o estresse dos felinos na sala de espera.' },
                 { id: 'c2', premium: false, titulo: 'Protocolo de assepsia rápida de consultórios', img: 'https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=600&q=80', resumo: 'O checklist de limpeza entre atendimentos.' },
                 { id: 'c3', premium: false, titulo: 'Como comunicar o diagnóstico preliminar ao tutor', img: 'https://images.unsplash.com/photo-1584820927498-cafe6c1c953a?w=600&q=80', resumo: 'Empatia e clareza na recepção clínica.' },
-                // 3 PREMIUM
                 { id: 'c4', premium: true, titulo: 'Derrubando o "No-Show": Gestão de Agendamentos', img: 'https://images.unsplash.com/photo-1551076805-e1869043e560?w=600&q=80', resumo: 'O fluxo de mensagens que reduz as faltas em 80%.' },
                 { id: 'c5', premium: true, titulo: 'Calculando a hora clínica: Custo Fixo vs Hora Útil', img: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=600&q=80', resumo: 'Descubra qual é o custo real para manter o consultório de portas abertas.' },
                 { id: 'c6', premium: true, titulo: 'Planos de Saúde Preventiva: Receita Recorrente', img: 'https://images.unsplash.com/photo-1606425271394-c3ca9aa1fc06?w=600&q=80', resumo: 'Como criar e vender pacotes anuais de vacina e check-up.' }
             ]},
             estetica: { id: 'estetica', nome: 'Banho & Tosa', tagColor: 'text-pink-700', bgColor: 'bg-pink-50', artigos: [
-                // 3 ABERTOS
                 { id: 'e1', premium: false, titulo: 'Secagem rápida: Regulagem de soprador para cães medrosos', img: 'https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?w=600&q=80', resumo: 'Otimização do tempo de secagem sem gerar trauma.' },
-                { id: 'e2', premium: false, titulo: 'Dicas de enquadramento para fotos do \"Antes e Depois\"', img: 'https://images.unsplash.com/photo-1583337260546-28b6bf66d004?w=600&q=80', resumo: 'Como o banhista pode gerar o conteúdo para as redes sociais.' },
+                { id: 'e2', premium: false, titulo: 'Dicas de enquadramento para fotos do "Antes e Depois"', img: 'https://images.unsplash.com/photo-1583337260546-28b6bf66d004?w=600&q=80', resumo: 'Como o banhista pode gerar o conteúdo para as redes sociais.' },
                 { id: 'e3', premium: false, titulo: 'Lidando com pelagens emboladas sem machucar', img: 'https://images.unsplash.com/photo-1527526029430-319f10814151?w=600&q=80', resumo: 'Técnicas de desembaraço e uso de fluidos.' },
-                // 3 PREMIUM
                 { id: 'e4', premium: true, titulo: 'A Matemática das Assinaturas de Banho', img: 'https://images.unsplash.com/photo-1556740738-b6a63e27c4df?w=600&q=80', resumo: 'Como criar planos mensais para pagar os custos fixos no dia 1º.' },
                 { id: 'e5', premium: true, titulo: 'Comissionamento Inteligente de Tosadores', img: 'https://images.unsplash.com/photo-1573164713988-8665fc963095?w=600&q=80', resumo: 'Formatos de remuneração que evitam passivos trabalhistas.' },
                 { id: 'e6', premium: true, titulo: 'Técnicas de Upsell: Como vender hidratação no checkout', img: 'https://images.unsplash.com/photo-1560421683-6856ea585c78?w=600&q=80', resumo: 'Aumente o ticket médio treinando a recepção.' }
             ]},
             comportamento: { id: 'comportamento', nome: 'Adestramento', tagColor: 'text-orange-700', bgColor: 'bg-orange-50', artigos: [
-                // 3 ABERTOS
                 { id: 'a1', premium: false, titulo: 'O timing do reforço positivo', img: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80', resumo: 'A janela de segundos necessária para o cão associar o prêmio.' },
                 { id: 'a2', premium: false, titulo: 'Linguagem corporal do adestrador', img: 'https://images.unsplash.com/photo-1537151608804-ea6f1103d82f?w=600&q=80', resumo: 'Como a sua postura influencia o respeito do animal.' },
                 { id: 'a3', premium: false, titulo: 'Equipamentos seguros vs Ferramentas punitivas', img: 'https://images.unsplash.com/photo-1554692911-37d363b2f8a4?w=600&q=80', resumo: 'Guia básico sobre coleiras e guias.' },
-                // 3 PREMIUM
                 { id: 'a4', premium: true, titulo: 'Vendendo Pacotes High-Ticket de Adestramento', img: 'https://images.unsplash.com/photo-1556740758-90de374c12ad?w=600&q=80', resumo: 'Como fechar consultorias anuais ao invés de aulas avulsas.' },
                 { id: 'a5', premium: true, titulo: 'Estruturação de Parcerias B2B com Clínicas', img: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80', resumo: 'Transforme veterinários na sua principal fonte de indicação.' },
                 { id: 'a6', premium: true, titulo: 'Escalabilidade: Aulas em grupo vs EAD', img: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&q=80', resumo: 'Desvinculando o seu ganho financeiro das suas horas de trabalho.' }
             ]},
             hospedagem: { id: 'hospedagem', nome: 'Hotelzinho Pet', tagColor: 'text-indigo-700', bgColor: 'bg-indigo-50', artigos: [
-                // 3 ABERTOS
                 { id: 'h1', premium: false, titulo: 'Enriquecimento Ambiental na Prática', img: 'https://images.unsplash.com/photo-1601758174114-e711c0cbaa69?w=600&q=80', resumo: 'Atividades baratas para manter os cães ocupados.' },
                 { id: 'h2', premium: false, titulo: 'Rotina de higienização de áreas comuns', img: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&q=80', resumo: 'Prevenção de transmissão de doenças em hotéis pet.' },
                 { id: 'h3', premium: false, titulo: 'Sinais de estresse em matilha', img: 'https://images.unsplash.com/photo-1541599540903-216a46ca1dc0?w=600&q=80', resumo: 'Como identificar e separar cães antes que uma briga aconteça.' },
-                // 3 PREMIUM
                 { id: 'h4', premium: true, titulo: 'Precificação Dinâmica: Feriados e Alta Temporada', img: 'https://images.unsplash.com/photo-1556742044-3c52d6e88c62?w=600&q=80', resumo: 'Modelos de negócio para maximizar o lucro em dezembo/janeiro.' },
                 { id: 'h5', premium: true, titulo: 'Transformando Hóspedes de Férias em Daycare Mensal', img: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=600&q=80', resumo: 'A estratégia comercial para bater metas na baixa temporada.' },
                 { id: 'h6', premium: true, titulo: 'Triagem Comportamental Digital', img: 'https://images.unsplash.com/photo-1517048676732-d65af93c5f22?w=600&q=80', resumo: 'O termo de responsabilidade e formulário que blinda sua empresa de processos.' }
@@ -283,13 +269,10 @@
             }
         }
 
-        // ==========================================
-        // LÓGICA DO TYPEFORM (CAPTURA)
-        // ==========================================
         window.abrirTypeform = function() {
             document.getElementById('typeform-modal').classList.remove('hidden');
             document.getElementById('typeform-modal').classList.add('flex');
-            document.body.style.overflow = 'hidden'; // trava o scroll de fundo
+            document.body.style.overflow = 'hidden'; 
             mostrarPasso(1);
         }
 
@@ -304,11 +287,8 @@
             document.getElementById('step-1').classList.add('hidden');
             document.getElementById('step-2').classList.add('hidden');
             document.getElementById('step-3').classList.add('hidden');
-            
             document.getElementById('step-' + passo).classList.remove('hidden');
-            
-            const progress = (passo / 3) * 100;
-            document.getElementById('tf-progress').style.width = progress + '%';
+            document.getElementById('tf-progress').style.width = ((passo / 3) * 100) + '%';
         }
 
         window.tfNext = function(nextStepNum, chave, valor) {
@@ -325,15 +305,12 @@
                 return;
             }
 
-            // Grava Localmente
             localStorage.setItem('petlojas_lead_qualificado', 'true');
             localStorage.setItem('petlojas_cargo_lead', tfData.cargo);
             localStorage.setItem('petlojas_whatsapp_lead', tfData.whatsapp);
 
-            // Envia para Firebase
             window.qualificarLead(tfData);
 
-            // Libera a interface
             fecharTypeform();
             if (pendingArticle) {
                 const artigo = bancoDeArtigos[pendingArticle.catId].artigos.find(a => a.id === pendingArticle.artigoId);
@@ -343,9 +320,14 @@
         }
 
         function renderArtigo(container, dados) {
-            const { artigo } = dados;
-            container.innerHTML = `
-                <div class="fade-in bg-white min-h-screen pb-10">
+            const { catId, artigo } = dados;
+            const cat = bancoDeArtigos[catId];
+            
+            // Lógica de Retenção: Puxar outros artigos da mesma categoria
+            const sugestoes = cat.artigos.filter(a => a.id !== artigo.id).slice(0, 3);
+            
+            let html = `
+                <div class="fade-in bg-white min-h-screen">
                     <div class="px-5 pt-8 pb-6">
                         ${artigo.premium ? '<span class="bg-yellow-100 text-yellow-700 text-[10px] font-bold px-2 py-1 rounded uppercase mb-3 inline-block tracking-widest border border-yellow-200"><i class="fa-solid fa-crown"></i> Conteúdo Gestor</span>' : ''}
                         <h1 class="text-3xl font-black text-gray-900 leading-tight tracking-tight">${artigo.titulo}</h1>
@@ -356,14 +338,38 @@
                         <br><h3 class="font-bold text-xl text-gray-900 font-sans mt-4">Aplicação Prática</h3>
                         <p>O mercado pet exige profissionalização. Implemente métricas, padronize processos e foque na automação para escalar a sua operação.</p>
                     </div>
+                    
                     <div class="m-5 p-8 rounded-2xl bg-blue-600 text-white text-center shadow-xl shadow-blue-200">
                         <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fa-solid fa-rocket"></i></div>
                         <h4 class="font-black text-xl mb-2">Automatize sua operação!</h4>
                         <p class="text-sm text-blue-100 mb-6">Comece a gerenciar seu fluxo com tecnologia e inteligência.</p>
                         <button onclick="clicouCTA('${artigo.id}')" class="w-full bg-white text-blue-700 font-black py-3 px-8 rounded-full shadow-lg">Falar com Consultor</button>
                     </div>
+
+                    <div class="bg-gray-50 border-t border-gray-200 mt-10 px-5 py-8 pb-20">
+                        <h3 class="font-black text-lg text-gray-900 mb-5 uppercase tracking-tight">Leia também em ${cat.nome}</h3>
+                        <div class="flex flex-col gap-5">
+            `;
+
+            sugestoes.forEach(a => {
+                const badge = a.premium ? `<span class="text-[9px] text-yellow-700 font-bold bg-yellow-200 px-2 py-0.5 rounded ml-2 inline-flex items-center gap-1 shrink-0"><i class="fa-solid fa-lock text-[8px]"></i> Premium</span>` : '';
+                html += `
+                    <div class="flex items-start gap-4 cursor-pointer group" onclick="tratarCliqueArtigo('${catId}', '${a.id}')">
+                        <img src="${a.img}" class="w-24 h-16 object-cover rounded shadow-sm group-hover:opacity-90 shrink-0">
+                        <div class="flex-1">
+                            <h4 class="font-bold text-sm text-gray-800 leading-tight group-hover:text-blue-700 transition inline-block">${a.titulo} ${badge}</h4>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `
+                        </div>
+                    </div>
                 </div>
             `;
+            
+            container.innerHTML = html;
         }
 
         window.clicouCTA = (o) => window.registrarEvento('clicou_cta', { de: o });
