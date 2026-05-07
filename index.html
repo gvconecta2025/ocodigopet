@@ -9,37 +9,29 @@
     <meta name="theme-color" content="#2563eb">
     <link rel="apple-touch-icon" href="/icon-192x192.png">
 
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js').catch(() => {});
-            });
-        }
-    </script>
-
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* Correção de Fontes e Reset Estético */
+        /* Correção de Fontes e Reset Estético - Design Aprovado */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
         body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        /* Animações Suaves */
         .fade-in { animation: fadeIn 0.4s ease-out forwards; }
         .slide-up { animation: slideUp 0.4s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Linha Decorativa Superior (Aprovado) */
         .header-line { border-top: 4px solid #ef4444; }
-        
-        /* Ocultar Scrollbar mantendo funcionalidade */
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* Efeito de desfoque para conteúdo bloqueado (Premium) */
-        .blur-content { filter: blur(6px); user-select: none; pointer-events: none; }
+        /* Efeito de desfoque para conteúdo bloqueado (Paywall/Gestão) */
+        .blur-content { filter: blur(8px); user-select: none; pointer-events: none; }
+        
+        /* Estilo Typeform para formulário Gestão */
+        .tf-input { @apply w-full bg-transparent border-b-2 border-gray-200 text-2xl font-bold p-2 outline-none focus:border-blue-600 transition; }
+        .tf-label { @apply block text-sm font-bold text-gray-400 uppercase tracking-widest mb-2; }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 antialiased overflow-x-hidden">
@@ -50,12 +42,19 @@
                 <h2 class="font-black text-gray-900 text-lg uppercase tracking-tighter">O Código Pet</h2>
                 <button onclick="toggleMenu()" class="text-gray-500 hover:text-red-600 text-2xl p-2"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="p-5 flex-1 overflow-y-auto">
-                <h3 class="font-bold text-gray-400 text-[10px] uppercase tracking-[0.2em] mb-4">Acervo de Edições</h3>
+            <div class="p-5 flex-1 overflow-y-auto space-y-3">
+                <h3 class="font-bold text-gray-400 text-[10px] uppercase tracking-[0.2em] mb-4">Navegação</h3>
+                <button onclick="toggleMenu(); renderView('home')" class="w-full flex items-center gap-3 font-bold text-gray-700 p-3 rounded-lg hover:bg-gray-100"><i class="fa-solid fa-house text-blue-500"></i> Início</button>
+                
+                <div id="menu-conta-logado" class="hidden space-y-3 border-t border-gray-100 pt-3">
+                    <button onclick="toggleMenu(); renderView('conta')" class="w-full flex items-center gap-3 font-bold text-gray-700 p-3 rounded-lg hover:bg-gray-100"><i class="fa-solid fa-user-gear text-blue-500"></i> Minha Conta</button>
+                    <button onclick="executarLogout()" class="w-full flex items-center gap-3 font-bold text-red-600 p-3 rounded-lg hover:bg-red-50"><i class="fa-solid fa-right-from-bracket"></i> Sair</button>
+                </div>
+                
+                <h3 class="font-bold text-gray-400 text-[10px] uppercase tracking-[0.2em] mt-6 mb-4">Acervo de Edições</h3>
                 <ul class="space-y-4">
                     <li><button onclick="toggleMenu(); renderView('home')" class="w-full flex items-center justify-between font-black text-blue-700 border border-blue-200 bg-blue-50 p-3 rounded-lg">Edição 01 <span class="bg-blue-600 text-white text-[9px] px-2 py-1 rounded uppercase">Atual</span></button></li>
                     <li><span class="block w-full text-left font-bold text-gray-400 p-3 rounded-lg">Edição 02 (Em breve)</span></li>
-                    <li><span class="block w-full text-left font-bold text-gray-400 p-3 rounded-lg">Edição 03 (Em breve)</span></li>
                 </ul>
             </div>
             <div class="p-5 border-t border-gray-100">
@@ -73,7 +72,7 @@
                     <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Revista Semanal</span>
                 </div>
                 <div class="flex items-center gap-3">
-                    <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded uppercase">Ed. 01</span>
+                    <span id="header-edicao" class="bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded uppercase">Ed. 01</span>
                     <button onclick="toggleMenu()" class="text-gray-700 focus:outline-none p-1"><i class="fa-solid fa-bars text-2xl"></i></button>
                 </div>
             </div>
@@ -99,42 +98,70 @@
                 <button onclick="fecharAuth()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-900"><i class="fa-solid fa-xmark text-xl"></i></button>
                 
                 <div id="auth-content-login">
-                    <h3 class="text-2xl font-black tracking-tighter text-gray-950 mb-2">Acesse o Conteúdo</h3>
-                    <p class="text-sm text-gray-500 mb-6">Faça login ou cadastre-se gratuitamente para ler artigos Premium e gerenciar sua conta.</p>
-                    
+                    <h3 class="text-2xl font-black tracking-tighter text-gray-950 mb-2">Acesse a Revista</h3>
+                    <p class="text-sm text-gray-500 mb-6">Faça login ou cadastre-se gratuitamente para destravar a leitura completa.</p>
                     <div class="space-y-4">
-                        <input type="email" id="auth-email" placeholder="Seu e-mail" class="w-full p-3 border border-gray-200 rounded-xl outline-none focus:border-blue-500 transition">
+                        <input type="email" id="auth-email" placeholder="Seu e-mail corporativo" class="w-full p-3 border border-gray-200 rounded-xl outline-none focus:border-blue-500 transition">
                         <input type="password" id="auth-pass" placeholder="Sua senha" class="w-full p-3 border border-gray-200 rounded-xl outline-none focus:border-blue-500 transition">
-                        
                         <div id="auth-error" class="text-xs text-red-600 hidden"></div>
-
-                        <button onclick="executarLogin()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition active:scale-95">Entrar</button>
+                        <button onclick="executarLogin()" class="w-full bg-blue-600 text-white font-bold py-3.5 rounded-xl hover:bg-blue-700 transition active:scale-95">Entrar</button>
                         
-                        <div class="relative flex py-2 items-center">
-                            <div class="flex-1 border-t border-gray-200"></div>
-                            <span class="flex-shrink mx-4 text-gray-400 text-xs">ou</span>
-                            <div class="flex-1 border-t border-gray-200"></div>
+                        <div class="flex justify-between items-center pt-2">
+                            <button onclick="executarEsqueciSenha()" class="text-xs text-blue-600 font-medium">Esqueci a senha</button>
+                            <button onclick="toggleAuthMode('cadastro')" class="text-xs text-gray-500 font-medium">Criar Conta Grátis</button>
                         </div>
-
-                        <button onclick="toggleAuthMode('cadastro')" class="w-full bg-gray-100 text-gray-700 font-bold py-3 rounded-xl hover:bg-gray-200 transition">Criar Conta Grátis</button>
                     </div>
                 </div>
 
                 <div id="auth-content-cadastro" class="hidden">
-                    <h3 class="text-2xl font-black tracking-tighter text-gray-950 mb-2">Crie sua Conta</h3>
-                    <p class="text-sm text-gray-500 mb-6">Cadastre-se para destravar conteúdos de Gestão e receber novidades GV Conecta.</p>
-                    
+                    <h3 class="text-2xl font-black tracking-tighter text-gray-950 mb-2">Cadastro Grátis</h3>
+                    <p class="text-sm text-gray-500 mb-6">Insira seu e-mail corporativo para se cadastrar como usuário e destravar o conteúdo.</p>
                     <div class="space-y-4">
                         <input type="text" id="reg-nome" placeholder="Seu nome completo" class="w-full p-3 border border-gray-200 rounded-xl outline-none focus:border-blue-500 transition">
-                        <input type="email" id="reg-email" placeholder="Melhor e-mail" class="w-full p-3 border border-gray-200 rounded-xl outline-none focus:border-blue-500 transition">
+                        <input type="email" id="reg-email" placeholder="Seu melhor e-mail (Login)" class="w-full p-3 border border-gray-200 rounded-xl outline-none focus:border-blue-500 transition">
                         <input type="password" id="reg-pass" placeholder="Crie uma senha" class="w-full p-3 border border-gray-200 rounded-xl outline-none focus:border-blue-500 transition">
-                        
                         <div id="reg-error" class="text-xs text-red-600 hidden"></div>
-
-                        <button onclick="executarCadastro()" class="w-full bg-green-600 text-white font-bold py-3 rounded-xl hover:bg-green-700 transition active:scale-95">Cadastrar e Ler</button>
-                        <button onclick="toggleAuthMode('login')" class="w-full text-sm text-blue-600 font-medium py-2">Já tenho conta (Login)</button>
+                        <button onclick="executarCadastro()" id="btn-registrar" class="w-full bg-green-600 text-white font-bold py-3.5 rounded-xl hover:bg-green-700 transition active:scale-95">Finalizar Cadastro Grátis</button>
+                        <button onclick="toggleAuthMode('login')" class="w-full text-xs text-blue-600 font-medium py-2">Já tenho conta (Login)</button>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <div id="gestor-modal" class="fixed inset-0 bg-white z-[110] hidden flex-col max-w-md mx-auto h-screen fade-in">
+            <div class="p-6 flex justify-between items-center border-b border-gray-100">
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Acesso Premium Gestão</span>
+                <button onclick="fecharGestorForm()" class="text-gray-400 hover:text-red-600 text-xl"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-8 md:p-12 flex flex-col justify-center">
+                <form id="form-gestor" class="space-y-12">
+                    <div class="slide-up">
+                        <label class="tf-label">1. Como podemos te chamar?</label>
+                        <input type="text" id="gestor-nome" placeholder="Seu nome completo" required class="tf-input">
+                    </div>
+                    
+                    <div class="slide-up" style="animation-delay: 0.1s">
+                        <label class="tf-label">2. Qual o seu WhatsApp?</label>
+                        <input type="tel" id="gestor-whatsapp" placeholder="(00) 90000-0000" required class="tf-input">
+                    </div>
+                    
+                    <div class="slide-up" style="animation-delay: 0.2s">
+                        <label class="tf-label">3. Confirmar E-mail (Login)</label>
+                        <input type="email" id="gestor-email" readonly class="tf-input text-gray-400 border-gray-100">
+                    </div>
+
+                    <div class="slide-up p-5 rounded-2xl bg-gray-50 border border-gray-100" style="animation-delay: 0.3s">
+                        <p class="text-xs text-gray-500 leading-relaxed">
+                            <i class="fa-solid fa-circle-info text-blue-500 mr-1"></i> 
+                            O acesso aos artigos de gestão é **gratuito**. Ao enviar, você concorda que a **GV Conecta** poderá enviar comunicações sobre atualizações da revista e novidades via WhatsApp ou e-mail no futuro.
+                        </p>
+                    </div>
+
+                    <button type="submit" class="w-full bg-blue-600 text-white font-black text-lg py-5 rounded-2xl shadow-lg hover:bg-blue-700 transition active:scale-95 slide-up" style="animation-delay: 0.4s">
+                        Liberar Acesso Gestão
+                    </button>
+                </form>
             </div>
         </div>
 
@@ -142,10 +169,10 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, query, where, serverTimestamp, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        // ✅ INTEGRADO: Credenciais reais do projeto crmpetshop (Ponto 2)
+        // ✅ INTEGRADO: Credenciais reais do projeto crmpetshop Beta (Ponto 2)
         const firebaseConfig = {
           apiKey: "AIzaSyBjuvcJvTWw7lMrIwej5lHbIUXe99lJDN4",
           authDomain: "crmpetshop.firebaseapp.com",
@@ -158,23 +185,52 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // Hierarquia de Acesso (Stub para verificação)
-        const ADMIN_EMAILS = ["programador@gvconecta.com.br", "administrador@gvconecta.com.br"];
+        // ✅ Configuração Hierarquia (Ponto 2)
+        const PROGRAMMER_EMAIL = "professoragiselle.edu2@gmail.com";
+        const ADMIN_EMAILS = [PROGRAMMER_EMAIL, "administrador@gvconecta.com.br"]; // Lista admins
 
-        // Expor funções para o escopo global
-        window.db = db;
-        window.auth = auth;
-        window.ADMIN_EMAILS = ADMIN_EMAILS;
+        // Expor para o escopo global (usado nos scripts abaixo)
+        window.GvFirebase = { app, db, auth, collection, addDoc, getDocs, query, where, serverTimestamp, doc, updateDoc, getDoc, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider, PROGRAMMER_EMAIL, ADMIN_EMAILS };
     </script>
 
     <script>
-        let currentUser = null;
+        // Banco de Dados Estático (Design Aprovado + Conteúdo Ed. 01)
+        const bancoDeArtigos = {
+            varejo: { id: 'varejo', nome: 'Pet Shop', tagColor: 'text-blue-700', bgColor: 'bg-blue-50', artigos: [
+                { id: 'v1', premium: false, titulo: '5 técnicas de vitrinismo para aumentar a venda de brinquedos', img: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&q=80', resumo: 'Como organizar as prateleiras de forma que o cliente compre por impulso.' },
+                { id: 'v2', premium: false, titulo: 'O roteiro de atendimento perfeito no balcão', img: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=600&q=80', resumo: 'O que o seu atendente deve dizer para fechar vendas mais rápidas.' },
+                { id: 'v3', premium: true, categoriaNome: 'Gestão', titulo: 'Gestão de Estoque: A matemática oculta que devora o seu caixa', img: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&q=80', resumo: 'Planilha prática de giro de estoque para não imobilizar capital.' }
+            ]},
+            clinica: { id: 'clinica', nome: 'Clínica Veterinária', tagColor: 'text-teal-700', bgColor: 'bg-teal-50', artigos: [
+                { id: 'c1', premium: false, titulo: 'Técnicas de contenção cat-friendly na triagem', img: 'https://images.unsplash.com/photo-1628009368231-7bb7cb192fb6?w=600&q=80', resumo: 'Como evitar o estresse dos felinos na sala de espera.' },
+                { id: 'c2', premium: true, categoriaNome: 'Finanças', titulo: 'Calculando a hora clínica: Custo Fixo vs Hora Útil', img: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=600&q=80', resumo: 'Descubra qual é o custo real para manter o consultório de portas abertas.' }
+            ]}
+        };
 
-        // Monitorar estado de autenticação
+        // VARIÁVEIS DE ESTADO GLOBAL
+        let currentUser = null;
+        let userData = null; // Dados complementares do Firestore
+        let currentView = 'home';
+        let pendingArticle = null; // Artigo que tentou ler antes do paywall/form
+
+        // Monitorar estado de autenticação real (Ponto 2)
         window.addEventListener('load', () => {
-            if(window.auth) {
-                window.auth.onAuthStateChanged(window.auth.getAuth(), user => {
+            if(window.GvFirebase) {
+                const { auth, onAuthStateChanged, getAuth } = window.GvFirebase;
+                onAuthStateChanged(getAuth(), user => {
                     currentUser = user;
+                    const menuLogado = document.getElementById('menu-conta-logado');
+                    
+                    if (user) {
+                        menuLogado.classList.remove('hidden');
+                        document.getElementById('header-edicao').innerText = isProgrammer() ? "PROG" : "Ed. 01";
+                        // Busca dados complementares (para saber se é gestor qualificado)
+                        buscarDadosUsuario(user.uid);
+                    } else {
+                        menuLogado.classList.add('hidden');
+                        document.getElementById('header-edicao').innerText = "Ed. 01";
+                        userData = null;
+                    }
                     renderView(currentView); // Re-renderiza a view atual com o contexto do usuário
                 });
             } else {
@@ -182,21 +238,9 @@
             }
         });
 
-        // Banco de Dados Estático (Design Aprovado + Conteúdo)
-        const bancoDeArtigos = {
-            varejo: { id: 'varejo', nome: 'Pet Shop', tagColor: 'text-blue-700', bgColor: 'bg-blue-50', artigos: [
-                { id: 'v1', premium: false, titulo: '5 técnicas de vitrinismo para aumentar a venda de brinquedos', img: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&q=80', resumo: 'Como organizar as prateleiras de forma que o cliente compre por impulso.' },
-                { id: 'v2', premium: false, titulo: 'O roteiro de atendimento perfeito no balcão', img: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=600&q=80', resumo: 'O que o seu atendente deve dizer para fechar vendas mais rápidas.' },
-                { id: 'v3', premium: true, titulo: 'Gestão de Estoque: A matemática oculta que devora o seu caixa', img: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&q=80', resumo: 'Planilha prática de giro de estoque para não imobilizar capital.' }
-            ]},
-            clinica: { id: 'clinica', nome: 'Clínica Veterinária', tagColor: 'text-teal-700', bgColor: 'bg-teal-50', artigos: [
-                { id: 'c1', premium: false, titulo: 'Técnicas de contenção cat-friendly na triagem', img: 'https://images.unsplash.com/photo-1628009368231-7bb7cb192fb6?w=600&q=80', resumo: 'Como evitar o estresse dos felinos na sala de espera.' },
-                { id: 'c2', premium: true, titulo: 'Calculando a hora clínica: Custo Fixo vs Hora Útil', img: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=600&q=80', resumo: 'Descubra qual é o custo real para manter o consultório de portas abertas.' }
-            ]}
-        };
-
-        let currentView = 'home';
-        let pendingArticle = null;
+        // UTILITÁRIOS DE HIERARQUIA (Ponto 2)
+        function isProgrammer() { return currentUser && currentUser.email === window.GvFirebase.PROGRAMMER_EMAIL; }
+        function isAdmin() { return currentUser && window.GvFirebase.ADMIN_EMAILS.includes(currentUser.email); }
 
         // MOTOR DE NAVEGAÇÃO
         function renderView(view, param = null) {
@@ -218,29 +262,32 @@
                 navCategorias.classList.add('hidden');
                 renderArtigo(mainContent, param);
             }
-            // View do Painel Central Protegida (Hierarquia - Ponto 2)
+            else if (view === 'conta') {
+                btnVoltar.classList.remove('hidden');
+                navCategorias.classList.add('hidden');
+                renderContaView(mainContent);
+            }
+            // View do Painel Central Protegida (5 Cliques - Ponto 3)
             else if (view === 'admin') {
-                if(currentUser && window.ADMIN_EMAILS && window.ADMIN_EMAILS.includes(currentUser.email)) {
+                if(isAdmin()) {
                     btnVoltar.classList.remove('hidden');
                     navCategorias.classList.add('hidden');
                     renderAdminPanel(mainContent);
                 } else {
-                    // Se tentar acessar sem ser admin, abre o login
-                    btnVoltar.classList.add('hidden');
-                    navCategorias.classList.remove('hidden');
-                    renderHomeFeed(mainContent);
-                    abrirAuth('login');
+                    alert("Acesso Negado. Área restrita.");
+                    renderView('home');
                 }
             }
         }
 
-        // RENDERIZADORES DE INTERFACE (Hardcoded Design Original - Ponto 4)
+        // RENDERIZADORES DE INTERFACE
+
         function renderHomeFeed(container) {
             let html = `
                 <div class="fade-in">
                     <div class="px-5 pt-6 pb-4 bg-white border-b border-gray-100">
                         <p class="text-sm text-gray-600 leading-relaxed">
-                            Conteúdo prático para a linha de frente (<strong class="text-gray-900">funcionários</strong>) e estratégias avançadas de gestão e finanças exclusivas para <strong class="text-gray-900">decisores de negócios Pet</strong>.
+                            Conteúdo prático para a linha de frente (<strong class="text-gray-900">funcionários</strong>) e estratégias avançadas de gestão exclusivas para <strong class="text-gray-900">decisores de negócios Pet</strong>.
                         </p>
                     </div>
             `;
@@ -254,7 +301,7 @@
                 `;
 
                 categoria.artigos.forEach((artigo, idx) => {
-                    const badge = artigo.premium ? `<span class="text-[9px] text-yellow-700 font-bold bg-yellow-200 px-2 py-0.5 rounded ml-2 inline-flex items-center gap-1 shrink-0"><i class="fa-solid fa-lock text-[8px]"></i> Premium Gestão</span>` : '';
+                    const badge = artigo.premium ? `<span class="text-[9px] text-yellow-700 font-bold bg-yellow-200 px-2 py-0.5 rounded ml-2 inline-flex items-center gap-1 shrink-0"><i class="fa-solid fa-lock text-[8px]"></i> ${artigo.categoriaNome || 'Premium'}</span>` : '';
                     
                     if (idx === 0) { // Destaque da seção
                         html += `
@@ -282,52 +329,71 @@
             const categoria = bancoDeArtigos[param.catId];
             const artigo = categoria.artigos.find(a => a.id === param.artId);
             
-            // Verificação de bloqueio Premium (Ponto 2)
-            const bloqueado = artigo.premium && !currentUser;
+            // ✅ Lógica de Bloqueio (Paywall / Form Gestão - Ponto 2)
+            const bloqueioPaywall = !currentUser && checkPaywallBlocked();
+            const bloqueioGestor = artigo.premium && currentUser && (!userData || !userData.qualificadoGestor) && !isAdmin();
+            
+            const bloqueado = bloqueioPaywall || bloqueioGestor;
 
-            let ctaBlocks = '';
-            if(!bloqueado) {
-                 // Geração da URL Deep Link para compartilhamento
-                const shareUrl = window.location.origin + window.location.pathname + '?artigo_id=' + artigo.id;
-                ctaBlocks = `
-                    <div class="mt-8 mb-6 border-y border-gray-100 py-3 flex items-center justify-between gap-3">
-                        <span class="text-xs text-gray-400 font-medium">Compartilhar Artigo:</span>
-                        <button onclick="copiarLinkWhatsApp('${shareUrl}', '${artigo.titulo.replace(/'/g, "\\'")}')" class="bg-green-600 text-white text-xs font-bold px-4 py-2 rounded-full flex items-center gap-2 hover:bg-green-700 active:scale-95 transition">
-                            <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp
-                        </button>
+            let mainContentHtml = `
+                <div class="prose prose-sm prose-slate max-w-none text-gray-800 leading-relaxed space-y-4 font-serif pt-4">
+                    <p class="text-lg font-bold">Resumo Estratégico:</p>
+                    <p>${artigo.resumo}</p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                </div>
+            `;
+
+            if(bloqueado) {
+                // Conteúdo falso/borrado para o paywall
+                mainContentHtml = `
+                    <div class="prose prose-sm prose-slate max-w-none text-gray-800 leading-relaxed space-y-4 font-serif pt-4 blur-content">
+                        <p class="text-lg font-bold">Resumo Estratégico:</p>
+                        <p>${artigo.resumo}</p>
+                        <p>O texto completo deste artigo estratégico contém dados financeiros, planilhas de giro de estoque, KPIs cruciais e análises de mercado detalhadas para decisores de negócios pet shop e clínicas.</p>
+                        <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.</p>
                     </div>
                 `;
             }
 
             container.innerHTML = `
-                <div class="fade-in bg-white pb-10">
+                <div class="fade-in bg-white pb-10 relative">
                     <img src="${artigo.img}" class="w-full h-64 object-cover shadow-inner">
                     
-                    <div class="px-5 py-6 ${bloqueado ? 'blur-content' : ''}">
+                    <div class="px-5 py-6">
                         <div class="flex items-center justify-between mb-4">
                             <span class="${categoria.tagColor} ${categoria.bgColor} text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">${categoria.nome}</span>
-                            ${artigo.premium ? '<span class="text-xs text-yellow-700 font-bold flex items-center gap-1.5"><i class="fa-solid fa-lock text-[10px]"></i> Conteúdo Gestão Premium</span>' : ''}
+                            ${artigo.premium ? `<span class="text-xs text-yellow-700 font-bold flex items-center gap-1.5"><i class="fa-solid fa-lock text-[10px]"></i> ${artigo.categoriaNome || 'Premium Gestão'}</span>` : ''}
                         </div>
                         
                         <h1 class="text-3xl font-black text-gray-950 leading-tight tracking-tighter mb-4">${artigo.titulo}</h1>
                         <p class="text-gray-500 italic mb-6 border-l-2 border-gray-200 pl-4">${artigo.resumo}</p>
                         
-                        ${ctaBlocks}
-
-                        <div class="prose prose-sm prose-slate max-w-none text-gray-800 leading-relaxed space-y-4 font-serif">
-                            <p class="text-lg font-bold">Resumo Estratégico:</p>
-                            <p>${artigo.resumo} O texto completo contém dados financeiros, planilhas de giro de estoque e métricas cruciais para decisores.</p>
-                            <p>O conteúdo completo desta edição é restrito para usuários cadastrados ou parceiros GV Conecta. Inscreva-se para destravar.</p>
+                        <div class="mt-8 mb-6 border-y border-gray-100 py-3 flex items-center justify-between gap-3 ${bloqueado ? 'blur-content' : ''}">
+                            <span class="text-xs text-gray-400 font-medium">Compartilhar Artigo:</span>
+                            <button onclick="copiarLinkWhatsApp('${artigo.id}', '${artigo.titulo.replace(/'/g, "\\'")}')" class="bg-green-600 text-white text-xs font-bold px-4 py-2 rounded-full flex items-center gap-2 hover:bg-green-700 active:scale-95 transition">
+                                <i class="fa-brands fa-whatsapp text-sm"></i> WhatsApp
+                            </button>
                         </div>
+
+                        ${mainContentHtml}
                     </div>
                     
-                    ${bloqueado ? `
-                        <div class="absolute inset-x-5 top-80 z-20 p-8 rounded-2xl bg-white/90 backdrop-blur-sm shadow-xl border border-gray-100 text-center slide-up">
-                            <i class="fa-solid fa-lock text-3xl text-yellow-500 mb-4"></i>
-                            <h4 class="font-bold text-gray-900 mb-1">Conteúdo Exclusivo de Gestão</h4>
-                            <p class="text-sm text-gray-600 mb-6">Para ler este artigo completo, cadastre-se gratuitamente.</p>
-                            <button onclick="abrirAuth('cadastro')" class="w-full bg-blue-600 text-white font-bold py-3.5 rounded-xl text-sm shadow-md hover:bg-blue-700 transition active:scale-95">Criar Conta Grátis</button>
+                    ${bloqueioPaywall ? `
+                        <div class="absolute inset-x-5 top-72 z-20 p-8 rounded-3xl bg-white/95 backdrop-blur-sm shadow-2xl border border-gray-100 text-center slide-up">
+                            <i class="fa-solid fa-hand-holding-heart text-4xl text-blue-500 mb-5"></i>
+                            <h4 class="font-bold text-xl text-gray-900 mb-2">Gostando da Revista?</h4>
+                            <p class="text-sm text-gray-600 mb-6 leading-relaxed">Você leu seus 2 artigos grátis. Para continuar lendo esta e outras edições, faça seu **Cadastro Grátis** agora.</p>
+                            <button onclick="abrirAuth('cadastro')" class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl text-sm shadow-md hover:bg-blue-700 transition active:scale-95">Criar Conta Grátis (E-mail)</button>
                             <button onclick="abrirAuth('login')" class="w-full text-blue-700 font-medium py-3 text-sm">Já tenho conta (Entrar)</button>
+                        </div>
+                    ` : ''}
+
+                    ${bloqueioGestor ? `
+                        <div class="absolute inset-x-5 top-72 z-20 p-8 rounded-3xl bg-white/95 backdrop-blur-sm shadow-2xl border border-gray-100 text-center slide-up">
+                            <i class="fa-solid fa-lock text-4xl text-yellow-500 mb-5"></i>
+                            <h4 class="font-bold text-xl text-gray-900 mb-2">Conteúdo Restrito de Gestão</h4>
+                            <p class="text-sm text-gray-600 mb-6 leading-relaxed">Este artigo contém estratégias avançadas. Como usuário cadastrado, basta preencher um formulário rápido (grátis) para liberar.</p>
+                            <button onclick="abrirGestorForm()" class="w-full bg-yellow-500 text-gray-950 font-bold py-4 rounded-xl text-sm shadow-md hover:bg-yellow-600 transition active:scale-95">Liberar Conteúdo Gestão (Grátis)</button>
                         </div>
                     ` : ''}
 
@@ -340,66 +406,105 @@
             `;
         }
 
-        // PAINEL CENTRAL PROTEGIDO (Ponto 2 & 3)
-        function renderAdminPanel(container) {
-            // Captação de e-mails (Ponto 2) -> Lógica real via Firestore stub
-            let leitoresHtml = '<p class="text-xs text-gray-400">Carregando leitores...</p>';
-            if(window.db) {
-                getDocs(query(collection(window.db, "leitores"), orderBy("dataCadastro", "desc"))).then(snap => {
-                    const lista = document.getElementById('admin-leitores-lista');
-                    if(snap.size === 0) { lista.innerHTML = '<p class="text-sm text-gray-500">Nenhum leitor cadastrado.</p>'; return; }
-                    let html = '<ul class="space-y-2">';
-                    snap.forEach(doc => {
-                        const l = doc.data();
-                        const data = l.dataCadastro ? l.dataCadastro.toDate().toLocaleDateString('pt-BR') : '---';
-                        html += `<li class="text-sm bg-gray-50 p-3 rounded-lg border flex justify-between"><div><strong>${l.nome}</strong> (${l.email})</div> <span class="text-xs text-gray-400">${data}</span></li>`;
-                    });
-                    lista.innerHTML = html + '</ul>';
-                });
-            } else { leitoresHtml = '<p class="text-xs text-red-600">Firebase offline.</p>'; }
+        // ✅ View Minha Conta (Alterar Senha - Ponto 2)
+        function renderContaView(container) {
+            const role = isProgrammer() ? "Programador" : (isAdmin() ? "Administrador" : "Leitor GV");
+            container.innerHTML = `
+                <div class="fade-in p-6 bg-white min-h-screen">
+                    <h2 class="text-3xl font-black tracking-tighter text-gray-950 mb-2">Minha Conta</h2>
+                    <p class="text-sm text-gray-500 mb-8">Gerencie suas credenciais de acesso à Revista O Código Pet.</p>
+                    
+                    <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 mb-8 space-y-3">
+                        <div class="flex justify-between items-center"><span class="text-xs text-gray-400 font-bold uppercase">Nome:</span> <span class="font-bold text-gray-900">${userData ? userData.nome : currentUser.displayName || '---'}</span></div>
+                        <div class="flex justify-between items-center"><span class="text-xs text-gray-400 font-bold uppercase">E-mail:</span> <span class="font-bold text-gray-700">${currentUser.email}</span></div>
+                        <div class="flex justify-between items-center"><span class="text-xs text-gray-400 font-bold uppercase">Nível de Acesso:</span> <span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-3 py-1 rounded-full uppercase">${role}</span></div>
+                    </div>
 
+                    <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                        <h4 class="font-bold text-gray-900 mb-5 flex items-center gap-2"><i class="fa-solid fa-key text-blue-500"></i> Alterar Minha Senha</h4>
+                        <div class="space-y-4">
+                            <input type="password" id="change-pass-curr" placeholder="Senha atual" class="w-full p-3 border border-gray-200 rounded-xl outline-none focus:border-blue-500 transition">
+                            <input type="password" id="change-pass-new" placeholder="Nova senha" class="w-full p-3 border border-gray-200 rounded-xl outline-none focus:border-blue-500 transition">
+                            <div id="change-pass-error" class="text-xs text-red-600 hidden"></div>
+                            <div id="change-pass-success" class="text-xs text-green-600 hidden">Senha alterada com sucesso!</div>
+                            <button onclick="executarAlterarSenha()" class="w-full bg-gray-900 text-white font-bold py-3 rounded-xl hover:bg-gray-800 transition active:scale-95">Atualizar Senha</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ✅ PAINEL CENTRAL PROTEGIDO (Ponto 3)
+        function renderAdminPanel(container) {
             container.innerHTML = `
                 <div class="fade-in p-5 bg-gray-100 min-h-screen overflow-y-auto">
                     <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-3xl font-black tracking-tighter text-gray-950">Painel Central <span class="text-red-600">BETA</span></h2>
+                        <h2 class="text-3xl font-black tracking-tighter text-gray-950">Painel Central <span class="text-red-600">PROG</span></h2>
                         <button onclick="executarLogout()" class="text-gray-600 hover:text-red-600"><i class="fa-solid fa-right-from-bracket text-lg"></i></button>
                     </div>
                     
                     <div class="grid grid-cols-2 gap-4 mb-8">
-                        <div class="bg-white p-4 rounded-xl shadow border border-gray-100">
-                            <span class="text-xs text-gray-400 font-bold uppercase block mb-1">Sua Função</span>
-                            <span class="text-xl font-black text-blue-700">${window.ADMIN_EMAILS[0].includes(currentUser.email) ? 'Programador' : 'Administrador'}</span>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl shadow border border-gray-100">
+                        <div class="bg-white p-4 rounded-xl shadow border border-gray-100 overflow-hidden">
                             <span class="text-xs text-gray-400 font-bold uppercase block mb-1">Módulo Atual</span>
-                            <span class="text-xl font-black text-gray-900">Revista S.</span>
+                            <span class="text-lg font-black text-blue-700 truncate">Revista Semanal</span>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow border border-gray-100">
+                            <span class="text-xs text-gray-400 font-bold uppercase block mb-1">Status Sistema</span>
+                            <span class="text-lg font-black text-green-600">Online Beta</span>
                         </div>
                     </div>
 
-                    <div class="bg-white p-5 rounded-2xl shadow border border-gray-100 mb-8">
-                        <h4 class="font-bold text-gray-900 mb-4 flex items-center gap-2"><i class="fa-solid fa-users text-blue-500"></i> Leitores Cadastrados (Captação)</h4>
-                        <div id="admin-leitores-lista">${leitoresHtml}</div>
+                    <div class="bg-white p-6 rounded-2xl shadow border border-gray-100 mb-8 text-center">
+                        <i class="fa-solid fa-tools text-5xl text-gray-300 mb-5"></i>
+                        <h4 class="font-bold text-gray-900 mb-2">Área de Desenvolvimento</h4>
+                        <p class="text-sm text-gray-600 leading-relaxed mb-6">Esta view simula o Painel de Comando PWA que será construído nos Módulos 2 (CRM) e 3 (WhatsApp/Automação). Atualmente, é acessada apenas pelo Programador/Admin.</p>
+                        <button disabled class="w-full bg-gray-100 text-gray-400 font-bold py-3 rounded-xl mb-3">Gerar Nova Edição (Módulo Autoria)</button>
+                        <button disabled class="w-full bg-gray-100 text-gray-400 font-bold py-3 rounded-xl">Disparo WhatsApp (Módulo Disparo)</button>
                     </div>
-
-                    <div class="bg-white p-5 rounded-2xl shadow border border-gray-100 mb-20">
-                        <h4 class="font-bold text-gray-900 mb-2">Ações Rápidas</h4>
-                        <p class="text-sm text-gray-600 mb-4">Os módulos de autoria, disparos e CRM estarão disponíveis em breve.</p>
-                        <button disabled class="w-full bg-gray-100 text-gray-400 font-bold py-3 rounded-xl mb-3">Gerar Nova Edição (Bloqueado)</button>
-                        <button disabled class="w-full bg-gray-100 text-gray-400 font-bold py-3 rounded-xl">Disparo WhatsApp (Bloqueado)</button>
-                    </div>
-
-                     <footer class="mt-10 bg-gray-900 text-white p-6 text-center rounded-2xl">
-                        <div class="text-[10px] text-gray-500 uppercase tracking-[0.3em] font-bold mb-2">Produzido por</div>
+                    
+                    <div class="text-center p-5 rounded-2xl bg-gray-900 text-white">
                         <h3 class="text-xl font-black tracking-tighter text-blue-400">GV CONECTA</h3>
-                        <p class="text-[9px] text-gray-400 mt-1 uppercase tracking-widest">Marketing para Negócios Locais</p>
-                    </footer>
+                    </div>
                 </div>
             `;
         }
 
         // LÓGICA DE AÇÃO & UTILITÁRIOS
+
+        // ✅ Lógica de Paywall (Ponto 2)
+        function checkPaywallBlocked() {
+            let lidos = localStorage.getItem('gv_artigos_lidos') || 0;
+            return parseInt(lidos) >= 2; // Bloqueia no 3º artigo (índice 2)
+        }
+        function incrementarContadorLidos() {
+            if(currentUser) return; // Não conta para logados
+            let lidos = parseInt(localStorage.getItem('gv_artigos_lidos') || 0);
+            localStorage.setItem('gv_artigos_lidos', lidos + 1);
+        }
+
         function tratarCliqueArtigo(catId, artId) {
+            pendingArticle = { catId, artId };
+            const categoria = bancoDeArtigos[catId];
+            const artigo = categoria.artigos.find(a => a.id === artId);
+
+            // 1. Se deslogado, verifica paywall
+            if (!currentUser) {
+                if (checkPaywallBlocked()) {
+                    abrirAuth('cadastro'); // Bloqueia e pede cadastro grátis
+                    return;
+                }
+                incrementarContadorLidos(); // Permite ler, incrementa contador
+            }
+            
+            // 2. Se logado e premium, verifica form gestor
+            if (artigo.premium && currentUser && (!userData || !userData.qualificadoGestor) && !isAdmin()) {
+                abrirGestorForm(); // Bloqueia e pede form gestão
+                return;
+            }
+
+            // Permite leitura
             renderView('artigo', { catId, artId });
+            pendingArticle = null;
         }
 
         function toggleMenu(forceClose) {
@@ -423,15 +528,18 @@
         }
 
         // Copiar Link para WhatsApp
-        function copiarLinkWhatsApp(url, titulo) {
-            const texto = encodeURIComponent(`*O Código Pet:* _${titulo}_\nLeia completo aqui: ${url}`);
+        function copiarLinkWhatsApp(artId, titulo) {
+            const shareUrl = window.location.origin + window.location.pathname + '?artigo_id=' + artId;
+            const texto = encodeURIComponent(`*O Código Pet:* _${titulo}_\nLeia completo aqui: ${shareUrl}`);
             window.open(`https://wa.me/?text=${texto}`, '_blank');
         }
 
-        // Gatilho do Painel Central (5 Cliques no Logo - Correção Ponto 1)
+        // Gatilho do Painel Central (5 Cliques no Logo - Ponto 3)
         let logoClicks = 0;
         let logoTimer;
         function handleLogoClick() {
+            if(currentView !== 'home' && currentView !== 'admin') renderView('home'); // Volta pra home se tiver lendo
+            
             logoClicks++;
             clearTimeout(logoTimer);
             logoTimer = setTimeout(() => { logoClicks = 0; }, 1500); // 1.5s para 5 cliques rápidos
@@ -439,26 +547,31 @@
             if (logoClicks >= 5) {
                 logoClicks = 0;
                 clearTimeout(logoTimer);
-                // Hierarquia: Programador/Admin devem fazer login (Ponto 2)
-                if(currentUser && window.ADMIN_EMAILS && window.ADMIN_EMAILS.includes(currentUser.email)) {
+                // Hierarquia: Apenas Admin/Prog acessam (Ponto 2/3)
+                if(isAdmin()) {
                     renderView('admin'); 
                 } else {
-                    abrirAuth('login'); // Força login administrativo
+                    // Se deslogado ou leitor, força abrir login administrativo
+                    abrirAuth('login'); 
+                    document.getElementById('auth-error').innerText = "Acesso restrito. Faça login administrativo.";
+                    document.getElementById('auth-error').classList.remove('hidden');
                 }
             }
         }
 
-        // LÓGICA DE AUTENTICAÇÃO E CAPTAÇÃO (Ponto 2)
+        // ✅ LÓGICA DE AUTENTICAÇÃO REAL (Ponto 2)
         function abrirAuth(modo = 'login') {
             document.getElementById('auth-modal').classList.remove('hidden');
             document.getElementById('auth-modal').classList.add('flex');
             toggleAuthMode(modo);
-            document.body.style.overflow = 'hidden'; // Impede scroll
+            document.body.style.overflow = 'hidden'; // Impede scroll da página
         }
         function fecharAuth() {
             document.getElementById('auth-modal').classList.add('hidden');
             document.getElementById('auth-modal').classList.remove('flex');
             document.body.style.overflow = '';
+            document.getElementById('auth-error').classList.add('hidden');
+            document.getElementById('reg-error').classList.add('hidden');
         }
         function toggleAuthMode(modo) {
             if(modo === 'login') {
@@ -470,52 +583,179 @@
             }
         }
 
-        // Funções de login/cadastro stubs (Firebase executará a real)
+        // 🔥 Funções Firebase Auth Reais (Ponto 2)
+
         function executarLogin() {
-            if(!window.auth) return;
+            const { auth, signInWithEmailAndPassword, getAuth } = window.GvFirebase;
             const email = document.getElementById('auth-email').value;
             const pass = document.getElementById('auth-pass').value;
             const errorBlock = document.getElementById('auth-error');
             errorBlock.classList.add('hidden');
 
-            window.auth.signInWithEmailAndPassword(window.auth.getAuth(), email, pass)
-                .then(() => { fecharAuth(); })
-                .catch(err => { errorBlock.innerText = "Login falhou. Verifique e-mail/senha corporativa."; errorBlock.classList.remove('hidden'); });
+            signInWithEmailAndPassword(getAuth(), email, pass)
+                .then(() => { 
+                    fecharAuth(); 
+                    if(pendingArticle) { tratarCliqueArtigo(pendingArticle.catId, pendingArticle.artId); }
+                    else if (currentView === 'home' && isAdmin()) { renderView('admin'); } // Entra direto no painel se for admin clicando no logo
+                })
+                .catch(err => { errorBlock.innerText = "Falha no login. Verifique e-mail corporativo e senha."; errorBlock.classList.remove('hidden'); });
         }
 
+        // ✅ Correção Cadastro (Ponto 1) - Pedir e-mail (Ponto 2)
         function executarCadastro() {
-            if(!window.auth || !window.db) return;
-            const nome = document.getElementById('reg-nome').value;
-            const email = document.getElementById('reg-email').value;
-            const pass = document.getElementById('reg-pass').value;
+            const { auth, db, createUserWithEmailAndPassword, getAuth, collection, addDoc, serverTimestamp } = window.GvFirebase;
+            const nome = document.getElementById('reg-nome').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const pass = document.getElementById('reg-pass').value.trim();
             const errorBlock = document.getElementById('reg-error');
             errorBlock.classList.add('hidden');
 
+            // Validação básica frontend (garante inputs preenchidos - Ponto 1)
             if(!nome || !email || !pass) { errorBlock.innerText = "Preencha todos os campos."; errorBlock.classList.remove('hidden'); return; }
+            if(pass.length < 6) { errorBlock.innerText = "A senha deve ter pelo menos 6 caracteres."; errorBlock.classList.remove('hidden'); return; }
 
-            // 1. Criar conta no Auth
-            window.auth.createUserWithEmailAndPassword(window.auth.getAuth(), email, pass)
+            // 1. Criar conta no Auth (E-mail = usuário - Ponto 2)
+            createUserWithEmailAndPassword(getAuth(), email, pass)
                 .then(userCredential => {
-                    // 2. Captação de Dados no Firestore (Ponto 2)
-                    addDoc(collection(window.db, "leitores"), {
+                    // 2. Captação de Dados no Firestore coleção 'leitores' (Ponto 2)
+                    addDoc(collection(db, "leitores"), {
                         uid: userCredential.user.uid,
                         nome: nome,
-                        email: email,
+                        email: email, // Captando e-mail (Ponto 2)
                         dataCadastro: serverTimestamp(),
-                        módulo: "Revista S."
+                        qualificadoGestor: false // Inicialmente leitor comum
                     });
                     fecharAuth();
-                    alert("Conta criada! O conteúdo Premium foi destravado.");
+                    localStorage.setItem('gv_artigos_lidos', 0); // Zera contador paywall
+                    alert("Conta criada com sucesso! O acesso gratuito à revista foi liberado.");
+                    if(pendingArticle) tratarCliqueArtigo(pendingArticle.catId, pendingArticle.artId);
                 })
-                .catch(err => { errorBlock.innerText = "Falha no cadastro (verifique e-mail ou senha)."; errorBlock.classList.remove('hidden'); });
+                .catch(err => { 
+                    console.error(err);
+                    if(err.code === 'auth/email-already-in-use') errorBlock.innerText = "Este e-mail já está cadastrado. Tente fazer login.";
+                    else errorBlock.innerText = "Falha no cadastro. Verifique os dados."; 
+                    errorBlock.classList.remove('hidden'); 
+                });
+        }
+
+        // ✅ Esqueci a Senha (Ponto 2)
+        function executarEsqueciSenha() {
+            const { auth, sendPasswordResetEmail, getAuth } = window.GvFirebase;
+            const email = document.getElementById('auth-email').value.trim();
+            const errorBlock = document.getElementById('auth-error');
+            errorBlock.classList.add('hidden');
+
+            if(!email || !email.includes('@')) { alert("Insira um e-mail válido no campo acima para receber o link de recuperação."); return; }
+
+            sendPasswordResetEmail(getAuth(), email)
+                .then(() => { alert("Um e-mail de recuperação de senha foi enviado para " + email + ". Verifique sua caixa de entrada."); })
+                .catch(err => { errorBlock.innerText = "Erro ao enviar e-mail. Verifique se o endereço está correto."; errorBlock.classList.remove('hidden'); });
+        }
+
+        // ✅ Alterar Senha dentro da Revista (Ponto 2)
+        function executarAlterarSenha() {
+            const { auth, getAuth, updatePassword, reauthenticateWithCredential, EmailAuthProvider } = window.GvFirebase;
+            const user = getAuth().currentUser;
+            const passCurr = document.getElementById('change-pass-curr').value;
+            const passNew = document.getElementById('change-pass-new').value;
+            const errorBlock = document.getElementById('change-pass-error');
+            const successBlock = document.getElementById('change-pass-success');
+            
+            errorBlock.classList.add('hidden');
+            successBlock.classList.add('hidden');
+
+            if(!passCurr || !passNew) { errorBlock.innerText = "Preencha a senha atual e a nova senha."; errorBlock.classList.remove('hidden'); return; }
+            if(passNew.length < 6) { errorBlock.innerText = "A nova senha deve ter pelo menos 6 caracteres."; errorBlock.classList.remove('hidden'); return; }
+
+            // 1. Reautenticar (segurança Firebase para operações sensíveis)
+            const credential = EmailAuthProvider.credential(user.email, passCurr);
+            reauthenticateWithCredential(user, credential)
+                .then(() => {
+                    // 2. Atualizar Senha
+                    updatePassword(user, passNew).then(() => {
+                        successBlock.classList.remove('hidden');
+                        document.getElementById('change-pass-curr').value = '';
+                        document.getElementById('change-pass-new').value = '';
+                    }).catch(err => { errorBlock.innerText = "Erro ao atualizar senha. Tente novamente."; errorBlock.classList.remove('hidden'); });
+                })
+                .catch(err => { errorBlock.innerText = "Senha atual incorreta."; errorBlock.classList.remove('hidden'); });
         }
 
         function executarLogout() {
-            if(!window.auth) return;
-            window.auth.signOut(window.auth.getAuth()).then(() => {
-                alert("Você saiu do painel.");
+            if(!window.GvFirebase) return;
+            window.GvFirebase.signOut(window.GvFirebase.getAuth()).then(() => {
+                alert("Você saiu da sua conta.");
+                fecharAuth();
                 renderView('home');
             });
+        }
+
+        // ✅ LÓGICA FORMULÁRIO GESTÃO (Ponto 2)
+
+        function abrirGestorForm() {
+            if(!currentUser) return abrirAuth('cadastro');
+            document.getElementById('gestor-modal').classList.remove('hidden');
+            document.getElementById('gestor-modal').classList.add('flex');
+            // Pré-preenche e-mail e nome (se houver)
+            document.getElementById('gestor-email').value = currentUser.email;
+            document.getElementById('gestor-nome').value = userData ? userData.nome : (currentUser.displayName || '');
+            document.body.style.overflow = 'hidden';
+        }
+        function fecharGestorForm() {
+            document.getElementById('gestor-modal').classList.add('hidden');
+            document.getElementById('gestor-modal').classList.remove('flex');
+            document.body.style.overflow = '';
+        }
+
+        // Envio do Form Gestão (Ponto 2 - Captação Gestores)
+        window.onload = () => {
+            const formGestor = document.getElementById('form-gestor');
+            if(formGestor) {
+                formGestor.addEventListener('submit', executarQualificacaoGestor);
+            }
+        };
+
+        function executarQualificacaoGestor(e) {
+            e.preventDefault();
+            if(!window.GvFirebase || !currentUser) return;
+            const { db, collection, addDoc, serverTimestamp, doc, updateDoc } = window.GvFirebase;
+            
+            const nome = document.getElementById('gestor-nome').value.trim();
+            const whatsapp = document.getElementById('gestor-whatsapp').value.trim();
+            const email = document.getElementById('gestor-email').value; // readonly
+
+            // 1. Salva dados na coleção centralizada 'gestores' (Ponto 2)
+            addDoc(collection(db, "gestores"), {
+                uid: currentUser.uid,
+                nome: nome, // Captando nome
+                email: email, // Captando e-mail
+                whatsapp: whatsapp, // Captando whatsapp
+                dataQualificacao: serverTimestamp(),
+                origem: "Revista S."
+            });
+
+            // 2. Atualiza o status do leitor para 'qualificado' (para não pedir o form de novo)
+            if(userData && userData.firestoreId) {
+                const leitorRef = doc(db, "leitores", userData.firestoreId);
+                updateDoc(leitorRef, { qualificadoGestor: true });
+                userData.qualificadoGestor = true; // Atualiza estado local
+            }
+
+            fecharGestorForm();
+            alert("Obrigado! Seu acesso aos conteúdos de Gestão e Finanças foi liberado.");
+            if(pendingArticle) tratarCliqueArtigo(pendingArticle.catId, pendingArticle.artId);
+        }
+
+        // Função auxiliar para buscar dados complementares do Firestore
+        async function buscarDadosUsuario(uid) {
+            const { db, collection, getDocs, query, where } = window.GvFirebase;
+            const q = query(collection(db, "leitores"), where("uid", "==", uid));
+            const querySnapshot = await getDocs(q);
+            if (!querySnapshot.empty) {
+                const doc = querySnapshot.docs[0];
+                userData = { firestoreId: doc.id, ...doc.data() };
+                if (currentView === 'artigo') renderView('artigo', pendingArticle); // Re-renderiza artigo se tiver bloqueado
+            }
         }
 
         // Scroll para botão "UP"
