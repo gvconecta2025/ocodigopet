@@ -270,3 +270,54 @@
                             <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at center, #ffffff 1px, transparent 1px); background-size: 10px 10px;"></div>
                             <span class="text-[9px] text-blue-400 uppercase tracking-widest font-bold block mb-2 z-10 relative">Anúncio PetLojas</span>
                             <h4 class="text-xl font-black mt-1 leading-tight z-10 relative">Tempo é dinheiro.</h4>
+                            <p class="text-gray-400 text-sm mt-2 mb-5 z-10 relative">Automatize seu WhatsApp e venda enquanto você descansa.</p>
+                            <button onclick="clicouCTA('banner_feed')" class="bg-blue-600 hover:bg-blue-500 active:scale-95 transition-transform px-6 py-3 rounded-full font-black text-sm z-10 relative shadow-lg shadow-blue-500/30">Descobrir como</button>
+                        </div>
+                    `;
+                }
+                indexCat++;
+            }
+            mainContent.innerHTML = html;
+        }
+
+        window.abrirArtigo = function(catId, artigoId) {
+            const artigo = bancoDeArtigos[catId].artigos.find(a => a.id === artigoId);
+            registrarEvento('leu_artigo', { categoria: catId, artigo_id: artigoId, titulo: artigo.titulo });
+            renderView('artigo', { catId, artigo });
+        }
+
+        function renderArtigo(dados) {
+            const { catId, artigo } = dados;
+            mainContent.innerHTML = `
+                <div class="fade-in bg-white min-h-screen">
+                    <div class="px-5 pt-8 pb-6">
+                        <h1 class="text-3xl font-black text-gray-900 leading-tight tracking-tight">${artigo.titulo}</h1>
+                        <div class="flex items-center gap-2 mt-4 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                            <i class="fa-regular fa-clock"></i> Leitura de 2 min
+                        </div>
+                    </div>
+                    <img src="${artigo.img}" class="w-full h-64 object-cover shadow-inner">
+                    <div class="px-6 py-8 text-gray-800 leading-relaxed text-lg font-serif">
+                        <p><span class="float-left text-6xl font-black mr-3 mt-2 text-blue-600 font-sans leading-none">O</span> conteúdo estratégico deste artigo é focado em aumentar a eficiência do seu negócio pet. Aplique as dicas hoje mesmo para ver os resultados na próxima semana.</p>
+                        <br>
+                        <h3 class="font-bold text-xl text-gray-900 font-sans mt-4">Ponto de Atenção</h3>
+                        <p>O mercado muda rapidamente, e os gestores que automatizam tarefas saem na frente da concorrência local.</p>
+                    </div>
+                    <div class="m-5 p-8 rounded-2xl bg-blue-600 text-white text-center shadow-xl shadow-blue-200">
+                        <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fa-solid fa-rocket"></i></div>
+                        <h4 class="font-black text-xl mb-2">Escale sua operação Pet!</h4>
+                        <p class="text-sm text-blue-100 mb-6">Pare de apagar incêndios e comece a gerenciar seu fluxo de clientes com inteligência.</p>
+                        <button onclick="clicouCTA('${artigo.id}')" class="w-full bg-white hover:bg-gray-100 active:scale-95 transition-transform text-blue-700 font-black py-3 px-8 rounded-full shadow-lg">Falar com Consultor</button>
+                    </div>
+                    <div class="h-10"></div> </div>
+            `;
+        }
+
+        window.clicouCTA = (o) => registrarEvento('clicou_cta', { de: o });
+        
+        // Dispara ao carregar
+        registrarEvento('abriu_revista', { edicao: '01' });
+        renderView('home');
+    </script>
+</body>
+</html>
