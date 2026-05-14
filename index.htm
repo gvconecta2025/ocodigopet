@@ -3,334 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>O Código Pet | Portal de Notícias</title>
+    <title>O Código Pet | O portal definitivo do mundo animal</title>
+    
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#3b82f6">
+    <link rel="apple-touch-icon" href="/icon-192.png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Merriweather:wght@400;700;900&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        .font-serif { font-family: 'Merriweather', serif; }
-        
-        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .nav-tab.active { border-bottom: 4px solid #3b82f6; color: #1e293b; font-weight: 900; }
-        .blur-content { filter: blur(5px); user-select: none; pointer-events: none; }
-    </style>
+    
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="text-slate-800">
+<body class="min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
 
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
-        <div class="bg-slate-900 text-slate-300 text-[10px] uppercase tracking-widest py-2 px-6 flex justify-between items-center">
-            <span>O Portal Definitivo do Mundo Animal</span>
-            <div class="flex gap-4">
-                <span class="hidden md:block"><i class="fa-regular fa-calendar"></i> <span id="data-hoje"></span></span>
-                <a href="#" class="hover:text-white transition"><i class="fa-solid fa-user"></i> Login / Assinar</a>
-            </div>
-        </div>
+    <div class="absolute inset-0 z-0 opacity-20" style="background-image: radial-gradient(#3b82f6 1px, transparent 1px); background-size: 30px 30px;"></div>
 
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 flex justify-between items-center">
-            <div class="flex items-center gap-3 cursor-pointer" onclick="voltarHome()">
-                <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg">
-                    <i class="fa-solid fa-book-open text-white text-xl"></i>
-                </div>
-                <h1 class="text-3xl md:text-4xl font-black tracking-tighter font-serif">O Código Pet</h1>
-            </div>
-            
-            <button class="md:hidden text-2xl"><i class="fa-solid fa-bars"></i></button>
-        </div>
-
-        <nav class="max-w-6xl mx-auto px-4 sm:px-6 flex gap-8">
-            <button onclick="mudarGuia('tutores')" id="tab-tutores" class="nav-tab active pb-4 text-slate-500 font-bold hover:text-slate-900 transition flex items-center gap-2">
-                <i class="fa-solid fa-dog"></i> Guia do Tutor
-            </button>
-            <button onclick="mudarGuia('negocios')" id="tab-negocios" class="nav-tab pb-4 text-slate-500 font-bold hover:text-blue-600 transition flex items-center gap-2">
-                <i class="fa-solid fa-store"></i> <span class="hidden sm:inline">Portal</span> Negócios <span class="bg-amber-100 text-amber-700 text-[9px] px-2 py-0.5 rounded-full uppercase ml-1"><i class="fa-solid fa-star"></i> Pro</span>
-            </button>
-        </nav>
-    </header>
-
-    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8 min-h-[60vh]">
+    <div class="z-10 text-center w-full max-w-5xl px-6 fade-in">
         
-        <div id="loader" class="flex flex-col items-center justify-center py-20">
-            <i class="fa-solid fa-circle-notch fa-spin text-4xl text-blue-600 mb-4"></i>
-            <p class="text-slate-500 font-bold text-sm uppercase tracking-widest">Atualizando manchetes...</p>
+        <div class="mb-10">
+            <div class="w-20 h-20 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-blue-500/50">
+                <i class="fa-solid fa-book-open text-4xl text-white"></i>
+            </div>
+            <h1 class="text-5xl md:text-7xl font-black tracking-tighter mb-4 font-serif">O Código Pet</h1>
+            <p class="text-lg md:text-xl text-slate-400 font-medium max-w-2xl mx-auto">
+                Selecione o seu perfil para aceder ao conteúdo especializado.
+            </p>
         </div>
 
-        <div id="modulo-tutores" class="hidden fade-in space-y-10">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="lg:col-span-2 relative rounded-2xl overflow-hidden shadow-lg group cursor-pointer h-[400px]">
-                    <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent flex flex-col justify-end p-8">
-                        <span class="bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded w-max mb-3">Saúde Pet</span>
-                        <h2 class="text-3xl font-black text-white font-serif leading-tight">Alimentação Natural: A nova revolução na longevidade canina.</h2>
-                    </div>
-                </div>
-                <div class="space-y-6">
-                    <div class="flex gap-4 cursor-pointer group">
-                        <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=300&auto=format&fit=crop" class="w-24 h-24 rounded-xl object-cover">
-                        <div>
-                            <span class="text-emerald-600 text-[10px] font-black uppercase tracking-widest block mb-1">Comportamento</span>
-                            <h3 class="font-bold text-slate-800 leading-snug group-hover:text-blue-600 transition">Como entender os sinais de stress no seu gato.</h3>
-                        </div>
-                    </div>
-                    <div class="flex gap-4 cursor-pointer group">
-                        <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?q=80&w=300&auto=format&fit=crop" class="w-24 h-24 rounded-xl object-cover">
-                        <div>
-                            <span class="text-purple-600 text-[10px] font-black uppercase tracking-widest block mb-1">Curiosidades</span>
-                            <h3 class="font-bold text-slate-800 leading-snug group-hover:text-blue-600 transition">As raças mais antigas que ainda existem hoje.</h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
             
-            <div id="grid-dinamico-tutores" class="grid grid-cols-1 md:grid-cols-3 gap-8 border-t border-slate-200 pt-8"></div>
+            <div onclick="acessarModulo('business')" class="door-card bg-slate-800 border border-slate-700 rounded-3xl p-8 text-left relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-bl-full -mr-8 -mt-8 transition-transform duration-500 group-hover:scale-110"></div>
+                <i class="fa-solid fa-store text-4xl text-blue-400 mb-6 relative z-10"></i>
+                <h2 class="text-2xl font-black text-white mb-2 relative z-10">Para Negócios</h2>
+                <p class="text-sm text-slate-400 leading-relaxed mb-6 relative z-10">Gestores, Donos de Pet Shop, Estética Animal e Clínicas. Estratégias de lucro e mercado.</p>
+                <span class="text-blue-400 font-bold text-sm flex items-center gap-2 relative z-10">
+                    Aceder à Edição Business <i class="fa-solid fa-arrow-right arrow-icon transition-transform"></i>
+                </span>
+            </div>
+
+            <div onclick="acessarModulo('tutores')" class="door-card bg-slate-800 border border-slate-700 rounded-3xl p-8 text-left relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-bl-full -mr-8 -mt-8 transition-transform duration-500 group-hover:scale-110"></div>
+                <i class="fa-solid fa-dog text-4xl text-emerald-400 mb-6 relative z-10"></i>
+                <h2 class="text-2xl font-black text-white mb-2 relative z-10">Para Tutores</h2>
+                <p class="text-sm text-slate-400 leading-relaxed mb-6 relative z-10">Dicas de saúde, nutrição, comportamento e bem-estar para pais e mães de pets.</p>
+                <span class="text-emerald-400 font-bold text-sm flex items-center gap-2 relative z-10">
+                    Aceder à Edição Tutores <i class="fa-solid fa-arrow-right arrow-icon transition-transform"></i>
+                </span>
+            </div>
+
         </div>
+    </div>
 
-        <div id="modulo-negocios" class="hidden fade-in">
-            <div class="bg-slate-900 rounded-3xl p-8 mb-8 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl border border-slate-800">
-                <div>
-                    <h2 class="text-2xl font-black font-serif mb-2">Portal Gestão Pet <span class="text-amber-400">PRO</span></h2>
-                    <p class="text-slate-400 text-sm">O maior acervo de estratégias de vendas, retenção e lucro para Pet Shops e Clínicas.</p>
-                </div>
-                <div class="bg-slate-800 border border-slate-700 p-4 rounded-xl text-center shrink-0">
-                    <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Assinatura Anual</p>
-                    <p class="text-2xl font-black text-amber-400">R$ 297,00<span class="text-xs text-slate-500 font-normal">/ano</span></p>
-                </div>
-            </div>
+    <script type="module" src="app.js"></script>
 
-            <div id="grid-dinamico-negocios" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
-        </div>
-
-        <div id="tela-leitura" class="hidden fade-in bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden max-w-3xl mx-auto">
-            <div id="leitura-img-container" class="w-full h-64 bg-slate-200 relative overflow-hidden">
-                <img id="leitura-img" src="" class="w-full h-full object-cover">
-            </div>
-            <div class="p-6 md:p-10 relative">
-                <button onclick="voltarHome()" class="text-xs font-bold text-slate-400 hover:text-blue-600 mb-6 flex items-center gap-1 transition">
-                    <i class="fa-solid fa-arrow-left"></i> Voltar ao portal
-                </button>
-                
-                <h1 id="leitura-titulo" class="text-3xl md:text-4xl font-black text-slate-900 leading-tight mb-4 font-serif"></h1>
-                <p id="leitura-resumo" class="text-lg text-slate-500 font-medium italic mb-8 border-l-4 border-slate-300 pl-4"></p>
-
-                <div id="leitura-conteudo-wrapper" class="relative">
-                    <div id="leitura-conteudo" class="font-serif text-lg leading-relaxed space-y-6 text-slate-700"></div>
-                    
-                    <div id="paywall-negocios" class="hidden absolute inset-0 bg-gradient-to-t from-white via-white/95 to-transparent flex flex-col items-center justify-end pb-10 pt-20">
-                        <div class="bg-white p-8 rounded-3xl shadow-2xl border border-amber-100 max-w-md w-full text-center">
-                            <i class="fa-solid fa-lock text-3xl text-amber-500 mb-4"></i>
-                            <h3 class="text-xl font-black text-slate-900 mb-2">Conteúdo Exclusivo PRO</h3>
-                            <p class="text-xs text-slate-500 mb-6 font-medium">Este artigo requer uma assinatura anual. <strong>Mas nós temos um convite VIP para si.</strong> Preencha os dados da sua loja para liberar a leitura gratuita agora.</p>
-                            
-                            <form onsubmit="liberarLeadVIP(event)" class="space-y-3 text-left">
-                                <input type="text" id="lead-nome" required placeholder="Seu Nome (Gestor)" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm outline-none focus:border-amber-500">
-                                <input type="text" id="lead-loja" required placeholder="Nome do Pet Shop" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm outline-none focus:border-amber-500">
-                                <input type="tel" id="lead-zap" required placeholder="WhatsApp da Loja" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm outline-none focus:border-amber-500 font-mono">
-                                
-                                <button type="submit" id="btn-liberar" class="w-full bg-slate-900 hover:bg-black text-white font-black py-4 rounded-xl shadow-lg transition-all mt-2">
-                                    DESBLOQUEAR ARTIGO VIP
-                                </button>
-                            </form>
-                            <p class="text-[9px] text-slate-400 mt-4">Ao prosseguir, você fará parte da rede executiva da PetLojas.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </main>
-
-    <footer class="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
-        <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div>
-                <h3 class="text-white font-black text-xl mb-4 font-serif"><i class="fa-solid fa-book-open text-blue-500 mr-2"></i> O Código Pet</h3>
-                <p class="text-xs leading-relaxed">Informação independente e estratégias de alta performance para quem ama e vive do mercado animal.</p>
-            </div>
-            <div>
-                <h4 class="text-white font-bold mb-4 uppercase text-xs tracking-widest">Navegação</h4>
-                <ul class="space-y-2 text-sm">
-                    <li><a href="#" class="hover:text-blue-400 transition">Guia do Tutor</a></li>
-                    <li><a href="#" class="hover:text-blue-400 transition">Portal Gestão PRO</a></li>
-                    <li><a href="#" class="hover:text-blue-400 transition">Assinar Revista</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="text-white font-bold mb-4 uppercase text-xs tracking-widest">Apoio e Infraestrutura</h4>
-                <a href="#" class="block bg-slate-800 border border-slate-700 p-4 rounded-xl hover:border-blue-500 transition group">
-                    <span class="block text-xs font-bold text-slate-300 mb-1 group-hover:text-white transition">Powered by PetLojas OS</span>
-                    <span class="text-[10px]">A infraestrutura definitiva de vendas para Pet Shops.</span>
-                </a>
-            </div>
-        </div>
-    </footer>
-
-    <script type="module">
-        // Data atual
-        const dt = new Date();
-        document.getElementById('data-hoje').innerText = dt.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, getDoc, doc, addDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        // COLOQUE AS SUAS CREDENCIAIS AQUI
-        const firebaseConfig = {
-            apiKey: "COLOQUE_API",
-            authDomain: "ocodigopet.firebaseapp.com",
-            projectId: "ocodigopet",
-            storageBucket: "ocodigopet.firebasestorage.app",
-            messagingSenderId: "COLOQUE_SENDER",
-            appId: "COLOQUE_APPID"
-        };
-
-        let db;
-        let artigosCache = [];
-        let guiaAtual = 'tutores';
-
-        try {
-            const app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            carregarPortal();
-        } catch(e) {
-            console.error("Firebase não configurado.");
-            document.getElementById('loader').innerHTML = "<p class='text-red-500 font-bold'>Erro ao conectar com a Redação.</p>";
-        }
-
-        async function carregarPortal() {
-            try {
-                // Puxamos a coleção 'artigos' e filtramos no front-end para não gastar leituras no Firebase
-                const q = query(collection(db, "artigos"), orderBy("data_publicacao", "desc"));
-                const qs = await getDocs(q);
-                
-                let tutoresHtml = '';
-                let negociosHtml = '';
-
-                qs.forEach(docSnap => {
-                    const art = { id: docSnap.id, ...docSnap.data() };
-                    artigosCache.push(art);
-
-                    const card = `
-                        <div onclick="abrirArtigo('${art.id}', '${art.publico_alvo}')" class="cursor-pointer group flex flex-col">
-                            <div class="h-48 rounded-2xl bg-slate-200 overflow-hidden mb-4 relative">
-                                <img src="${art.imagem}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                                ${art.publico_alvo === 'gestor' ? '<div class="absolute top-2 right-2 bg-amber-400 text-amber-900 text-[9px] font-black px-2 py-1 rounded shadow"><i class="fa-solid fa-lock"></i> PRO</div>' : ''}
-                            </div>
-                            <span class="text-[10px] text-blue-600 font-black uppercase tracking-widest mb-1">${art.caderno || 'Geral'}</span>
-                            <h3 class="text-xl font-black text-slate-900 font-serif leading-snug group-hover:text-blue-600 transition mb-2">${art.titulo}</h3>
-                            <p class="text-sm text-slate-500 leading-relaxed line-clamp-3">${art.resumo}</p>
-                        </div>
-                    `;
-
-                    if(art.publico_alvo === 'gestor' || art.publico_alvo === 'funcionario') {
-                        negociosHtml += card;
-                    } else {
-                        tutoresHtml += card;
-                    }
-                });
-
-                document.getElementById('grid-dinamico-tutores').innerHTML = tutoresHtml || '<p class="col-span-3 text-slate-400">Em breve novos artigos...</p>';
-                document.getElementById('grid-dinamico-negocios').innerHTML = negociosHtml || '<p class="col-span-2 text-slate-400">Em breve novas estratégias...</p>';
-
-                // Renderiza a tela limpa
-                document.getElementById('loader').classList.add('hidden');
-                document.getElementById('modulo-tutores').classList.remove('hidden');
-
-            } catch(e) {
-                console.error(e);
-            }
-        }
-
-        window.mudarGuia = (guia) => {
-            guiaAtual = guia;
-            document.getElementById('tab-tutores').classList.remove('active');
-            document.getElementById('tab-negocios').classList.remove('active');
-            document.getElementById('modulo-tutores').classList.add('hidden');
-            document.getElementById('modulo-negocios').classList.add('hidden');
-            document.getElementById('tela-leitura').classList.add('hidden');
-
-            document.getElementById(`tab-${guia}`).classList.add('active');
-            document.getElementById(`modulo-${guia}`).classList.remove('hidden');
-            window.scrollTo(0,0);
-        };
-
-        window.abrirArtigo = (id, tipo) => {
-            const art = artigosCache.find(a => a.id === id);
-            if(!art) return;
-
-            // Esconde TUDO
-            document.getElementById('modulo-tutores').classList.add('hidden');
-            document.getElementById('modulo-negocios').classList.add('hidden');
-            
-            // Preenche
-            document.getElementById('leitura-img').src = art.imagem;
-            document.getElementById('leitura-titulo').innerText = art.titulo;
-            document.getElementById('leitura-resumo').innerText = art.resumo;
-            
-            const divConteudo = document.getElementById('leitura-conteudo');
-            const divPaywall = document.getElementById('paywall-negocios');
-            const isVip = localStorage.getItem('ocodigopet_vip') === 'true';
-
-            // SISTEMA DE SEGURANÇA B2B (PAYWALL)
-            if(tipo === 'gestor' && !isVip) {
-                // Borra o texto (mostra só o resumo ou texto falso longo) e abre cadeado
-                divConteudo.innerHTML = (art.conteudo.substring(0, 300) + '<br><br><br><br><br><br><br><br><br><br>').replace(/\n/g, '<br>');
-                divConteudo.classList.add('blur-content');
-                divPaywall.classList.remove('hidden');
-            } else {
-                // Libera total
-                divConteudo.innerHTML = art.conteudo.replace(/\n/g, '<br>');
-                divConteudo.classList.remove('blur-content');
-                divPaywall.classList.add('hidden');
-            }
-
-            document.getElementById('tela-leitura').classList.remove('hidden');
-            window.scrollTo(0,0);
-        };
-
-        window.voltarHome = () => {
-            mudarGuia(guiaAtual); // Volta pra guia onde estava
-        };
-
-        window.liberarLeadVIP = async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('btn-liberar');
-            btn.innerText = "VALIDANDO...";
-            btn.disabled = true;
-
-            const lead = {
-                nome: document.getElementById('lead-nome').value,
-                nomeLoja: document.getElementById('lead-loja').value, // Mesmo campo do CRM Petlojas
-                telefone: document.getElementById('lead-zap').value,
-                status_funil: "Novos",
-                origem: "O Código Pet - Portal PRO",
-                data_atualizacao: serverTimestamp()
-            };
-
-            try {
-                // Envia para a base de LEADS (que o seu CRM PetLojas vai ler)
-                await addDoc(collection(db, "leads"), lead);
-                
-                // Grava passe VIP no dispositivo
-                localStorage.setItem('ocodigopet_vip', 'true');
-                
-                alert("Acesso Liberado! O seu Passe VIP está ativo.");
-                
-                // Retira o borrão e esconde o cadeado
-                document.getElementById('leitura-conteudo').classList.remove('blur-content');
-                document.getElementById('paywall-negocios').classList.add('hidden');
-                
-                // Atualiza o texto real
-                const tituloAtivo = document.getElementById('leitura-titulo').innerText;
-                const art = artigosCache.find(a => a.titulo === tituloAtivo);
-                if(art) document.getElementById('leitura-conteudo').innerHTML = art.conteudo.replace(/\n/g, '<br>');
-
-            } catch(erro) {
-                alert("Falha na validação. Tente novamente.");
-                btn.innerText = "DESBLOQUEAR ARTIGO VIP";
-                btn.disabled = false;
-            }
-        };
-
-    </script>
 </body>
 </html>
