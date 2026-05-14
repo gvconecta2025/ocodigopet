@@ -14,11 +14,11 @@
     
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
+<body class="min-h-screen flex flex-col items-center justify-center relative overflow-hidden bg-slate-900 text-white">
 
     <div class="absolute inset-0 z-0 opacity-20" style="background-image: radial-gradient(#3b82f6 1px, transparent 1px); background-size: 30px 30px;"></div>
 
-    <div class="z-10 text-center w-full max-w-5xl px-6 fade-in">
+    <div class="z-10 text-center w-full max-w-5xl px-6 fade-in flex-1 flex flex-col justify-center">
         
         <div class="mb-10">
             <div class="w-20 h-20 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-blue-500/50">
@@ -30,7 +30,7 @@
             </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto w-full">
             
             <div onclick="acessarModulo('business')" class="door-card bg-slate-800 border border-slate-700 rounded-3xl p-8 text-left relative overflow-hidden group">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-bl-full -mr-8 -mt-8 transition-transform duration-500 group-hover:scale-110"></div>
@@ -51,11 +51,43 @@
                     Aceder à Edição Tutores <i class="fa-solid fa-arrow-right arrow-icon transition-transform"></i>
                 </span>
             </div>
-
         </div>
+    </div>
+
+    <div class="z-20 pb-4 pt-8 w-full text-center">
+        <button onclick="forcarAtualizacao()" class="text-[10px] text-slate-500 hover:text-white uppercase tracking-widest font-bold transition flex items-center justify-center gap-2 mx-auto bg-slate-800/50 px-4 py-2 rounded-full border border-slate-700/50 hover:border-slate-500">
+            <i class="fa-solid fa-rotate" id="icone-sync"></i> Verificar Atualizações (PWA)
+        </button>
     </div>
 
     <script type="module" src="app.js"></script>
 
+    <script>
+        function forcarAtualizacao() {
+            const icone = document.getElementById('icone-sync');
+            icone.classList.add('fa-spin'); // Feedback visual imediato
+
+            // 1. Desregistra o Service Worker (limpa o motor offline)
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    for(let registration of registrations) {
+                        registration.unregister();
+                    }
+                });
+            }
+
+            // 2. Limpa o Cache Storage do PWA
+            if ('caches' in window) {
+                caches.keys().then(function(names) {
+                    for (let name of names) caches.delete(name);
+                });
+            }
+
+            // 3. Força o Reload ignorando o cache HTTP (Shift+F5)
+            setTimeout(() => {
+                window.location.reload(true);
+            }, 500); // Dá meio segundo para a limpeza ocorrer antes de recarregar
+        }
+    </script>
 </body>
 </html>
