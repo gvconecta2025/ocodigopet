@@ -11,7 +11,31 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for (let registration of registrations) {
+                    registration.unregister();
+                }
+            });
+        }
+        if ('caches' in window) {
+            caches.keys().then(function(names) {
+                for (let name of names) caches.delete(name);
+            });
+        }
+    </script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Merriweather:wght@400;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .font-serif { font-family: 'Merriweather', serif; }
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .nav-tab.active { border-bottom: 4px solid #3b82f6; color: #1e293b; font-weight: 900; }
+        .blur-content { filter: blur(5px); user-select: none; pointer-events: none; }
+    </style>
 </head>
 <body class="text-slate-800 bg-slate-50 min-h-screen flex flex-col">
 
@@ -20,8 +44,7 @@
             <span>O Portal Definitivo do Mundo Animal</span>
             <div class="flex gap-4 items-center">
                 <span class="hidden md:block"><i class="fa-regular fa-calendar"></i> <span id="data-hoje"></span></span>
-                
-                <button onclick="forcarAtualizacao()" class="text-emerald-400 hover:text-white transition flex items-center gap-1 border border-slate-700 px-2 py-0.5 rounded">
+                <button onclick="window.location.reload(true)" class="text-emerald-400 hover:text-white transition flex items-center gap-1 border border-slate-700 px-2 py-0.5 rounded">
                     <i class="fa-solid fa-rotate" id="icone-sync"></i> Refresh App
                 </button>
             </div>
@@ -126,24 +149,155 @@
         </div>
     </main>
 
-    <script type="module" src="app.js"></script>
+    <script type="module">
+        const dt = new Date();
+        document.getElementById('data-hoje').innerText = dt.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-    <script>
-        function forcarAtualizacao() {
-            const icone = document.getElementById('icone-sync');
-            icone.classList.add('fa-spin');
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                    for(let registration of registrations) { registration.unregister(); }
-                });
-            }
-            if ('caches' in window) {
-                caches.keys().then(function(names) {
-                    for (let name of names) caches.delete(name);
-                });
-            }
-            setTimeout(() => { window.location.reload(true); }, 500);
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, addDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // COLOQUE AS CREDENCIAIS DO NOVO FIREBASE OCODIGOPET
+        const firebaseConfig = {
+            apiKey: "COLOQUE_AQUI_SUA_CHAVE",
+            authDomain: "ocodigopet.firebaseapp.com",
+            projectId: "ocodigopet",
+            storageBucket: "ocodigopet.firebasestorage.app",
+            messagingSenderId: "SENDER_ID",
+            appId: "APP_ID"
+        };
+
+        let db;
+        let artigosCache = [];
+        let guiaAtual = 'tutores';
+
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            carregarPortal();
+        } catch(e) {
+            console.error("Firebase não configurado ainda.", e);
+            document.getElementById('loader').innerHTML = "<p class='text-amber-500 font-bold'>Base de Dados não conectada. Configure o Firebase.</p>";
         }
+
+        async function carregarPortal() {
+            try {
+                const q = query(collection(db, "artigos"), orderBy("data_publicacao", "desc"));
+                const qs = await getDocs(q);
+                
+                let tutoresHtml = '';
+                let negociosHtml = '';
+
+                qs.forEach(docSnap => {
+                    const art = { id: docSnap.id, ...docSnap.data() };
+                    artigosCache.push(art);
+
+                    const card = `
+                        <div onclick="abrirArtigo('${art.id}', '${art.publico_alvo}')" class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 cursor-pointer group flex flex-col">
+                            <div class="h-40 rounded-xl bg-slate-200 overflow-hidden mb-4 relative">
+                                <img src="${art.imagem}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                                ${art.publico_alvo === 'gestor' ? '<div class="absolute top-2 right-2 bg-amber-400 text-amber-900 text-[9px] font-black px-2 py-1 rounded shadow"><i class="fa-solid fa-lock"></i> PRO</div>' : ''}
+                            </div>
+                            <span class="text-[10px] text-blue-600 font-black uppercase tracking-widest mb-1">${art.caderno || 'Geral'}</span>
+                            <h3 class="text-lg font-black text-slate-900 font-serif leading-snug group-hover:text-blue-600 transition mb-2">${art.titulo}</h3>
+                            <p class="text-xs text-slate-500 leading-relaxed line-clamp-3">${art.resumo}</p>
+                        </div>
+                    `;
+
+                    if(art.publico_alvo === 'gestor' || art.publico_alvo === 'funcionario') {
+                        negociosHtml += card;
+                    } else {
+                        tutoresHtml += card;
+                    }
+                });
+
+                document.getElementById('grid-dinamico-tutores').innerHTML = tutoresHtml || '<p class="text-slate-400">Em breve novos artigos...</p>';
+                document.getElementById('grid-dinamico-negocios').innerHTML = negociosHtml || '<p class="text-slate-400">Em breve novas estratégias...</p>';
+
+                document.getElementById('loader').classList.add('hidden');
+                document.getElementById('modulo-tutores').classList.remove('hidden');
+
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        window.mudarGuia = (guia) => {
+            guiaAtual = guia;
+            document.getElementById('tab-tutores').classList.remove('active');
+            document.getElementById('tab-negocios').classList.remove('active');
+            document.getElementById('modulo-tutores').classList.add('hidden');
+            document.getElementById('modulo-negocios').classList.add('hidden');
+            document.getElementById('tela-leitura').classList.add('hidden');
+
+            document.getElementById(`tab-${guia}`).classList.add('active');
+            document.getElementById(`modulo-${guia}`).classList.remove('hidden');
+            window.scrollTo(0,0);
+        };
+
+        window.abrirArtigo = (id, tipo) => {
+            const art = artigosCache.find(a => a.id === id);
+            if(!art) return;
+
+            document.getElementById('modulo-tutores').classList.add('hidden');
+            document.getElementById('modulo-negocios').classList.add('hidden');
+            
+            document.getElementById('leitura-img').src = art.imagem;
+            document.getElementById('leitura-titulo').innerText = art.titulo;
+            document.getElementById('leitura-resumo').innerText = art.resumo;
+            
+            const divConteudo = document.getElementById('leitura-conteudo');
+            const divPaywall = document.getElementById('paywall-negocios');
+            const isVip = localStorage.getItem('ocodigopet_vip') === 'true';
+
+            if(tipo === 'gestor' && !isVip) {
+                divConteudo.innerHTML = (art.conteudo.substring(0, 300) + '<br><br><br><br><br><br>').replace(/\n/g, '<br>');
+                divConteudo.classList.add('blur-content');
+                divPaywall.classList.remove('hidden');
+            } else {
+                divConteudo.innerHTML = art.conteudo.replace(/\n/g, '<br>');
+                divConteudo.classList.remove('blur-content');
+                divPaywall.classList.add('hidden');
+            }
+
+            document.getElementById('tela-leitura').classList.remove('hidden');
+            window.scrollTo(0,0);
+        };
+
+        window.voltarHome = () => mudarGuia(guiaAtual);
+
+        window.liberarLeadVIP = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-liberar');
+            btn.innerText = "VALIDANDO...";
+            btn.disabled = true;
+
+            const lead = {
+                nome: document.getElementById('lead-nome').value,
+                nomeLoja: document.getElementById('lead-loja').value,
+                telefone: document.getElementById('lead-zap').value,
+                status_funil: "Novos",
+                origem: "O Código Pet - Portal PRO",
+                data_atualizacao: serverTimestamp()
+            };
+
+            try {
+                await addDoc(collection(db, "leads"), lead);
+                localStorage.setItem('ocodigopet_vip', 'true');
+                alert("Acesso Liberado! O seu Passe VIP está ativo.");
+                
+                document.getElementById('leitura-conteudo').classList.remove('blur-content');
+                document.getElementById('paywall-negocios').classList.add('hidden');
+                
+                const tituloAtivo = document.getElementById('leitura-titulo').innerText;
+                const art = artigosCache.find(a => a.titulo === tituloAtivo);
+                if(art) document.getElementById('leitura-conteudo').innerHTML = art.conteudo.replace(/\n/g, '<br>');
+
+            } catch(erro) {
+                alert("Falha na validação. Tente novamente.");
+                btn.innerText = "DESBLOQUEAR ARTIGO VIP";
+                btn.disabled = false;
+            }
+        };
     </script>
 </body>
 </html>
