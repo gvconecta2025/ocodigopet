@@ -1,39 +1,26 @@
-const CACHE_NAME = 'ocodigopet-shell-v1';
-const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/style.css',
-  '/app.js',
-  '/manifest.json'
-];
-
-// Instalação: Guarda a Casca no Cache
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
-    })
-  );
-  self.skipWaiting();
+// VERSÃO ANTI-CACHE: Este Service Worker força a limpeza total e desliga-se a si mesmo.
+self.addEventListener('install', function(e) {
+  self.skipWaiting(); // Força a instalação imediata
 });
 
-// Ativação: Limpa caches antigos se atualizarmos a versão
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
+self.addEventListener('activate', function(e) {
+  e.waitUntil(
+    caches.keys().then(function(cacheNames) {
       return Promise.all(
-        cacheNames.filter((name) => name !== CACHE_NAME).map((name) => caches.delete(name))
+        cacheNames.map(function(cacheName) {
+          // Apaga TODOS os caches antigos
+          return caches.delete(cacheName);
+        })
       );
+    }).then(function() {
+      // Desregistra o Service Worker
+      self.registration.unregister();
     })
   );
-  self.clients.claim();
+  return self.clients.claim();
 });
 
-// Interceptação: Responde com Cache rápido, ou busca na Rede
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      return cachedResponse || fetch(event.request);
-    })
-  );
+// Impede que as requisições usem cache
+self.addEventListener('fetch', function(e) {
+  e.respondWith(fetch(e.request));
 });
