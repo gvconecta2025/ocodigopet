@@ -6,18 +6,15 @@
     <title>O Código Pet | Portal de Notícias</title>
     
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#ffffff">
-    <link rel="apple-touch-icon" href="/icon-192.png">
-
+    <meta name="theme-color" content="#0f172a">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                for (let registration of registrations) {
-                    registration.unregister();
-                }
+                for (let registration of registrations) registration.unregister();
             });
         }
         if ('caches' in window) {
@@ -33,39 +30,40 @@
         .font-serif { font-family: 'Merriweather', serif; }
         .fade-in { animation: fadeIn 0.4s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .nav-tab { border-bottom: 4px solid transparent; transition: all 0.3s; }
         .nav-tab.active { border-bottom: 4px solid #3b82f6; color: #1e293b; font-weight: 900; }
-        .blur-content { filter: blur(5px); user-select: none; pointer-events: none; }
+        .blur-content { filter: blur(6px); user-select: none; pointer-events: none; opacity: 0.5; }
     </style>
 </head>
 <body class="text-slate-800 bg-slate-50 min-h-screen flex flex-col">
 
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
         <div class="bg-slate-900 text-slate-300 text-[10px] uppercase tracking-widest py-2 px-6 flex justify-between items-center">
-            <span>O Portal Definitivo do Mundo Animal</span>
+            <span>Portal Definitivo do Mundo Animal</span>
             <div class="flex gap-4 items-center">
-                <span class="hidden md:block"><i class="fa-regular fa-calendar"></i> <span id="data-hoje"></span></span>
-                <button onclick="window.location.reload(true)" class="text-emerald-400 hover:text-white transition flex items-center gap-1 border border-slate-700 px-2 py-0.5 rounded">
-                    <i class="fa-solid fa-rotate" id="icone-sync"></i> Refresh App
+                <span class="hidden md:block" id="data-hoje"></span>
+                <button onclick="window.location.reload(true)" class="text-emerald-400 font-bold hover:text-white transition flex items-center gap-1">
+                    <i class="fa-solid fa-rotate"></i> Atualizar Portal
                 </button>
             </div>
         </div>
 
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 flex justify-between items-center">
-            <div class="flex items-center gap-3 cursor-pointer" onclick="voltarHome()">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="mudarGuia('tutores')">
                 <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg">
                     <i class="fa-solid fa-book-open text-white text-xl"></i>
                 </div>
                 <h1 class="text-3xl md:text-4xl font-black tracking-tighter font-serif">O Código Pet</h1>
             </div>
-            <button class="md:hidden text-2xl text-slate-400 hover:text-slate-900"><i class="fa-solid fa-bars"></i></button>
         </div>
 
         <nav class="max-w-6xl mx-auto px-4 sm:px-6 flex gap-8">
-            <button onclick="mudarGuia('tutores')" id="tab-tutores" class="nav-tab active pb-4 text-slate-500 font-bold hover:text-slate-900 transition flex items-center gap-2">
+            <button onclick="mudarGuia('tutores')" id="tab-tutores" class="nav-tab active pb-4 text-slate-500 font-bold hover:text-slate-900 flex items-center gap-2">
                 <i class="fa-solid fa-dog"></i> Guia do Tutor
             </button>
-            <button onclick="mudarGuia('negocios')" id="tab-negocios" class="nav-tab pb-4 text-slate-500 font-bold hover:text-blue-600 transition flex items-center gap-2">
-                <i class="fa-solid fa-store"></i> <span class="hidden sm:inline">Portal</span> Negócios <span class="bg-amber-100 text-amber-700 text-[9px] px-2 py-0.5 rounded-full uppercase ml-1"><i class="fa-solid fa-star"></i> Pro</span>
+            <button onclick="mudarGuia('negocios')" id="tab-negocios" class="nav-tab pb-4 text-slate-500 font-bold hover:text-blue-600 flex items-center gap-2">
+                <i class="fa-solid fa-store"></i> <span class="hidden sm:inline">Portal</span> Negócios 
+                <span class="bg-amber-100 text-amber-700 text-[9px] px-2 py-0.5 rounded-full uppercase ml-1"><i class="fa-solid fa-star"></i> Pro</span>
             </button>
         </nav>
     </header>
@@ -74,24 +72,24 @@
         
         <div id="loader" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-50 z-10 pt-20">
             <i class="fa-solid fa-circle-notch fa-spin text-4xl text-blue-600 mb-4"></i>
-            <p class="text-slate-500 font-bold text-sm uppercase tracking-widest">Atualizando manchetes...</p>
+            <p class="text-slate-500 font-bold text-sm uppercase tracking-widest">Acessando Redação...</p>
         </div>
 
         <div id="modulo-tutores" class="hidden fade-in space-y-10">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="lg:col-span-2 relative rounded-2xl overflow-hidden shadow-lg group cursor-pointer h-[400px]">
-                    <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                <div class="lg:col-span-2 relative rounded-2xl overflow-hidden shadow-lg group h-[400px]">
+                    <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent flex flex-col justify-end p-8">
                         <span class="bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded w-max mb-3">Saúde Pet</span>
                         <h2 class="text-3xl font-black text-white font-serif leading-tight">Alimentação Natural: A nova revolução na longevidade canina.</h2>
                     </div>
                 </div>
                 <div class="space-y-6">
-                    <div class="flex gap-4 cursor-pointer group">
+                    <div class="flex gap-4 group">
                         <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=300&auto=format&fit=crop" class="w-24 h-24 rounded-xl object-cover">
                         <div>
                             <span class="text-emerald-600 text-[10px] font-black uppercase tracking-widest block mb-1">Comportamento</span>
-                            <h3 class="font-bold text-slate-800 leading-snug group-hover:text-blue-600 transition">Como entender os sinais de stress no seu gato.</h3>
+                            <h3 class="font-bold text-slate-800 leading-snug">Como entender os sinais de stress no seu gato.</h3>
                         </div>
                     </div>
                 </div>
@@ -100,10 +98,10 @@
         </div>
 
         <div id="modulo-negocios" class="hidden fade-in">
-            <div class="bg-slate-900 rounded-3xl p-8 mb-8 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl border border-slate-800">
+            <div class="bg-slate-900 rounded-3xl p-8 mb-8 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
                 <div>
                     <h2 class="text-2xl font-black font-serif mb-2">Portal Gestão Pet <span class="text-amber-400">PRO</span></h2>
-                    <p class="text-slate-400 text-sm">O maior acervo de estratégias de vendas, retenção e lucro para Pet Shops e Clínicas.</p>
+                    <p class="text-slate-400 text-sm">Estratégias de vendas, retenção e lucro para Pet Shops e Clínicas.</p>
                 </div>
                 <div class="bg-slate-800 border border-slate-700 p-4 rounded-xl text-center shrink-0">
                     <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Assinatura Anual</p>
@@ -114,39 +112,38 @@
         </div>
 
         <div id="tela-leitura" class="hidden fade-in bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden max-w-3xl mx-auto">
-            <div id="leitura-img-container" class="w-full h-64 bg-slate-200 relative overflow-hidden">
+            <div class="w-full h-64 bg-slate-200 relative overflow-hidden">
                 <img id="leitura-img" src="" class="w-full h-full object-cover">
             </div>
             <div class="p-6 md:p-10 relative">
-                <button onclick="voltarHome()" class="text-xs font-bold text-slate-400 hover:text-blue-600 mb-6 flex items-center gap-1 transition">
+                <button onclick="mudarGuia(guiaAtual)" class="text-xs font-bold text-slate-400 hover:text-blue-600 mb-6 flex items-center gap-1 transition">
                     <i class="fa-solid fa-arrow-left"></i> Voltar ao portal
                 </button>
                 <h1 id="leitura-titulo" class="text-3xl md:text-4xl font-black text-slate-900 leading-tight mb-4 font-serif"></h1>
                 <p id="leitura-resumo" class="text-lg text-slate-500 font-medium italic mb-8 border-l-4 border-slate-300 pl-4"></p>
 
-                <div id="leitura-conteudo-wrapper" class="relative">
+                <div class="relative">
                     <div id="leitura-conteudo" class="font-serif text-lg leading-relaxed space-y-6 text-slate-700"></div>
                     
                     <div id="paywall-negocios" class="hidden absolute inset-0 bg-gradient-to-t from-white via-white/95 to-transparent flex flex-col items-center justify-end pb-10 pt-20">
                         <div class="bg-white p-8 rounded-3xl shadow-2xl border border-amber-100 max-w-md w-full text-center">
                             <i class="fa-solid fa-lock text-3xl text-amber-500 mb-4"></i>
                             <h3 class="text-xl font-black text-slate-900 mb-2">Conteúdo Exclusivo PRO</h3>
-                            <p class="text-xs text-slate-500 mb-6 font-medium">Este artigo requer uma assinatura anual. <strong>Mas temos um convite VIP para si.</strong> Preencha os dados da sua loja para liberar a leitura gratuita agora.</p>
+                            <p class="text-xs text-slate-500 mb-6 font-medium">Assinatura necessária. <strong>Temos um convite VIP para si.</strong> Preencha os dados da sua loja para liberar a leitura gratuita agora.</p>
                             
                             <form onsubmit="liberarLeadVIP(event)" class="space-y-3 text-left">
                                 <input type="text" id="lead-nome" required placeholder="Seu Nome (Gestor)" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm outline-none focus:border-amber-500">
-                                <input type="text" id="lead-loja" required placeholder="Nome do Pet Shop" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm outline-none focus:border-amber-500">
                                 <input type="tel" id="lead-zap" required placeholder="WhatsApp da Loja" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm outline-none focus:border-amber-500 font-mono">
-                                <button type="submit" id="btn-liberar" class="w-full bg-slate-900 hover:bg-black text-white font-black py-4 rounded-xl shadow-lg transition-all mt-2">
-                                    DESBLOQUEAR ARTIGO VIP
+                                <button type="submit" id="btn-liberar" class="w-full bg-slate-900 hover:bg-black text-white font-black py-4 rounded-xl shadow-lg mt-2">
+                                    DESBLOQUEAR ACESSO VIP
                                 </button>
                             </form>
-                            <p class="text-[9px] text-slate-400 mt-4">Ao prosseguir, você fará parte da rede executiva da PetLojas.</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
     </main>
 
     <script type="module">
@@ -156,7 +153,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs, addDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // COLOQUE AS CREDENCIAIS DO NOVO FIREBASE OCODIGOPET
+        // IMPORTANTE: Insira aqui as suas chaves do Firebase ocodigopet
         const firebaseConfig = {
             apiKey: "COLOQUE_AQUI_SUA_CHAVE",
             authDomain: "ocodigopet.firebaseapp.com",
@@ -167,16 +164,17 @@
         };
 
         let db;
-        let artigosCache = [];
-        let guiaAtual = 'tutores';
+        window.artigosCache = [];
+        window.guiaAtual = 'tutores';
 
         try {
             const app = initializeApp(firebaseConfig);
             db = getFirestore(app);
             carregarPortal();
         } catch(e) {
-            console.error("Firebase não configurado ainda.", e);
-            document.getElementById('loader').innerHTML = "<p class='text-amber-500 font-bold'>Base de Dados não conectada. Configure o Firebase.</p>";
+            console.error("Firebase falhou:", e);
+            document.getElementById('loader').classList.add('hidden');
+            document.getElementById('modulo-tutores').classList.remove('hidden'); // Mostra a UI base mesmo sem DB
         }
 
         async function carregarPortal() {
@@ -189,7 +187,7 @@
 
                 qs.forEach(docSnap => {
                     const art = { id: docSnap.id, ...docSnap.data() };
-                    artigosCache.push(art);
+                    window.artigosCache.push(art);
 
                     const card = `
                         <div onclick="abrirArtigo('${art.id}', '${art.publico_alvo}')" class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 cursor-pointer group flex flex-col">
@@ -197,7 +195,6 @@
                                 <img src="${art.imagem}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                                 ${art.publico_alvo === 'gestor' ? '<div class="absolute top-2 right-2 bg-amber-400 text-amber-900 text-[9px] font-black px-2 py-1 rounded shadow"><i class="fa-solid fa-lock"></i> PRO</div>' : ''}
                             </div>
-                            <span class="text-[10px] text-blue-600 font-black uppercase tracking-widest mb-1">${art.caderno || 'Geral'}</span>
                             <h3 class="text-lg font-black text-slate-900 font-serif leading-snug group-hover:text-blue-600 transition mb-2">${art.titulo}</h3>
                             <p class="text-xs text-slate-500 leading-relaxed line-clamp-3">${art.resumo}</p>
                         </div>
@@ -210,19 +207,19 @@
                     }
                 });
 
-                document.getElementById('grid-dinamico-tutores').innerHTML = tutoresHtml || '<p class="text-slate-400">Em breve novos artigos...</p>';
-                document.getElementById('grid-dinamico-negocios').innerHTML = negociosHtml || '<p class="text-slate-400">Em breve novas estratégias...</p>';
-
-                document.getElementById('loader').classList.add('hidden');
-                document.getElementById('modulo-tutores').classList.remove('hidden');
+                if(tutoresHtml) document.getElementById('grid-dinamico-tutores').innerHTML = tutoresHtml;
+                if(negociosHtml) document.getElementById('grid-dinamico-negocios').innerHTML = negociosHtml;
 
             } catch(e) {
-                console.error(e);
+                console.log("Sem artigos no Firebase ainda.");
+            } finally {
+                document.getElementById('loader').classList.add('hidden');
+                document.getElementById('modulo-tutores').classList.remove('hidden');
             }
         }
 
         window.mudarGuia = (guia) => {
-            guiaAtual = guia;
+            window.guiaAtual = guia;
             document.getElementById('tab-tutores').classList.remove('active');
             document.getElementById('tab-negocios').classList.remove('active');
             document.getElementById('modulo-tutores').classList.add('hidden');
@@ -235,7 +232,7 @@
         };
 
         window.abrirArtigo = (id, tipo) => {
-            const art = artigosCache.find(a => a.id === id);
+            const art = window.artigosCache.find(a => a.id === id);
             if(!art) return;
 
             document.getElementById('modulo-tutores').classList.add('hidden');
@@ -250,7 +247,7 @@
             const isVip = localStorage.getItem('ocodigopet_vip') === 'true';
 
             if(tipo === 'gestor' && !isVip) {
-                divConteudo.innerHTML = (art.conteudo.substring(0, 300) + '<br><br><br><br><br><br>').replace(/\n/g, '<br>');
+                divConteudo.innerHTML = (art.conteudo.substring(0, 400) + '<br><br><br><br><br>').replace(/\n/g, '<br>');
                 divConteudo.classList.add('blur-content');
                 divPaywall.classList.remove('hidden');
             } else {
@@ -263,38 +260,33 @@
             window.scrollTo(0,0);
         };
 
-        window.voltarHome = () => mudarGuia(guiaAtual);
-
         window.liberarLeadVIP = async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btn-liberar');
             btn.innerText = "VALIDANDO...";
             btn.disabled = true;
 
-            const lead = {
-                nome: document.getElementById('lead-nome').value,
-                nomeLoja: document.getElementById('lead-loja').value,
-                telefone: document.getElementById('lead-zap').value,
-                status_funil: "Novos",
-                origem: "O Código Pet - Portal PRO",
-                data_atualizacao: serverTimestamp()
-            };
-
             try {
-                await addDoc(collection(db, "leads"), lead);
+                await addDoc(collection(db, "leads"), {
+                    nome: document.getElementById('lead-nome').value,
+                    telefone: document.getElementById('lead-zap').value,
+                    status_funil: "Novos",
+                    origem: "O Código Pet - Portal PRO",
+                    data_atualizacao: serverTimestamp()
+                });
                 localStorage.setItem('ocodigopet_vip', 'true');
-                alert("Acesso Liberado! O seu Passe VIP está ativo.");
+                alert("Acesso Liberado!");
                 
                 document.getElementById('leitura-conteudo').classList.remove('blur-content');
                 document.getElementById('paywall-negocios').classList.add('hidden');
                 
                 const tituloAtivo = document.getElementById('leitura-titulo').innerText;
-                const art = artigosCache.find(a => a.titulo === tituloAtivo);
+                const art = window.artigosCache.find(a => a.titulo === tituloAtivo);
                 if(art) document.getElementById('leitura-conteudo').innerHTML = art.conteudo.replace(/\n/g, '<br>');
-
             } catch(erro) {
-                alert("Falha na validação. Tente novamente.");
-                btn.innerText = "DESBLOQUEAR ARTIGO VIP";
+                alert("Falha na validação.");
+            } finally {
+                btn.innerText = "DESBLOQUEAR ACESSO VIP";
                 btn.disabled = false;
             }
         };
