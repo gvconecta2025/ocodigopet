@@ -2,557 +2,111 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>O Código Pet - Revista Semanal</title>
-    
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#2563eb">
-    <link rel="apple-touch-icon" href="/icon-192x192.png">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O Código Pet | O portal definitivo do mundo animal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
-        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Merriweather:wght@700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: white; }
+        .font-serif { font-family: 'Merriweather', serif; }
+        .fade-in { animation: fadeIn 0.8s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         
-        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
-        .slide-up { animation: slideUp 0.4s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .header-line { border-top: 4px solid #ef4444; }
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        .blur-content { filter: blur(8px); user-select: none; pointer-events: none; }
-        .tf-input { @apply w-full bg-transparent border-b-2 border-gray-200 text-xl md:text-2xl font-bold p-2 outline-none focus:border-blue-600 transition; }
-        .tf-label { @apply block text-sm font-bold text-gray-400 uppercase tracking-widest mb-2; }
-
-        /* Loader */
-        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #2563eb; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 40px auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* Efeito de Hover nas Portas de Entrada */
+        .door-card { transition: all 0.4s ease; cursor: pointer; }
+        .door-card:hover { transform: translateY(-10px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800 antialiased overflow-x-hidden">
+<body class="min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
 
-    <div id="side-menu" class="fixed inset-0 bg-black/60 z-[60] hidden transition-opacity opacity-0" onclick="fecharMenuClickFora(event)">
-        <div class="absolute right-0 top-0 bottom-0 w-64 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col" id="side-menu-panel">
-            <div class="p-5 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-                <h2 class="font-black text-gray-900 text-lg uppercase tracking-tighter">O Código Pet</h2>
-                <button onclick="toggleMenu()" class="text-gray-500 hover:text-red-600 text-2xl p-2"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="p-5 flex-1 overflow-y-auto space-y-3">
-                <button onclick="toggleMenu(); window.renderView('home')" class="w-full flex items-center gap-3 font-bold text-gray-700 p-3 rounded-lg hover:bg-gray-100"><i class="fa-solid fa-house text-blue-500"></i> Início</button>
-                
-                <h3 class="font-bold text-gray-400 text-[10px] uppercase tracking-[0.2em] mt-6 mb-4">Edições</h3>
-                <ul class="space-y-4">
-                    <li><button onclick="toggleMenu(); window.renderView('home')" class="w-full flex items-center justify-between font-black text-blue-700 border border-blue-200 bg-blue-50 p-3 rounded-lg">Edição 01 <span class="bg-blue-600 text-white text-[9px] px-2 py-1 rounded uppercase">Atual</span></button></li>
-                    <li><span class="block w-full text-left font-bold text-gray-400 p-3 rounded-lg">Edição 02 (Em breve)</span></li>
-                </ul>
-            </div>
-            <div class="p-5 border-t border-gray-100">
-                <p class="text-[9px] text-gray-400 text-center uppercase tracking-widest font-bold">Uma iniciativa GV Conecta</p>
-            </div>
-        </div>
-    </div>
+    <div class="absolute inset-0 z-0 opacity-20" style="background-image: radial-gradient(#3b82f6 1px, transparent 1px); background-size: 30px 30px;"></div>
 
-    <div id="app-container" class="max-w-md mx-auto bg-white min-h-screen shadow-2xl relative flex flex-col">
+    <div class="z-10 text-center w-full max-w-5xl px-6 fade-in">
         
-        <header class="bg-white sticky top-0 z-40 shadow-md header-line w-full">
-            <div class="px-4 py-3 flex justify-between items-center">
-                <div class="flex flex-col cursor-pointer" onclick="window.renderView('home')">
-                    <h1 class="text-2xl font-black tracking-tighter text-blue-700 uppercase leading-none">O CÓDIGO PET</h1>
-                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Revista Semanal</span>
-                </div>
-                <div class="flex items-center gap-3">
-                    <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded uppercase">Ed. 01</span>
-                    <button onclick="toggleMenu()" class="text-gray-700 focus:outline-none p-1"><i class="fa-solid fa-bars text-2xl"></i></button>
-                </div>
+        <div class="mb-10">
+            <div class="w-20 h-20 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-blue-500/50">
+                <i class="fa-solid fa-book-open text-4xl text-white"></i>
             </div>
+            <h1 class="text-5xl md:text-7xl font-black tracking-tighter mb-4 font-serif">O Código Pet</h1>
+            <p class="text-lg md:text-xl text-slate-400 font-medium max-w-2xl mx-auto">
+                Selecione o seu perfil para aceder ao conteúdo especializado.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
             
-            <div id="nav-categorias" class="bg-gray-50 border-b border-gray-200 px-4 py-2 overflow-x-auto whitespace-nowrap text-[11px] font-bold text-gray-500 uppercase tracking-wide flex gap-5 scrollbar-hide">
-                </div>
-        </header>
-
-        <main id="main-content" class="flex-1 pb-16 bg-white"></main>
-
-        <div class="fixed bottom-6 left-0 right-0 max-w-md mx-auto z-30 pointer-events-none h-12">
-            <button id="btn-voltar" onclick="window.renderView('home')" class="hidden absolute left-5 pointer-events-auto w-12 h-12 bg-black/60 backdrop-blur-md border border-white/20 rounded-full text-white flex items-center justify-center shadow-2xl hover:bg-black/80 active:scale-90 transition-all duration-300"><i class="fa-solid fa-arrow-left text-lg"></i></button>
-            <button id="btn-up" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="absolute right-5 pointer-events-auto w-12 h-12 bg-black/60 backdrop-blur-md border border-white/20 rounded-full text-white flex items-center justify-center shadow-2xl hover:bg-black/80 active:scale-90 transition-all duration-300 translate-y-10 opacity-0"><i class="fa-solid fa-arrow-up text-lg"></i></button>
-        </div>
-
-        <div id="modal-leitor" class="fixed inset-0 bg-black/80 z-[100] hidden items-center justify-center backdrop-blur-sm p-4 fade-in">
-            <div class="bg-white rounded-2xl p-8 w-full max-w-sm shadow-2xl slide-up relative">
-                <button onclick="window.fecharModais()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-900"><i class="fa-solid fa-xmark text-xl"></i></button>
-                <div class="text-center mb-6">
-                    <i class="fa-solid fa-book-open-reader text-4xl text-blue-500 mb-4"></i>
-                    <h3 class="text-2xl font-black tracking-tighter text-gray-950 mb-2">Continue Lendo Grátis</h3>
-                    <p class="text-sm text-gray-500">Você atingiu o limite de artigos anônimos. Informe seu e-mail para continuar lendo gratuitamente.</p>
-                </div>
-                <form id="form-leitor" class="space-y-4">
-                    <input type="email" id="leitor-email" placeholder="Seu melhor e-mail" required class="w-full p-4 border border-gray-200 rounded-xl outline-none focus:border-blue-500 font-bold">
-                    <button type="submit" class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl hover:bg-blue-700 transition active:scale-95">Liberar Acesso</button>
-                </form>
+            <div onclick="acessarModulo('business')" class="door-card bg-slate-800 border border-slate-700 rounded-3xl p-8 text-left relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+                <i class="fa-solid fa-store text-4xl text-blue-400 mb-6"></i>
+                <h2 class="text-2xl font-black text-white mb-2">Para Negócios</h2>
+                <p class="text-sm text-slate-400 leading-relaxed mb-6">Gestores, Donos de Pet Shop, Estética Animal e Clínicas. Estratégias de lucro e mercado.</p>
+                <span class="text-blue-400 font-bold text-sm flex items-center gap-2 group-hover:translate-x-2 transition-transform">
+                    Aceder à Edição Business <i class="fa-solid fa-arrow-right"></i>
+                </span>
             </div>
-        </div>
 
-        <div id="modal-gestor" class="fixed inset-0 bg-white z-[110] hidden flex-col max-w-md mx-auto h-screen fade-in">
-            <div class="p-6 flex justify-between items-center border-b border-gray-100">
-                <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Conteúdo Premium Gestão</span>
-                <button onclick="window.fecharModais()" class="text-gray-400 hover:text-red-600 text-xl"><i class="fa-solid fa-xmark"></i></button>
+            <div onclick="acessarModulo('tutores')" class="door-card bg-slate-800 border border-slate-700 rounded-3xl p-8 text-left relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+                <i class="fa-solid fa-dog text-4xl text-emerald-400 mb-6"></i>
+                <h2 class="text-2xl font-black text-white mb-2">Para Tutores</h2>
+                <p class="text-sm text-slate-400 leading-relaxed mb-6">Dicas de saúde, nutrição, comportamento e bem-estar para pais e mães de pets.</p>
+                <span class="text-emerald-400 font-bold text-sm flex items-center gap-2 group-hover:translate-x-2 transition-transform">
+                    Aceder à Edição Tutores <i class="fa-solid fa-arrow-right"></i>
+                </span>
             </div>
-            
-            <div class="flex-1 overflow-y-auto p-8 md:p-12 flex flex-col">
-                <div class="mb-8">
-                    <h3 class="text-2xl font-black text-gray-900 mb-2 leading-tight">Estratégias Avançadas</h3>
-                    <p class="text-sm text-gray-500">Para liberar este material, preencha os dados. **Enviaremos as próximas edições diretamente no seu WhatsApp.**</p>
-                </div>
 
-                <form id="form-gestor" class="space-y-10">
-                    <div class="slide-up">
-                        <label class="tf-label">Qual o seu nome?</label>
-                        <input type="text" id="gestor-nome" placeholder="Nome completo" required class="tf-input">
-                    </div>
-                    
-                    <div class="slide-up" style="animation-delay: 0.1s">
-                        <label class="tf-label">Qual o seu e-mail?</label>
-                        <input type="email" id="gestor-email" placeholder="E-mail principal" required class="tf-input">
-                    </div>
-
-                    <div class="slide-up" style="animation-delay: 0.2s">
-                        <label class="tf-label">Seu WhatsApp (Receber edições)</label>
-                        <input type="tel" id="gestor-whatsapp" placeholder="(00) 90000-0000" required class="tf-input">
-                    </div>
-
-                    <div class="slide-up" style="animation-delay: 0.3s">
-                        <label class="tf-label">O que mais te interessa? (Selecione)</label>
-                        <div class="flex flex-wrap gap-2 mt-4" id="gestor-interesses">
-                            ${['Vendas', 'Gestão Financeira', 'Marketing', 'Liderança', 'Atendimento'].map(t => 
-                                `<button type="button" onclick="window.toggleTag(this, '${t}')" class="border-2 border-gray-200 bg-white text-gray-600 px-4 py-2 rounded-full text-xs font-medium transition-all">${t}</button>`
-                            ).join('')}
-                        </div>
-                    </div>
-
-                    <button type="submit" class="w-full bg-yellow-500 text-gray-950 font-black text-lg py-5 rounded-2xl shadow-lg hover:bg-yellow-600 transition active:scale-95 slide-up" style="animation-delay: 0.4s">
-                        Liberar Artigo Agora
-                    </button>
-                </form>
-            </div>
         </div>
-
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // ✅ CREDENCIAIS REAIS
+        // NOTA: Cole aqui a sua nova firebaseConfig do projeto ocodigopet
         const firebaseConfig = {
-          apiKey: "AIzaSyBjuvcJvTWw7lMrIwej5lHbIUXe99lJDN4",
-          authDomain: "crmpetshop.firebaseapp.com",
-          projectId: "crmpetshop",
-          storageBucket: "crmpetshop.firebasestorage.app",
-          messagingSenderId: "381013124221",
-          appId: "1:381013124221:web:6a1860b4249c2939b6fd14"
-        };
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        window.GvFirebase = { db, collection, addDoc, getDocs, query, orderBy, serverTimestamp };
-
-        // Inicializa a aplicação após o Firebase carregar
-        window.initApp();
-    </script>
-
-    <script>
-        // ==========================================
-        // 1. SISTEMA DE RASTREIO E SESSÃO (Analytics)
-        // ==========================================
-        let visitorData = JSON.parse(localStorage.getItem('gv_visitor')) || null;
-        let routeEntryTime = Date.now();
-        let currentRoute = 'home';
-        let maxScrollDepth = 0;
-
-        // Gera ID único no primeiro acesso
-        if (!visitorData) {
-            visitorData = {
-                id: 'vis_' + Date.now() + Math.random().toString(36).substr(2, 5),
-                email: null,
-                whatsapp: null,
-                nome: null,
-                artigosLidos: 0,
-                isPremium: false, // Só vira true se preencher o form gestor
-                firstVisit: Date.now()
-            };
-            salvarSessao();
-            registrarEvento('new_visitor', { userAgent: navigator.userAgent });
-        } else {
-            registrarEvento('returning_visitor', {});
-        }
-
-        function salvarSessao() {
-            localStorage.setItem('gv_visitor', JSON.stringify(visitorData));
-        }
-
-        function registrarEvento(tipo, detalhesExtra = {}) {
-            if(!window.GvFirebase) return; // Aguarda carregamento
-            const evento = {
-                visitor_id: visitorData.id,
-                email: visitorData.email || 'anonimo',
-                tipo: tipo,
-                rota_atual: currentRoute,
-                data_hora: new Date().toISOString(),
-                timestamp: window.GvFirebase.serverTimestamp(),
-                ...detalhesExtra
-            };
-            
-            // Grava silenciosamente
-            window.GvFirebase.addDoc(window.GvFirebase.collection(window.GvFirebase.db, "revista_tracking"), evento).catch(e => console.error("Tracking erro", e));
-        }
-
-        // Rastreio de tempo e scroll na saída da página
-        function fecharCicloPagina() {
-            const timeSpentSeconds = Math.round((Date.now() - routeEntryTime) / 1000);
-            if(timeSpentSeconds > 2) { // Só grava se ficou mais de 2s
-                registrarEvento('page_view', { 
-                    tempo_segundos: timeSpentSeconds,
-                    scroll_max_percentual: maxScrollDepth
-                });
-            }
-            routeEntryTime = Date.now();
-            maxScrollDepth = 0;
-        }
-
-        window.addEventListener('scroll', () => {
-            const h = document.documentElement;
-            const scrollPercent = (h.scrollTop + h.clientHeight) / h.scrollHeight * 100;
-            if(scrollPercent > maxScrollDepth) maxScrollDepth = Math.round(scrollPercent);
-            
-            const btnUp = document.getElementById('btn-up');
-            if(btnUp) window.scrollY > 300 ? btnUp.classList.remove('translate-y-10', 'opacity-0') : btnUp.classList.add('translate-y-10', 'opacity-0');
-        });
-
-        // ==========================================
-        // 2. BUSCA DE CONTEÚDO (CMS Dinâmico)
-        // ==========================================
-        let bancoDeArtigosCache = null;
-
-        const CAT_MAP = {
-            varejo: { nome: 'Pet Shop', color: 'text-blue-700', bg: 'bg-blue-50' },
-            clinica: { nome: 'Clínica Vet', color: 'text-teal-700', bg: 'bg-teal-50' },
-            estetica: { nome: 'Banho & Tosa', color: 'text-pink-700', bg: 'bg-pink-50' },
-            comportamento: { nome: 'Adestramento', color: 'text-orange-700', bg: 'bg-orange-50' },
-            hotelzinho: { nome: 'Hotelzinho', color: 'text-indigo-700', bg: 'bg-indigo-50' },
-            dinamico: { nome: 'Destaque', color: 'text-gray-700', bg: 'bg-gray-50' } 
+            apiKey: "COLOQUE_A_SUA_API_KEY",
+            authDomain: "ocodigopet.firebaseapp.com",
+            projectId: "ocodigopet",
+            storageBucket: "ocodigopet.firebasestorage.app",
+            messagingSenderId: "COLOQUE_O_SENDER_ID",
+            appId: "COLOQUE_O_APP_ID"
         };
 
-        async function carregarArtigos() {
-            if (bancoDeArtigosCache) return bancoDeArtigosCache;
-            
-            try {
-                const { db, collection, getDocs, query, orderBy } = window.GvFirebase;
-                const q = query(collection(db, "revista_artigos"), orderBy("dataPublicacao", "desc"));
-                const querySnapshot = await getDocs(q);
-                
-                const agrupamento = {};
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const artigo = { id: doc.id, ...data };
-                    const catId = data.categoriaId || 'dinamico';
-                    if (!agrupamento[catId]) agrupamento[catId] = [];
-                    agrupamento[catId].push(artigo);
-                });
-
-                bancoDeArtigosCache = agrupamento;
-                return agrupamento;
-            } catch (error) {
-                console.error("Erro ao carregar do CMS:", error);
-                return {}; // Retorna vazio se falhar, para não quebrar a UI inteira
-            }
+        let db;
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            console.log("Infraestrutura ativada com sucesso.");
+        } catch (e) {
+            console.error("Aguardando configuração do Firebase.");
         }
 
-        // ==========================================
-        // 3. REGRAS DE NEGÓCIO E PAYWALLS
-        // ==========================================
-        let pendingArticleParams = null; // Guarda o artigo que o usuário tentou abrir
-
-        function checkAccess(artigo) {
-            // Regra 2: Premium Gestão
-            if (artigo.premium && !visitorData.isPremium) {
-                return 'modal-gestor';
-            }
+        // Função do Arquiteto: Grava a decisão do usuário antes de enviar para a pasta
+        window.acessarModulo = async (destino) => {
             
-            // Regra 1: Limite de Leitura Grátis Anônima
-            if (visitorData.artigosLidos >= 3 && !visitorData.email) {
-                return 'modal-leitor';
-            }
-
-            return 'livre';
-        }
-
-        // Interação com o artigo
-        window.tentarAbrirArtigo = (catId, artId) => {
-            const categoriaArtigos = bancoDeArtigosCache[catId];
-            if(!categoriaArtigos) return;
-            const artigo = categoriaArtigos.find(a => a.id === artId);
-            if(!artigo) return;
-
-            registrarEvento('click_artigo', { artigo_id: artId, titulo: artigo.titulo, premium: artigo.premium });
-
-            const status = checkAccess(artigo);
-
-            if (status === 'livre') {
-                visitorData.artigosLidos++;
-                salvarSessao();
-                renderView('artigo', artigo);
-            } else {
-                pendingArticleParams = artigo;
-                document.getElementById(status).classList.remove('hidden');
-                document.getElementById(status).classList.add('flex');
-                document.body.style.overflow = 'hidden';
-                registrarEvento('paywall_exibido', { tipo: status, artigo_id: artId });
-                
-                // Pré-preenche se já tiver email salvo
-                if(visitorData.email && status === 'modal-gestor') {
-                    document.getElementById('gestor-email').value = visitorData.email;
+            // 1. Telemetria Rápida (Grava de onde ele clicou para gerar inteligência)
+            if (db) {
+                try {
+                    await addDoc(collection(db, "telemetria_entrada"), {
+                        porta_escolhida: destino,
+                        data_acesso: serverTimestamp(),
+                        navegador: navigator.userAgent,
+                        plataforma: navigator.platform
+                    });
+                } catch (e) {
+                    // Silencioso. Não bloqueia o usuário se a internet falhar no envio do log
                 }
             }
-        }
 
-        window.fecharModais = () => {
-            document.getElementById('modal-leitor').classList.add('hidden');
-            document.getElementById('modal-leitor').classList.remove('flex');
-            document.getElementById('modal-gestor').classList.add('hidden');
-            document.getElementById('modal-gestor').classList.remove('flex');
-            document.body.style.overflow = '';
-            pendingArticleParams = null;
-        }
-
-        // Tratamento do Form Leitor Simples
-        document.getElementById('form-leitor').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('leitor-email').value.trim();
-            
-            visitorData.email = email;
-            salvarSessao();
-            
-            // Salva lead no banco
-            window.GvFirebase.addDoc(window.GvFirebase.collection(window.GvFirebase.db, "leads_revista"), {
-                visitor_id: visitorData.id,
-                email: email,
-                tipo: "Leitor Comum",
-                dataCaptura: window.GvFirebase.serverTimestamp()
-            });
-
-            registrarEvento('lead_capturado', { tipo: 'leitor' });
-            window.fecharModais();
-            
-            // Abre o artigo pendente
-            if(pendingArticleParams) {
-                visitorData.artigosLidos++; salvarSessao();
-                renderView('artigo', pendingArticleParams);
+            // 2. Roteamento (Abre a pasta escolhida)
+            if(destino === 'business') {
+                window.location.href = '/business/index.html';
+            } else if (destino === 'tutores') {
+                window.location.href = '/tutores/index.html';
+                // Para já, como focaremos no Business, a de tutores pode ficar em "Em breve" futuramente.
             }
-        });
-
-        // Tratamento do Form Gestor Premium
-        const gestorInteressesArray = [];
-        window.toggleTag = (btn, tema) => {
-            if(gestorInteressesArray.includes(tema)) {
-                gestorInteressesArray.splice(gestorInteressesArray.indexOf(tema), 1);
-                btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
-            } else {
-                gestorInteressesArray.push(tema);
-                btn.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
-            }
-        }
-
-        document.getElementById('form-gestor').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const nome = document.getElementById('gestor-nome').value.trim();
-            const email = document.getElementById('gestor-email').value.trim();
-            const whatsapp = document.getElementById('gestor-whatsapp').value.trim();
-
-            if(gestorInteressesArray.length === 0) { alert("Selecione pelo menos um interesse."); return; }
-
-            // Atualiza Sessão Local
-            visitorData.email = email;
-            visitorData.nome = nome;
-            visitorData.whatsapp = whatsapp;
-            visitorData.isPremium = true; // Destravou premium localmente
-            salvarSessao();
-            
-            // Salva lead Gestor Qualificado no banco
-            window.GvFirebase.addDoc(window.GvFirebase.collection(window.GvFirebase.db, "leads_revista"), {
-                visitor_id: visitorData.id,
-                email: email,
-                nome: nome,
-                whatsapp: whatsapp,
-                interesses: gestorInteressesArray,
-                tipo: "Gestor Premium",
-                dataCaptura: window.GvFirebase.serverTimestamp()
-            });
-
-            registrarEvento('lead_capturado', { tipo: 'gestor_premium' });
-            window.fecharModais();
-            
-            // Abre o artigo pendente
-            if(pendingArticleParams) {
-                renderView('artigo', pendingArticleParams);
-            }
-        });
-
-        // ==========================================
-        // 4. RENDERIZAÇÃO DA UI
-        // ==========================================
-        
-        window.renderView = async (view, artigoData = null) => {
-            fecharCicloPagina(); // Salva tracking da rota anterior
-            currentRoute = view === 'artigo' ? `artigo_${artigoData.id}` : view;
-            
-            const mainContent = document.getElementById('main-content');
-            const btnVoltar = document.getElementById('btn-voltar');
-            const navCategorias = document.getElementById('nav-categorias');
-            
-            window.scrollTo(0, 0);
-
-            if (view === 'home') { 
-                btnVoltar.classList.add('hidden'); 
-                navCategorias.classList.remove('hidden'); 
-                mainContent.innerHTML = '<div class="loader"></div>';
-                
-                const artigosAgrupados = await carregarArtigos();
-                
-                if (Object.keys(artigosAgrupados).length === 0) {
-                     mainContent.innerHTML = '<div class="p-10 text-center text-gray-500">Sem conteúdo. Crie artigos no Painel CMS.</div>';
-                     return;
-                }
-                
-                renderNav(Object.keys(artigosAgrupados));
-                renderHomeFeed(mainContent, artigosAgrupados); 
-            } 
-            else if (view === 'artigo') { 
-                btnVoltar.classList.remove('hidden'); 
-                navCategorias.classList.add('hidden'); 
-                renderArtigo(mainContent, artigoData); 
-            }
-        }
-
-        function renderNav(categoriasExistentes) {
-            const nav = document.getElementById('nav-categorias');
-            nav.innerHTML = '';
-            categoriasExistentes.forEach(catId => {
-                const meta = CAT_MAP[catId] || CAT_MAP.dinamico;
-                nav.innerHTML += `<span onclick="window.goToCategory('${catId}')" class="cursor-pointer hover:text-blue-600 transition">${meta.nome}</span>`;
-            });
-        }
-
-        function renderHomeFeed(container, dadosAgrupados) {
-            let html = `<div class="fade-in"><div class="px-5 pt-6 pb-4 bg-white border-b border-gray-100"><p class="text-sm text-gray-600 leading-relaxed">Estratégias avançadas de gestão e marketing para decisores de negócios Pet.</p></div>`;
-
-            let secCount = 0;
-            for (const catId in dadosAgrupados) {
-                secCount++;
-                const meta = CAT_MAP[catId] || CAT_MAP.dinamico;
-                const artigos = dadosAgrupados[catId];
-                
-                html += `
-                    <section id="sec-${catId}" class="${meta.bg} py-8 px-4 border-t border-gray-200">
-                        <h3 class="${meta.color} text-sm font-black uppercase tracking-[0.2em] mb-5 border-l-4 border-current pl-3">${meta.nome}</h3>
-                        <div class="flex flex-col gap-6">
-                `;
-
-                artigos.forEach((artigo, idx) => {
-                    // Badge premium
-                    const badge = artigo.premium ? `<span class="text-[9px] text-yellow-700 font-bold bg-yellow-200 px-2 py-0.5 rounded ml-2 inline-flex items-center gap-1 shrink-0"><i class="fa-solid fa-lock text-[8px]"></i> Premium Gestão</span>` : '';
-                    
-                    if (idx === 0) { // Destaque
-                        html += `
-                            <div class="cursor-pointer group" onclick="window.tentarAbrirArtigo('${catId}', '${artigo.id}')">
-                                <img src="${artigo.img || 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&q=80'}" class="w-full h-48 object-cover rounded shadow-sm mb-3 group-hover:opacity-90 transition">
-                                <h4 class="font-bold text-lg text-gray-900 group-hover:text-blue-700 flex flex-wrap items-center gap-1">${artigo.titulo} ${badge}</h4>
-                                <p class="text-gray-500 text-sm mt-1 line-clamp-2">${artigo.resumo}</p>
-                            </div>
-                        `;
-                    } else { // Lista
-                        html += `
-                            <div class="flex items-start gap-3 cursor-pointer group border-t border-gray-100 pt-4" onclick="window.tentarAbrirArtigo('${catId}', '${artigo.id}')">
-                                <div class="flex-1 pt-1"><h4 class="font-bold text-sm text-gray-800 leading-tight group-hover:text-blue-700 inline">${artigo.titulo}</h4> ${badge}</div>
-                                <img src="${artigo.img || 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&q=80'}" class="w-16 h-12 object-cover rounded shrink-0">
-                            </div>
-                        `;
-                    }
-                });
-                html += `</div></section>`;
-
-                // Native Banner Promo após a 1a seção
-                if(secCount === 1) {
-                    html += `
-                        <div class="my-6 px-4">
-                            <div class="rounded-lg bg-blue-700 text-white p-5 flex items-center gap-4 cursor-pointer shadow-lg hover:bg-blue-800" onclick="window.open('https://petlojas.vercel.app/', '_blank'); window.registrarEvento('clique_ad_petlojas');">
-                                <i class="fa-solid fa-store text-3xl opacity-60"></i>
-                                <div>
-                                    <h5 class="font-bold text-lg leading-tight">O CRM que a sua PetLojas merece.</h5>
-                                    <p class="text-xs text-blue-100">Solução completa para lojistas locais.</p>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }
-            }
-            container.innerHTML = html + `</div>`;
-        }
-
-        function renderArtigo(container, artigo) {
-            const meta = CAT_MAP[artigo.categoriaId] || CAT_MAP.dinamico;
-            
-            container.innerHTML = `
-                <div class="fade-in bg-white pb-10">
-                    <img src="${artigo.img || 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&q=80'}" class="w-full h-64 object-cover shadow-inner">
-                    
-                    <div class="px-5 py-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <span class="${meta.color} ${meta.bg} text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">${meta.nome}</span>
-                            ${artigo.premium ? `<span class="text-xs text-yellow-700 font-bold flex items-center gap-1.5"><i class="fa-solid fa-lock text-[10px]"></i> Premium Gestão</span>` : ''}
-                        </div>
-                        
-                        <h1 class="text-3xl font-black text-gray-950 leading-tight tracking-tighter mb-4">${artigo.titulo}</h1>
-                        <p class="text-gray-500 italic mb-6 border-l-2 border-gray-200 pl-4">${artigo.resumo}</p>
-                        
-                        <div class="prose prose-sm prose-slate max-w-none text-gray-800 leading-relaxed space-y-4">
-                            ${artigo.conteudo}
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // ==========================================
-        // 5. UTILS UI
-        // ==========================================
-        window.goToCategory = (catId) => {
-            const sec = document.getElementById(`sec-${catId}`);
-            if(sec) sec.scrollIntoView({ behavior: 'smooth' });
-        }
-
-        window.toggleMenu = () => {
-            const menu = document.getElementById('side-menu');
-            const panel = document.getElementById('side-menu-panel');
-            if (menu.classList.contains('hidden')) {
-                menu.classList.remove('hidden');
-                setTimeout(() => { menu.classList.remove('opacity-0'); panel.classList.remove('translate-x-full'); }, 10);
-            } else {
-                panel.classList.add('translate-x-full'); menu.classList.add('opacity-0');
-                setTimeout(() => menu.classList.add('hidden'), 300);
-            }
-        }
-        window.fecharMenuClickFora = (event) => { if(event.target.id === 'side-menu') window.toggleMenu(); }
-
-        // Ponto de entrada (chamado pelo módulo Firebase lá em cima)
-        window.initApp = () => {
-            renderView('home');
         };
-
     </script>
 </body>
 </html>
