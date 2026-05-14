@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redação | O Código Pet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col">
+
+    <header class="bg-slate-900 text-white p-4 shadow-md sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-pen-nib text-blue-500 text-2xl"></i>
+                <h1 class="text-xl font-black tracking-tight">Sala de Redação</h1>
+            </div>
+            <a href="index.html" class="text-xs font-bold text-slate-300 hover:text-white transition">Voltar ao Portal <i class="fa-solid fa-arrow-right ml-1"></i></a>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-4xl mx-auto w-full p-4 md:p-8 fade-in">
+        <div class="bg-white rounded-3xl shadow-lg border border-slate-200 overflow-hidden">
+            <div class="p-6 md:p-8">
+                <h2 class="text-2xl font-black text-slate-900 mb-2">Publicar Nova Matéria</h2>
+                <p class="text-sm text-slate-500 mb-8">O conteúdo enviado aqui aparecerá instantaneamente no Portal.</p>
+
+                <form id="form-publicacao" onsubmit="publicarArtigo(event)" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Público-Alvo</label>
+                            <select id="pub-alvo" required class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 transition">
+                                <option value="tutores">🐕 Guia do Tutor (Aberto)</option>
+                                <option value="gestor">💼 Portal Negócios (VIP/Lead)</option>
+                                <option value="funcionario">🩺 Operação Pet (Aberto)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Categoria/Caderno</label>
+                            <input type="text" id="pub-caderno" required placeholder="Ex: Saúde, Vendas..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-blue-500 transition">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Imagem de Capa (URL)</label>
+                        <input type="url" id="pub-imagem" required placeholder="https://..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-blue-500 transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Título da Manchete</label>
+                        <input type="text" id="pub-titulo" required placeholder="Título impactante..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-4 text-lg font-black text-slate-900 outline-none focus:ring-2 focus:ring-blue-500 transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Linha Fina (Resumo)</label>
+                        <textarea id="pub-resumo" required class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-blue-500 transition h-20 resize-none"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Corpo do Artigo</label>
+                        <textarea id="pub-conteudo" required class="w-full bg-slate-50 border border-slate-300 rounded-xl p-4 text-sm outline-none focus:ring-2 focus:ring-blue-500 transition h-80"></textarea>
+                    </div>
+                    <button type="submit" id="btn-enviar" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-xl shadow-lg transition-all text-lg flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i> PUBLICAR AGORA
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // COLOQUE AS SUAS CHAVES DO FIREBASE OCODIGOPET AQUI
+        const firebaseConfig = {
+            apiKey: "AIzaSyBjuvcJvTWw7lMrIwej5lHbIUXe99lJDN4",
+            authDomain: "ocodigopet.firebaseapp.com",
+            projectId: "ocodigopet",
+            storageBucket: "ocodigopet.firebasestorage.app",
+            messagingSenderId: "381013124221",
+            appId: "1:381013124221:web:6a1860b4249c2939b6fd14"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.publicarArtigo = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-enviar');
+            btn.innerHTML = 'A TRANSMITIR...';
+            btn.disabled = true;
+
+            const artigo = {
+                publico_alvo: document.getElementById('pub-alvo').value,
+                caderno: document.getElementById('pub-caderno').value,
+                imagem: document.getElementById('pub-imagem').value,
+                titulo: document.getElementById('pub-titulo').value,
+                resumo: document.getElementById('pub-resumo').value,
+                conteudo: document.getElementById('pub-conteudo').value,
+                data_publicacao: serverTimestamp(),
+                visualizacoes: 0
+            };
+
+            try {
+                await addDoc(collection(db, "artigos"), artigo);
+                alert("Artigo publicado!");
+                document.getElementById('form-publicacao').reset();
+            } catch(err) {
+                alert("Erro ao conectar com o Firebase.");
+            } finally {
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> PUBLICAR AGORA';
+                btn.disabled = false;
+            }
+        };
+    </script>
+</body>
+</html>
