@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revista O Código Pet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .blur-text { filter: blur(6px); user-select: none; pointer-events: none; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <header class="bg-gray-900 text-white p-4 shadow-lg text-center">
+        <h1 class="text-2xl font-black tracking-tighter">O CÓDIGO PET</h1>
+        <p class="text-xs text-gray-400 uppercase tracking-widest">Inteligência para o Mercado Pet</p>
+    </header>
+
+    <main id="app-container" class="max-w-4xl mx-auto p-4 mt-4"></main>
+
+    <div id="paywall-modal" class="hidden fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center p-4 z-50">
+        <div class="bg-white p-8 rounded-xl max-w-md w-full text-center">
+            <h2 class="text-2xl font-bold mb-2">Conteúdo Exclusivo para Gestores</h2>
+            <p class="text-gray-600 mb-6 text-sm">Insira seus dados para destravar este e todos os outros artigos da área VIP instantaneamente.</p>
+            <form id="formLead" class="space-y-4 text-left">
+                <input type="text" id="leadNome" placeholder="Seu Nome" class="w-full p-3 border rounded" required>
+                <input type="text" id="leadLoja" placeholder="Nome do Pet Shop / Clínica" class="w-full p-3 border rounded" required>
+                <input type="tel" id="leadWhats" placeholder="WhatsApp com DDD" class="w-full p-3 border rounded" required>
+                <input type="hidden" id="leadOrigemArtigo"> 
+                
+                <button type="submit" id="btnDestravar" class="w-full bg-green-600 text-white font-bold py-3 rounded-md hover:bg-green-700">
+                    Destravar Leitura Agora
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, collection, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // COLE AQUI AS CHAVES DO SEU NOVO FIREBASE
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "SEU_PROJETO.firebaseapp.com",
+            projectId: "SEU_PROJETO",
+            storageBucket: "SEU_PROJETO.appspot.com",
+            messagingSenderId: "SEU_ID",
+            appId: "SEU_APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const appContainer = document.getElementById('app-container');
+        const isVip = localStorage.getItem('ocodigopet_vip') === 'true';
+
+        // MOTOR DE DEEP LINKING
+        async function initApp() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const artigoId = urlParams.get('artigo_id');
+
+            if (artigoId) {
+                await carregarArtigoIndividual(artigoId);
+            } else {
+                await carregarHome();
+            }
+        }
+
+        // CARREGA A HOME (Lista de Artigos)
+        async function carregarHome() {
+            appContainer.innerHTML = '<p class="text-center text-gray-500">Buscando edições mais recentes...</p>';
+            const querySnapshot = await getDocs(collection(db, "revista_artigos"));
+            let html = '<div class="grid grid-cols-1 md:grid-cols-2 gap-6">';
+            
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                // O Link gerado aqui é o Deep Link Compartilhável
+                html += `
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer" onclick="window.location.href='?artigo_id=${doc.id}'">
+                        <img src="${data.imagem}" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <span class="text-xs font-bold text-blue-600 uppercase">${data.caderno}</span>
+                            <h2 class="text-xl font-bold mt-1 mb-2">${data.titulo}</h2>
+                            <p class="text-gray-600 text-sm">${data.resumo}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            appContainer.innerHTML = html;
+        }
+
+        // CARREGA UM ARTIGO ESPECÍFICO (Engatilha o Paywall)
+        async function carregarArtigoIndividual(id) {
+            appContainer.innerHTML = '<p class="text-center text-gray-500">Carregando matéria...</p>';
+            const docRef = doc(db, "revista_artigos", id);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                const isB2B = data.caderno.includes("B2B"); // Verifica se é conteúdo Premium
+                
+                // Separa o conteúdo em 2 parágrafos livres e o resto borrado (se for B2B e não for VIP)
+                let conteudoHTML = data.conteudo;
+                if (isB2B && !isVip) {
+                    // Simula o blur (Aqui você pode cortar a string do conteúdo no meio e aplicar a classe blur-text)
+                    conteudoHTML = `<div class="blur-text">${data.conteudo}</div>`;
+                    dispararPaywall(id, data.titulo);
+                }
+
+                appContainer.innerHTML = `
+                    <button onclick="window.location.href='?'" class="text-blue-600 text-sm mb-4">← Voltar para Capa</button>
+                    <article class="bg-white p-6 rounded-lg shadow-md">
+                        <span class="text-xs font-bold text-blue-600 uppercase">${data.caderno}</span>
+                        <h1 class="text-3xl font-black mt-2 mb-4 leading-tight">${data.titulo}</h1>
+                        <img src="${data.imagem}" class="w-full h-64 object-cover rounded mb-6">
+                        <div class="prose max-w-none text-gray-700 leading-relaxed">
+                            ${conteudoHTML}
+                        </div>
+                    </article>
+                `;
+            } else {
+                appContainer.innerHTML = '<p class="text-center text-red-500">Artigo não encontrado.</p>';
+            }
+        }
+
+        // PAYWALL E CAPTURA DE LEADS
+        function dispararPaywall(artigoId, titulo) {
+            document.getElementById('paywall-modal').classList.remove('hidden');
+            // DEDO DURO: Salva qual artigo gerou o lead
+            document.getElementById('leadOrigemArtigo').value = `ID: ${artigoId} | Título: ${titulo}`;
+        }
+
+        document.getElementById('formLead').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnDestravar');
+            btn.innerText = "Destravando...";
+
+            try {
+                // Grava no NOVO banco da Revista
+                await addDoc(collection(db, "revista_leads"), {
+                    nome: document.getElementById('leadNome').value,
+                    nomeLoja: document.getElementById('leadLoja').value,
+                    telefone: document.getElementById('leadWhats').value,
+                    interesse_inicial: document.getElementById('leadOrigemArtigo').value,
+                    status_funil: "Novo Lead - Revista",
+                    data_captura: serverTimestamp()
+                });
+                
+                // Salva VIP no navegador
+                localStorage.setItem('ocodigopet_vip', 'true');
+                document.getElementById('paywall-modal').classList.add('hidden');
+                
+                // Recarrega a página para remover o Blur
+                window.location.reload();
+            } catch (error) {
+                console.error("Erro ao salvar lead: ", error);
+                alert("Erro ao processar. Tente novamente.");
+                btn.innerText = "Destravar Leitura Agora";
+            }
+        });
+
+        // INICIA O MOTOR
+        initApp();
+    </script>
+</body>
+</html>
