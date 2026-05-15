@@ -38,19 +38,22 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
         import { getFirestore, collection, getDocs, addDoc, doc, getDoc, serverTimestamp, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // COLOQUE SUAS CHAVES DO FIREBASE AQUI TAMBÉM
+        // SUA CONFIGURAÇÃO OFICIAL DO FIREBASE
         const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            authDomain: "SEU_PROJETO.firebaseapp.com",
-            projectId: "SEU_PROJETO",
-            storageBucket: "SEU_PROJETO.appspot.com",
-            messagingSenderId: "SEU_ID",
-            appId: "SEU_APP_ID"
+            apiKey: "AIzaSyDdbQabOOtQzgquLrDZ00GPFi0O9FIJaHc",
+            authDomain: "ocodigopet.firebaseapp.com",
+            projectId: "ocodigopet",
+            storageBucket: "ocodigopet.firebasestorage.app",
+            messagingSenderId: "631820637339",
+            appId: "1:631820637339:web:25ea2942312d65ee09e23e",
+            measurementId: "G-Q1HDW15MC9"
         };
 
         const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
         const db = getFirestore(app);
         const appContainer = document.getElementById('app-container');
         
@@ -80,7 +83,7 @@
                     </div>`;
             });
             html += '</div>';
-            appContainer.innerHTML = snapshot.empty ? '<p>Nenhum artigo encontrado.</p>' : html;
+            appContainer.innerHTML = snapshot.empty ? '<p class="text-center mt-10 text-gray-500">Nenhum artigo publicado neste caderno ainda.</p>' : html;
         }
 
         // Abre a matéria completa
