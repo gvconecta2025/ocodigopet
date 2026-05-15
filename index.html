@@ -5,33 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Revista O Código Pet</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        .blur-text { filter: blur(6px); pointer-events: none; user-select: none; }
+        body { font-family: 'Fredoka', sans-serif; }
+        .margarina-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05); }
+        .blur-text { filter: blur(8px); pointer-events: none; user-select: none; opacity: 0.6; }
+        .gradient-pet { background: linear-gradient(135deg, #FFD93D 0%, #FFB100 100%); }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans">
+<body class="bg-[#FDFBEE] text-gray-800">
 
-    <header class="bg-gray-900 text-white text-center p-6 sticky top-0 z-40 shadow-md">
-        <h1 class="text-3xl font-black cursor-pointer" onclick="carregarLista('tutores')">O CÓDIGO PET</h1>
-        <div class="mt-4 flex justify-center space-x-4">
-            <button onclick="carregarLista('tutores')" class="bg-green-600 px-4 py-2 rounded font-bold text-sm hover:bg-green-500 transition-colors">Para Tutores (Grátis)</button>
-            <button onclick="carregarLista('gestores')" class="bg-yellow-600 px-4 py-2 rounded font-bold text-sm hover:bg-yellow-500 text-gray-900 transition-colors">Para Gestores (Premium)</button>
+    <header class="bg-white border-b-4 border-[#FFD93D] p-4 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="text-center md:text-left cursor-pointer" onclick="window.location.href='?'">
+                <h1 class="text-3xl font-black text-[#FFB100] tracking-tight leading-none">O CÓDIGO PET 🐾</h1>
+                <p class="text-[10px] text-blue-400 font-bold uppercase tracking-widest">A felicidade do seu pet começa aqui</p>
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <button onclick="forçarAtualizacao()" class="bg-blue-50 text-blue-500 hover:bg-blue-500 hover:text-white px-3 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1 border border-blue-100">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    ATUALIZAR REVISTA
+                </button>
+            </div>
         </div>
+
+        <nav class="flex justify-center gap-3 mt-4">
+            <button onclick="carregarLista('tutores')" class="bg-green-400 hover:bg-green-500 text-white px-6 py-2 rounded-full font-bold text-sm transition-transform hover:scale-105 shadow-md">Guia do Tutor 🐶</button>
+            <button onclick="carregarLista('gestores')" class="bg-orange-400 hover:bg-orange-500 text-white px-6 py-2 rounded-full font-bold text-sm transition-transform hover:scale-105 shadow-md">Portal PRO 💼</button>
+        </nav>
     </header>
 
-    <main id="app-container" class="max-w-4xl mx-auto p-4 mt-6 min-h-screen"></main>
+    <main id="app-container" class="max-w-5xl mx-auto p-6 min-h-screen"></main>
 
-    <div id="paywall-modal" class="hidden fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center p-4 z-50">
-        <div class="bg-white p-8 rounded-xl max-w-md w-full text-center shadow-2xl relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-2 bg-yellow-500"></div>
-            <h2 class="text-2xl font-black mb-2 text-gray-900">Conteúdo Premium 🔒</h2>
-            <p class="text-gray-600 mb-6 text-sm">Este caderno é exclusivo para donos de Pet Shop e Clínicas. Insira os seus dados para destravar o acesso gratuitamente.</p>
-            <form id="formLead" class="space-y-3 text-left">
-                <input type="text" id="leadNome" placeholder="O seu Nome" class="w-full p-3 border rounded focus:ring-2 focus:ring-yellow-500 outline-none" required>
-                <input type="text" id="leadLoja" placeholder="Nome do seu Pet Shop" class="w-full p-3 border rounded focus:ring-2 focus:ring-yellow-500 outline-none" required>
-                <input type="tel" id="leadWhats" placeholder="WhatsApp (com DDD)" class="w-full p-3 border rounded focus:ring-2 focus:ring-yellow-500 outline-none" required>
-                <button type="submit" id="btnDestravar" class="w-full bg-yellow-500 text-gray-900 font-black py-4 rounded hover:bg-yellow-400 mt-2 transition-transform transform hover:-translate-y-0.5">
-                    Liberar Leitura Agora
+    <div id="paywall-modal" class="hidden fixed inset-0 bg-blue-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div class="bg-white p-8 rounded-[2rem] max-w-md w-full text-center shadow-2xl border-t-8 border-orange-400">
+            <div class="text-5xl mb-4">🔒</div>
+            <h2 class="text-2xl font-bold mb-2">Conteúdo Exclusivo PRO</h2>
+            <p class="text-gray-500 mb-6 text-sm">Olá, Gestor! Cadastre sua loja gratuitamente para ler esta matéria e acessar ferramentas de lucro.</p>
+            <form id="formLead" class="space-y-4 text-left">
+                <input type="text" id="leadNome" placeholder="Seu Nome" class="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-orange-400 outline-none" required>
+                <input type="text" id="leadLoja" placeholder="Nome da Loja/Clínica" class="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-orange-400 outline-none" required>
+                <input type="tel" id="leadWhats" placeholder="WhatsApp (DDD)" class="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-orange-400 outline-none" required>
+                <button type="submit" id="btnDestravar" class="w-full gradient-pet text-white font-black py-4 rounded-2xl shadow-lg shadow-orange-200 transition-all hover:brightness-110">
+                    DESTRAVAR AGORA
                 </button>
             </form>
         </div>
@@ -39,7 +56,6 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
         import { getFirestore, collection, getDocs, addDoc, doc, getDoc, serverTimestamp, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -53,90 +69,77 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
         const db = getFirestore(app);
         const appContainer = document.getElementById('app-container');
-        
-        const isGestorVIP = localStorage.getItem('codigo_pet_vip') === 'true';
+        const isVip = localStorage.getItem('codigo_pet_vip') === 'true';
+
+        // 1. FUNÇÃO DE LIMPEZA DE CACHE COMPLETA
+        window.forçarAtualizacao = async function() {
+            if ('serviceWorker' in navigator) {
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                for (let registration of registrations) { await registration.unregister(); }
+            }
+            if ('caches' in window) {
+                const cacheNames = await caches.keys();
+                for (let name of cacheNames) { await caches.delete(name); }
+            }
+            window.location.reload(true);
+        }
 
         window.carregarLista = async function(publicoAlvo) {
-            appContainer.innerHTML = '<p class="text-center text-gray-500 mt-10">A carregar artigos...</p>';
-            
+            appContainer.innerHTML = '<div class="flex justify-center py-20"><div class="animate-bounce text-4xl">🐾</div></div>';
             try {
-                // FILTRO DE PRODUÇÃO ATIVADO: Puxa apenas a aba clicada, ordenado do mais novo pro mais velho
                 const q = query(collection(db, "artigos"), where("publico", "==", publicoAlvo), orderBy("data_publicacao", "desc"));
                 const snapshot = await getDocs(q);
                 
-                let html = `<h2 class="text-2xl font-bold mb-6 border-b pb-2 uppercase text-gray-800">${publicoAlvo}</h2>`;
-                html += '<div class="grid grid-cols-1 md:grid-cols-2 gap-6">';
-                
+                let html = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">`;
                 snapshot.forEach((doc) => {
                     const data = doc.data();
                     html += `
-                        <div class="bg-white rounded shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer overflow-hidden group" onclick="abrirArtigo('${doc.id}')">
-                            <div class="relative h-48 overflow-hidden">
-                                ${data.publico === 'gestores' ? '<div class="absolute top-2 right-2 bg-yellow-500 text-gray-900 text-xs font-bold px-2 py-1 rounded z-10 shadow">PRO 🔒</div>' : ''}
-                                <img src="${data.imagem}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
+                        <div class="bg-white rounded-[2.5rem] overflow-hidden margarina-shadow hover:-translate-y-2 transition-all cursor-pointer group" onclick="abrirArtigo('${doc.id}')">
+                            <div class="relative h-56">
+                                <img src="${data.imagem}" class="w-full h-full object-cover">
+                                ${data.publico === 'gestores' ? '<div class="absolute top-4 right-4 bg-orange-400 text-white text-[10px] font-black px-3 py-1 rounded-full shadow-lg">PRO 🔒</div>' : ''}
                             </div>
-                            <div class="p-5">
-                                <h3 class="text-xl font-bold mb-2 text-gray-900 group-hover:text-blue-600 transition-colors">${data.titulo}</h3>
-                                <p class="text-gray-600 text-sm line-clamp-2">${data.resumo}</p>
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold text-gray-900 group-hover:text-blue-500 transition-colors line-clamp-2 mb-2">${data.titulo}</h3>
+                                <p class="text-gray-500 text-sm line-clamp-3">${data.resumo}</p>
                             </div>
                         </div>`;
                 });
                 html += '</div>';
-                
-                if(snapshot.empty) {
-                    appContainer.innerHTML = `<p class="text-center text-gray-500 mt-10">Nenhum artigo publicado no caderno de ${publicoAlvo} ainda.</p>`;
-                } else {
-                    appContainer.innerHTML = html;
-                }
-            } catch (error) {
-                console.error(error);
-                appContainer.innerHTML = `<p class="text-center text-red-600 font-bold mt-10">Erro ao carregar matérias. Tente recarregar a página.</p>`;
-            }
+                appContainer.innerHTML = snapshot.empty ? '<p class="text-center py-20 text-gray-400">Em breve, novas matérias fofinhas!</p>' : html;
+            } catch (error) { console.error(error); }
         }
 
         window.abrirArtigo = async function(id) {
-            appContainer.innerHTML = '<p class="text-center mt-10 text-gray-500">A abrir matéria...</p>';
-            try {
-                const docSnap = await getDoc(doc(db, "artigos", id));
-
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    let conteudoHTML = data.conteudo;
-                    
-                    if (data.publico === 'gestores' && !isGestorVIP) {
-                        conteudoHTML = `<div class="blur-text">${data.conteudo}</div>`;
-                        setTimeout(() => document.getElementById('paywall-modal').classList.remove('hidden'), 600);
-                    }
-
-                    appContainer.innerHTML = `
-                        <button onclick="carregarLista('${data.publico}')" class="text-blue-600 font-bold mb-6 hover:text-blue-800 transition-colors flex items-center">
-                            ← Voltar para a Capa
-                        </button>
-                        <article class="bg-white p-6 md:p-10 rounded-xl shadow-sm border border-gray-100">
-                            <span class="${data.publico === 'gestores' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'} font-bold px-3 py-1 rounded-full text-xs uppercase tracking-wider">${data.publico}</span>
-                            <h1 class="text-3xl md:text-5xl font-black mt-4 mb-6 leading-tight text-gray-900">${data.titulo}</h1>
-                            <p class="text-xl text-gray-500 mb-8 font-medium leading-relaxed">${data.resumo}</p>
-                            <img src="${data.imagem}" class="w-full h-[400px] object-cover rounded-xl mb-10 shadow-md">
-                            <div class="prose max-w-none text-lg leading-relaxed text-gray-800 space-y-6">
-                                ${conteudoHTML}
-                            </div>
-                        </article>
-                    `;
+            window.scrollTo(0,0);
+            appContainer.innerHTML = '<p class="text-center py-20">Abrindo com carinho...</p>';
+            const docSnap = await getDoc(doc(db, "artigos", id));
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                let conteudoHTML = data.conteudo;
+                if (data.publico === 'gestores' && !isVip) {
+                    conteudoHTML = `<div class="blur-text">${data.conteudo}</div>`;
+                    setTimeout(() => document.getElementById('paywall-modal').classList.remove('hidden'), 500);
                 }
-            } catch(error) {
-                 console.error(error);
-                 appContainer.innerHTML = '<p class="text-center text-red-500">Erro ao acessar arquivo.</p>';
+                appContainer.innerHTML = `
+                    <button onclick="carregarLista('${data.publico}')" class="mb-6 font-bold text-blue-500 flex items-center gap-2">← VOLTAR</button>
+                    <article class="bg-white p-6 md:p-12 rounded-[3rem] shadow-sm">
+                        <h1 class="text-3xl md:text-5xl font-black mb-6 leading-tight">${data.titulo}</h1>
+                        <img src="${data.imagem}" class="w-full h-[450px] object-cover rounded-[2rem] mb-10 shadow-xl">
+                        <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed">
+                            ${conteudoHTML.replace(/\n/g, '<br>')}
+                        </div>
+                    </article>
+                `;
             }
         }
 
         document.getElementById('formLead').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btnDestravar');
-            btn.innerText = "A processar..."; btn.disabled = true;
-
+            btn.innerText = "LIBERANDO...";
             try {
                 await addDoc(collection(db, "leads_revista"), {
                     nome: document.getElementById('leadNome').value,
@@ -144,17 +147,11 @@
                     whatsapp: document.getElementById('leadWhats').value,
                     data_captura: serverTimestamp()
                 });
-                
                 localStorage.setItem('codigo_pet_vip', 'true');
                 window.location.reload();
-            } catch (error) {
-                console.error(error);
-                alert("Erro ao libertar o acesso. Verifique a conexão.");
-                btn.innerText = "Liberar Leitura Agora"; btn.disabled = false;
-            }
+            } catch (error) { alert("Erro de conexão"); btn.innerText = "DESTRAVAR AGORA"; }
         });
 
-        // Inicia na aba de Tutores por padrão
         carregarLista('tutores');
     </script>
 </body>
