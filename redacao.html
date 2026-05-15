@@ -3,13 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redação - O Código Pet</title>
+    <title>Painel de Redação PRO - O Código Pet</title>
     <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-4 md:p-10 font-sans">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-10">
+        
+        <div class="lg:col-span-1">
+            <div class="bg-white p-6 rounded-3xl shadow-sm border-t-8 border-blue-600 sticky top-10">
+                <h2 id="form-title" class="text-xl font-black mb-6 text-gray-800">✍️ Nova Matéria</h2>
+                <form id="formRedacao" class="space-y-4">
+                    <input type="hidden" id="artigoId"> <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase">Público Alvo</label>
+                        <select id="publico" class="w-full mt-1 p-3 bg-gray-50 border-none rounded-xl outline-none" required>
+                            <option value="tutores">Tutores (Grátis)</option>
+                            <option value="gestores">Gestores (Premium)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase">Título</label>
+                        <input type="text" id="titulo" class="w-full mt-1 p-3 bg-gray-50 border-none rounded-xl outline-none" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase">URL Imagem</label>
+                        <input type="url" id="imagem" class="w-full mt-1 p-3 bg-gray-50 border-none rounded-xl outline-none" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase">Resumo</label>
+                        <textarea id="resumo" rows="2" class="w-full mt-1 p-3 bg-gray-50 border-none rounded-xl outline-none" required></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase">Conteúdo</label>
+                        <textarea id="conteudo" rows="10" class="w-full mt-1 p-3 bg-gray-50 border-none rounded-xl outline-none font-mono text-sm" required></textarea>
+                    </div>
+                    
+                    <div class="flex gap-2">
+                        <button type="submit" id="btnSalvar" class="flex-1 bg-blue-600 text-white font-bold py-4 rounded-2xl hover:bg-blue-700 shadow-lg shadow-blue-100 transition-all">
+                            PUBLICAR
+                        </button>
+                        <button type="button" onclick="cancelarEdicao()" id="btnCancelar" class="hidden bg-gray-200 text-gray-600 font-bold px-4 py-4 rounded-2xl">
+                            X
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="lg:col-span-2">
+            <div class="bg-white p-6 rounded-3xl shadow-sm">
+                <h2 class="text-xl font-black mb-6 text-gray-800">📚 Gerenciar Acervo</h2>
+                <div id="lista-artigos" class="space-y-4">
+                    <p class="text-gray-400">Carregando artigos...</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, addDoc, doc, setDoc, deleteDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // SUA CONFIGURAÇÃO OFICIAL DO FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyDdbQabOOtQzgquLrDZ00GPFi0O9FIJaHc",
             authDomain: "ocodigopet.firebaseapp.com",
@@ -23,60 +77,94 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // BUSCAR E LISTAR ARTIGOS
+        async function renderizarAcervo() {
+            const container = document.getElementById('lista-artigos');
+            const q = query(collection(db, "artigos"), orderBy("data_publicacao", "desc"));
+            const snap = await getDocs(q);
+            
+            container.innerHTML = '';
+            snap.forEach(d => {
+                const item = d.data();
+                container.innerHTML += `
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:border-blue-200 transition-all">
+                        <div class="flex items-center gap-4">
+                            <img src="${item.imagem}" class="w-12 h-12 rounded-lg object-cover">
+                            <div>
+                                <h4 class="font-bold text-sm text-gray-800 line-clamp-1">${item.titulo}</h4>
+                                <span class="text-[10px] font-black uppercase ${item.publico === 'gestores' ? 'text-orange-500' : 'text-green-500'}">${item.publico}</span>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="prepararEdicao('${d.id}')" class="bg-blue-100 text-blue-600 p-2 rounded-lg hover:bg-blue-600 hover:text-white transition-all">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                            </button>
+                            <button onclick="excluirArtigo('${d.id}')" class="bg-red-100 text-red-600 p-2 rounded-lg hover:bg-red-600 hover:text-white transition-all">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        // SALVAR (CRIAÇÃO OU ATUALIZAÇÃO)
         document.getElementById('formRedacao').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('btnSalvar');
-            btn.innerText = "Publicando..."; btn.disabled = true;
+            const id = document.getElementById('artigoId').value;
+            const dados = {
+                titulo: document.getElementById('titulo').value,
+                publico: document.getElementById('publico').value,
+                imagem: document.getElementById('imagem').value,
+                resumo: document.getElementById('resumo').value,
+                conteudo: document.getElementById('conteudo').value,
+                data_publicacao: serverTimestamp()
+            };
 
             try {
-                await addDoc(collection(db, "artigos"), {
-                    titulo: document.getElementById('titulo').value,
-                    publico: document.getElementById('publico').value,
-                    imagem: document.getElementById('imagem').value,
-                    resumo: document.getElementById('resumo').value,
-                    conteudo: document.getElementById('conteudo').value,
-                    data_publicacao: serverTimestamp()
-                });
-                alert("Matéria publicada com sucesso!");
-                document.getElementById('formRedacao').reset();
-            } catch (error) {
-                console.error("Erro: ", error);
-                alert("Erro ao publicar.");
-            } finally {
-                btn.innerText = "Publicar Artigo"; btn.disabled = false;
-            }
+                if (id) {
+                    await setDoc(doc(db, "artigos", id), dados, { merge: true });
+                    alert("Matéria atualizada!");
+                } else {
+                    await addDoc(collection(db, "artigos"), dados);
+                    alert("Matéria publicada!");
+                }
+                cancelarEdicao();
+                renderizarAcervo();
+            } catch (e) { alert("Erro ao salvar"); }
         });
+
+        // PREPARAR EDIÇÃO
+        window.prepararEdicao = async (id) => {
+            const snap = await getDoc(doc(db, "artigos", id));
+            const data = snap.data();
+            document.getElementById('artigoId').value = id;
+            document.getElementById('titulo').value = data.titulo;
+            document.getElementById('publico').value = data.publico;
+            document.getElementById('imagem').value = data.imagem;
+            document.getElementById('resumo').value = data.resumo;
+            document.getElementById('conteudo').value = data.conteudo;
+            
+            document.getElementById('form-title').innerText = "📝 Editando Matéria";
+            document.getElementById('btnSalvar').innerText = "SALVAR ALTERAÇÕES";
+            document.getElementById('btnCancelar').classList.remove('hidden');
+        };
+
+        window.cancelarEdicao = () => {
+            document.getElementById('formRedacao').reset();
+            document.getElementById('artigoId').value = '';
+            document.getElementById('form-title').innerText = "✍️ Nova Matéria";
+            document.getElementById('btnSalvar').innerText = "PUBLICAR";
+            document.getElementById('btnCancelar').classList.add('hidden');
+        };
+
+        window.excluirArtigo = async (id) => {
+            if (confirm("Tem certeza que deseja excluir esta fofura permanentemente?")) {
+                await deleteDoc(doc(db, "artigos", id));
+                renderizarAcervo();
+            }
+        };
+
+        renderizarAcervo();
     </script>
-</head>
-<body class="bg-gray-100 p-8 font-sans">
-    <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow border-t-4 border-blue-600">
-        <h1 class="text-2xl font-black mb-6 text-gray-800">✍️ Redação O Código Pet</h1>
-        <form id="formRedacao" class="space-y-4">
-            <div>
-                <label class="font-bold text-sm text-gray-700">Público Alvo (Caderno)</label>
-                <select id="publico" class="w-full mt-1 p-3 border bg-gray-50 rounded" required>
-                    <option value="tutores">Tutores (Leitura Gratuita)</option>
-                    <option value="gestores">Gestores Pet (Conteúdo Premium/Pago)</option>
-                </select>
-            </div>
-            <div>
-                <label class="font-bold text-sm text-gray-700">Título</label>
-                <input type="text" id="titulo" class="w-full mt-1 p-3 border bg-gray-50 rounded" required>
-            </div>
-            <div>
-                <label class="font-bold text-sm text-gray-700">Link da Imagem</label>
-                <input type="url" id="imagem" class="w-full mt-1 p-3 border bg-gray-50 rounded" required>
-            </div>
-            <div>
-                <label class="font-bold text-sm text-gray-700">Resumo (Linha Fina)</label>
-                <textarea id="resumo" rows="2" class="w-full mt-1 p-3 border bg-gray-50 rounded" required></textarea>
-            </div>
-            <div>
-                <label class="font-bold text-sm text-gray-700">Conteúdo Completo (Aceita HTML)</label>
-                <textarea id="conteudo" rows="8" class="w-full mt-1 p-3 border bg-gray-50 rounded" required></textarea>
-            </div>
-            <button type="submit" id="btnSalvar" class="w-full bg-blue-600 text-white font-bold py-4 rounded hover:bg-blue-700">Publicar Artigo</button>
-        </form>
-    </div>
 </body>
 </html>
