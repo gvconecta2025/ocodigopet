@@ -3,14 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redação - O Código Pet</title>
+    <title>Revista O Código Pet</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
+    <style>
+        /* O Gatilho do Paywall */
+        .blur-text { 
+            filter: blur(5px); 
+            user-select: none; 
+            pointer-events: none; 
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+
+    <header class="bg-gray-900 text-white p-5 shadow-lg text-center sticky top-0 z-40">
+        <h1 class="text-3xl font-black tracking-tighter cursor-pointer" onclick="window.location.href='?'">O CÓDIGO PET</h1>
+        <p class="text-xs text-gray-400 uppercase tracking-widest mt-1">Inteligência para o Mercado Pet</p>
+    </header>
+
+    <main id="app-container" class="max-w-4xl mx-auto p-4 mt-6 min-h-screen"></main>
+
+    <div id="paywall-modal" class="hidden fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center p-4 z-50 transition-opacity">
+        <div class="bg-white p-8 rounded-2xl max-w-md w-full text-center shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-blue-600"></div>
+            <h2 class="text-2xl font-black mb-2 text-gray-900">Conteúdo Exclusivo 🔒</h2>
+            <p class="text-gray-600 mb-6 text-sm">Insira os dados da sua loja para destravar este artigo e todo o acervo VIP gratuitamente.</p>
+            
+            <form id="formLead" class="space-y-4 text-left">
+                <input type="text" id="leadNome" placeholder="Seu Nome (Gestor)" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
+                <input type="text" id="leadLoja" placeholder="Nome do Pet Shop / Clínica" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
+                <input type="tel" id="leadWhats" placeholder="WhatsApp (com DDD)" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
+                
+                <input type="hidden" id="leadOrigemArtigo"> 
+                
+                <button type="submit" id="btnDestravar" class="w-full bg-blue-600 text-white font-black py-4 rounded-lg hover:bg-blue-700 shadow-lg transform transition hover:-translate-y-0.5">
+                    Destravar Leitura Imediatamente
+                </button>
+            </form>
+            <p class="text-xs text-gray-400 mt-4">Seus dados estão seguros. Não enviamos spam.</p>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+        import { getFirestore, doc, getDoc, collection, getDocs, addDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Configuração Oficial: Revista O Código Pet
+        // Configuração Oficial
         const firebaseConfig = {
             apiKey: "AIzaSyDdbQabOOtQzgquLrDZ00GPFi0O9FIJaHc",
             authDomain: "ocodigopet.firebaseapp.com",
@@ -22,67 +62,166 @@
         };
 
         const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app); // Rastreamento de tráfego ativado
         const db = getFirestore(app);
 
-        document.getElementById('formRedacao').addEventListener('submit', async (e) => {
+        const appContainer = document.getElementById('app-container');
+        const isVip = localStorage.getItem('ocodigopet_vip') === 'true';
+
+        // Inicializador de Rotas (O Deep Linking)
+        async function initApp() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const artigoId = urlParams.get('artigo_id');
+
+            if (artigoId) {
+                await carregarArtigoIndividual(artigoId);
+            } else {
+                await carregarHome();
+            }
+        }
+
+        // Renderiza a Capa da Revista
+        async function carregarHome() {
+            appContainer.innerHTML = `
+                <div class="flex justify-center items-center py-20">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                </div>`;
+            
+            try {
+                // Busca os artigos ordenados (mais recentes primeiro)
+                const q = query(collection(db, "revista_artigos"), orderBy("data_publicacao", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                let html = '<div class="grid grid-cols-1 md:grid-cols-2 gap-8">';
+                
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    html += `
+                        <div class="bg-white rounded-xl shadow-sm hover:shadow-xl transition-shadow duration-300 overflow-hidden cursor-pointer border border-gray-100 group" onclick="window.location.href='?artigo_id=${doc.id}'">
+                            <div class="h-56 overflow-hidden relative">
+                                ${data.caderno.includes('B2B') ? '<div class="absolute top-2 right-2 bg-black text-white text-xs font-bold px-2 py-1 rounded z-10">PRO 🔒</div>' : ''}
+                                <img src="${data.imagem}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
+                            </div>
+                            <div class="p-6">
+                                <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">${data.caderno}</span>
+                                <h2 class="text-2xl font-bold mt-2 mb-3 text-gray-900 leading-tight group-hover:text-blue-600 transition-colors">${data.titulo}</h2>
+                                <p class="text-gray-600 text-sm line-clamp-3">${data.resumo}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                
+                if(querySnapshot.empty) {
+                    html = '<p class="text-center text-gray-500 py-10">Nenhuma matéria publicada ainda.</p>';
+                }
+                
+                appContainer.innerHTML = html;
+            } catch (error) {
+                console.error("Erro ao buscar artigos:", error);
+                appContainer.innerHTML = '<p class="text-center text-red-500 py-10">Erro ao carregar a revista. Tente recarregar a página.</p>';
+            }
+        }
+
+        // Renderiza um Artigo (e engatilha o Paywall)
+        async function carregarArtigoIndividual(id) {
+            appContainer.innerHTML = '<p class="text-center text-gray-500 py-20">Acessando arquivo...</p>';
+            
+            try {
+                const docRef = doc(db, "revista_artigos", id);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    const isB2B = data.caderno.includes("B2B");
+                    
+                    let conteudoHTML = data.conteudo;
+                    let mostrarPaywall = false;
+
+                    // Lógica de Retenção: Se for PRO e não for VIP, borra o conteúdo
+                    if (isB2B && !isVip) {
+                        // Aplica a classe de blur
+                        conteudoHTML = `<div class="blur-text">${data.conteudo}</div>`;
+                        mostrarPaywall = true;
+                    }
+
+                    appContainer.innerHTML = `
+                        <button onclick="window.location.href='?'" class="flex items-center text-blue-600 font-semibold text-sm mb-6 hover:text-blue-800 transition-colors">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                            Voltar para a Capa
+                        </button>
+                        
+                        <article class="bg-white p-6 md:p-10 rounded-2xl shadow-sm border border-gray-100">
+                            <span class="inline-block bg-blue-50 text-blue-600 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-4">${data.caderno}</span>
+                            <h1 class="text-3xl md:text-5xl font-black mb-6 text-gray-900 leading-tight">${data.titulo}</h1>
+                            <p class="text-xl text-gray-500 mb-8 font-medium leading-relaxed">${data.resumo}</p>
+                            
+                            <img src="${data.imagem}" class="w-full h-[400px] object-cover rounded-xl mb-10 shadow-md">
+                            
+                            <div class="prose prose-lg max-w-none text-gray-800 leading-relaxed space-y-6">
+                                ${conteudoHTML}
+                            </div>
+                        </article>
+                    `;
+
+                    // Dispara o Modal DEPOIS de renderizar a página no fundo
+                    if (mostrarPaywall) {
+                        setTimeout(() => dispararPaywall(id, data.titulo), 800); // Aguarda menos de 1 segundo para gerar a "dor" de querer ler
+                    }
+
+                } else {
+                    appContainer.innerHTML = `
+                        <div class="text-center py-20">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-2">Artigo não encontrado</h2>
+                            <button onclick="window.location.href='?'" class="text-blue-600 font-bold mt-4">Ir para a Home</button>
+                        </div>`;
+                }
+            } catch (error) {
+                 console.error("Erro:", error);
+                 appContainer.innerHTML = '<p class="text-center text-red-500">Ocorreu um erro ao carregar a matéria.</p>';
+            }
+        }
+
+        // Abre o Paywall
+        function dispararPaywall(artigoId, titulo) {
+            document.getElementById('paywall-modal').classList.remove('hidden');
+            // Dedo Duro: Salva exatamente o que ele tentou ler
+            document.getElementById('leadOrigemArtigo').value = `${titulo} (ID: ${artigoId})`;
+        }
+
+        // Submissão do Lead
+        document.getElementById('formLead').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('btnSalvar');
-            btn.innerText = "Publicando...";
+            const btn = document.getElementById('btnDestravar');
+            btn.innerText = "Processando Autorização...";
             btn.disabled = true;
 
             try {
-                const docRef = await addDoc(collection(db, "revista_artigos"), {
-                    titulo: document.getElementById('titulo').value,
-                    caderno: document.getElementById('caderno').value,
-                    imagem: document.getElementById('imagem').value,
-                    resumo: document.getElementById('resumo').value,
-                    conteudo: document.getElementById('conteudo').value,
-                    data_publicacao: serverTimestamp(),
-                    visualizacoes: 0
+                // Grava na coleção 'revista_leads' do seu novo Firebase
+                await addDoc(collection(db, "revista_leads"), {
+                    nome: document.getElementById('leadNome').value,
+                    nomeLoja: document.getElementById('leadLoja').value,
+                    telefone: document.getElementById('leadWhats').value,
+                    interesse_inicial: document.getElementById('leadOrigemArtigo').value,
+                    status_funil: "Novo Lead - Revista",
+                    data_captura: serverTimestamp()
                 });
-                alert(`Sucesso! Matéria publicada com a ID: ${docRef.id}`);
-                document.getElementById('formRedacao').reset();
+                
+                // Marca o dispositivo como VIP (Cookie/LocalStorage)
+                localStorage.setItem('ocodigopet_vip', 'true');
+                
+                // Sucesso: Recarrega a página. Como ele agora é VIP, o texto aparecerá limpo.
+                window.location.reload();
             } catch (error) {
-                console.error("Erro ao publicar: ", error);
-                alert("Erro ao publicar. Verifique o console.");
-            } finally {
-                btn.innerText = "Publicar Artigo";
+                console.error("Erro ao salvar lead: ", error);
+                alert("Erro de conexão. Tente novamente.");
+                btn.innerText = "Destravar Leitura Imediatamente";
                 btn.disabled = false;
             }
         });
+
+        // Start
+        initApp();
     </script>
-</head>
-<body class="bg-gray-100 p-8">
-    <div class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md border-t-4 border-blue-600">
-        <h1 class="text-2xl font-black mb-6 text-gray-800">✍️ Redação - O Código Pet</h1>
-        <form id="formRedacao" class="space-y-4">
-            <div>
-                <label class="block text-sm font-bold text-gray-700">Caderno / Categoria</label>
-                <select id="caderno" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border bg-gray-50 focus:ring-blue-500 focus:border-blue-500" required>
-                    <option value="Gestão PRO (B2B)">Gestão PRO (B2B - Lojistas)</option>
-                    <option value="Guia do Tutor (B2C)">Guia do Tutor (B2C)</option>
-                </select>
-            </div>
-            <div>
-                <label class="block text-sm font-bold text-gray-700">Título da Matéria</label>
-                <input type="text" id="titulo" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border bg-gray-50" required>
-            </div>
-            <div>
-                <label class="block text-sm font-bold text-gray-700">URL da Imagem de Capa</label>
-                <input type="url" id="imagem" placeholder="https://..." class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border bg-gray-50" required>
-            </div>
-            <div>
-                <label class="block text-sm font-bold text-gray-700">Linha Fina (Resumo curto)</label>
-                <textarea id="resumo" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border bg-gray-50" required></textarea>
-            </div>
-            <div>
-                <label class="block text-sm font-bold text-gray-700">Corpo do Artigo (Aceita HTML: &lt;b&gt;, &lt;br&gt;, &lt;h2&gt;)</label>
-                <textarea id="conteudo" rows="10" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border bg-gray-50 font-mono text-sm" required></textarea>
-            </div>
-            <button type="submit" id="btnSalvar" class="w-full bg-blue-600 text-white font-bold py-4 rounded-md hover:bg-blue-700 transition-colors">
-                Publicar Artigo
-            </button>
-        </form>
-    </div>
 </body>
 </html>
