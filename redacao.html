@@ -5,20 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Redação - O Código Pet</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Configuração Oficial: Revista O Código Pet
+        // COLOQUE SUAS CHAVES DO FIREBASE AQUI
         const firebaseConfig = {
-            apiKey: "AIzaSyDdbQabOOtQzgquLrDZ00GPFi0O9FIJaHc",
-            authDomain: "ocodigopet.firebaseapp.com",
-            projectId: "ocodigopet",
-            storageBucket: "ocodigopet.firebasestorage.app",
-            messagingSenderId: "631820637339",
-            appId: "1:631820637339:web:25ea2942312d65ee09e23e",
-            measurementId: "G-Q1HDW15MC9"
+            apiKey: "SUA_API_KEY",
+            authDomain: "SEU_PROJETO.firebaseapp.com",
+            projectId: "SEU_PROJETO",
+            storageBucket: "SEU_PROJETO.appspot.com",
+            messagingSenderId: "SEU_ID",
+            appId: "SEU_APP_ID"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -27,61 +25,56 @@
         document.getElementById('formRedacao').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btnSalvar');
-            btn.innerText = "Publicando...";
-            btn.disabled = true;
+            btn.innerText = "Publicando..."; btn.disabled = true;
 
             try {
-                const docRef = await addDoc(collection(db, "revista_artigos"), {
+                await addDoc(collection(db, "artigos"), {
                     titulo: document.getElementById('titulo').value,
-                    caderno: document.getElementById('caderno').value,
+                    publico: document.getElementById('publico').value,
                     imagem: document.getElementById('imagem').value,
                     resumo: document.getElementById('resumo').value,
                     conteudo: document.getElementById('conteudo').value,
-                    data_publicacao: serverTimestamp(),
-                    visualizacoes: 0
+                    data_publicacao: serverTimestamp()
                 });
-                alert(`Sucesso! Matéria publicada com a ID: ${docRef.id}`);
+                alert("Matéria publicada com sucesso!");
                 document.getElementById('formRedacao').reset();
             } catch (error) {
-                console.error("Erro ao publicar: ", error);
-                alert("Erro ao publicar. Verifique o console.");
+                console.error("Erro: ", error);
+                alert("Erro ao publicar.");
             } finally {
-                btn.innerText = "Publicar Artigo";
-                btn.disabled = false;
+                btn.innerText = "Publicar Artigo"; btn.disabled = false;
             }
         });
     </script>
 </head>
-<body class="bg-gray-100 p-8">
-    <div class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md border-t-4 border-blue-600">
-        <h1 class="text-2xl font-black mb-6 text-gray-800">✍️ Redação - O Código Pet</h1>
+<body class="bg-gray-100 p-8 font-sans">
+    <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow border-t-4 border-blue-600">
+        <h1 class="text-2xl font-black mb-6 text-gray-800">✍️ Redação O Código Pet</h1>
         <form id="formRedacao" class="space-y-4">
             <div>
-                <label class="block text-sm font-bold text-gray-700">Caderno / Categoria</label>
-                <select id="caderno" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border bg-gray-50 focus:ring-blue-500 focus:border-blue-500" required>
-                    <option value="Gestão PRO (B2B)">Gestão PRO (B2B - Lojistas)</option>
-                    <option value="Guia do Tutor (B2C)">Guia do Tutor (B2C)</option>
+                <label class="font-bold text-sm text-gray-700">Público Alvo (Caderno)</label>
+                <select id="publico" class="w-full mt-1 p-3 border bg-gray-50 rounded" required>
+                    <option value="tutores">Tutores (Leitura Gratuita)</option>
+                    <option value="gestores">Gestores Pet (Conteúdo Premium/Pago)</option>
                 </select>
             </div>
             <div>
-                <label class="block text-sm font-bold text-gray-700">Título da Matéria</label>
-                <input type="text" id="titulo" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border bg-gray-50" required>
+                <label class="font-bold text-sm text-gray-700">Título</label>
+                <input type="text" id="titulo" class="w-full mt-1 p-3 border bg-gray-50 rounded" required>
             </div>
             <div>
-                <label class="block text-sm font-bold text-gray-700">URL da Imagem de Capa</label>
-                <input type="url" id="imagem" placeholder="https://..." class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border bg-gray-50" required>
+                <label class="font-bold text-sm text-gray-700">Link da Imagem</label>
+                <input type="url" id="imagem" class="w-full mt-1 p-3 border bg-gray-50 rounded" required>
             </div>
             <div>
-                <label class="block text-sm font-bold text-gray-700">Linha Fina (Resumo curto)</label>
-                <textarea id="resumo" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border bg-gray-50" required></textarea>
+                <label class="font-bold text-sm text-gray-700">Resumo (Linha Fina)</label>
+                <textarea id="resumo" rows="2" class="w-full mt-1 p-3 border bg-gray-50 rounded" required></textarea>
             </div>
             <div>
-                <label class="block text-sm font-bold text-gray-700">Corpo do Artigo (Aceita HTML: &lt;b&gt;, &lt;br&gt;, &lt;h2&gt;)</label>
-                <textarea id="conteudo" rows="10" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border bg-gray-50 font-mono text-sm" required></textarea>
+                <label class="font-bold text-sm text-gray-700">Conteúdo Completo (Aceita HTML)</label>
+                <textarea id="conteudo" rows="8" class="w-full mt-1 p-3 border bg-gray-50 rounded" required></textarea>
             </div>
-            <button type="submit" id="btnSalvar" class="w-full bg-blue-600 text-white font-bold py-4 rounded-md hover:bg-blue-700 transition-colors">
-                Publicar Artigo
-            </button>
+            <button type="submit" id="btnSalvar" class="w-full bg-blue-600 text-white font-bold py-4 rounded hover:bg-blue-700">Publicar Artigo</button>
         </form>
     </div>
 </body>
