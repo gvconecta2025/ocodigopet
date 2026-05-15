@@ -6,222 +6,140 @@
     <title>Revista O Código Pet</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* O Gatilho do Paywall */
-        .blur-text { 
-            filter: blur(5px); 
-            user-select: none; 
-            pointer-events: none; 
-            opacity: 0.7;
-        }
+        .blur-text { filter: blur(6px); pointer-events: none; user-select: none; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+<body class="bg-gray-50 text-gray-800 font-sans">
 
-    <header class="bg-gray-900 text-white p-5 shadow-lg text-center sticky top-0 z-40">
-        <h1 class="text-3xl font-black tracking-tighter cursor-pointer" onclick="window.location.href='?'">O CÓDIGO PET</h1>
-        <p class="text-xs text-gray-400 uppercase tracking-widest mt-1">Inteligência para o Mercado Pet</p>
+    <header class="bg-gray-900 text-white text-center p-6 sticky top-0 z-40 shadow-md">
+        <h1 class="text-3xl font-black cursor-pointer" onclick="carregarLista('tutores')">O CÓDIGO PET</h1>
+        <div class="mt-4 flex justify-center space-x-4">
+            <button onclick="carregarLista('tutores')" class="bg-green-600 px-4 py-2 rounded font-bold text-sm hover:bg-green-500">Para Tutores (Grátis)</button>
+            <button onclick="carregarLista('gestores')" class="bg-yellow-600 px-4 py-2 rounded font-bold text-sm hover:bg-yellow-500 text-gray-900">Para Gestores (Premium)</button>
+        </div>
     </header>
 
     <main id="app-container" class="max-w-4xl mx-auto p-4 mt-6 min-h-screen"></main>
 
-    <div id="paywall-modal" class="hidden fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center p-4 z-50 transition-opacity">
-        <div class="bg-white p-8 rounded-2xl max-w-md w-full text-center shadow-2xl relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-2 bg-blue-600"></div>
-            <h2 class="text-2xl font-black mb-2 text-gray-900">Conteúdo Exclusivo 🔒</h2>
-            <p class="text-gray-600 mb-6 text-sm">Insira os dados da sua loja para destravar este artigo e todo o acervo VIP gratuitamente.</p>
-            
-            <form id="formLead" class="space-y-4 text-left">
-                <input type="text" id="leadNome" placeholder="Seu Nome (Gestor)" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
-                <input type="text" id="leadLoja" placeholder="Nome do Pet Shop / Clínica" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
-                <input type="tel" id="leadWhats" placeholder="WhatsApp (com DDD)" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
-                
-                <input type="hidden" id="leadOrigemArtigo"> 
-                
-                <button type="submit" id="btnDestravar" class="w-full bg-blue-600 text-white font-black py-4 rounded-lg hover:bg-blue-700 shadow-lg transform transition hover:-translate-y-0.5">
-                    Destravar Leitura Imediatamente
+    <div id="paywall-modal" class="hidden fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center p-4 z-50">
+        <div class="bg-white p-8 rounded-xl max-w-md w-full text-center">
+            <h2 class="text-2xl font-black mb-2 text-gray-900">Conteúdo Premium 🔒</h2>
+            <p class="text-gray-600 mb-6 text-sm">Este caderno é exclusivo para donos de Pet Shop e Clínicas. Insira seus dados para destravar o acesso.</p>
+            <form id="formLead" class="space-y-3 text-left">
+                <input type="text" id="leadNome" placeholder="Seu Nome" class="w-full p-3 border rounded" required>
+                <input type="text" id="leadLoja" placeholder="Nome do seu Pet Shop" class="w-full p-3 border rounded" required>
+                <input type="tel" id="leadWhats" placeholder="WhatsApp (com DDD)" class="w-full p-3 border rounded" required>
+                <button type="submit" id="btnDestravar" class="w-full bg-yellow-500 text-gray-900 font-black py-4 rounded hover:bg-yellow-400 mt-2">
+                    Liberar Leitura Agora
                 </button>
             </form>
-            <p class="text-xs text-gray-400 mt-4">Seus dados estão seguros. Não enviamos spam.</p>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
-        import { getFirestore, doc, getDoc, collection, getDocs, addDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, addDoc, doc, getDoc, serverTimestamp, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Configuração Oficial
+        // COLOQUE SUAS CHAVES DO FIREBASE AQUI TAMBÉM
         const firebaseConfig = {
-            apiKey: "AIzaSyDdbQabOOtQzgquLrDZ00GPFi0O9FIJaHc",
-            authDomain: "ocodigopet.firebaseapp.com",
-            projectId: "ocodigopet",
-            storageBucket: "ocodigopet.firebasestorage.app",
-            messagingSenderId: "631820637339",
-            appId: "1:631820637339:web:25ea2942312d65ee09e23e",
-            measurementId: "G-Q1HDW15MC9"
+            apiKey: "SUA_API_KEY",
+            authDomain: "SEU_PROJETO.firebaseapp.com",
+            projectId: "SEU_PROJETO",
+            storageBucket: "SEU_PROJETO.appspot.com",
+            messagingSenderId: "SEU_ID",
+            appId: "SEU_APP_ID"
         };
 
         const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app); // Rastreamento de tráfego ativado
         const db = getFirestore(app);
-
         const appContainer = document.getElementById('app-container');
-        const isVip = localStorage.getItem('ocodigopet_vip') === 'true';
+        
+        // Verifica se o usuário já preencheu o formulário antes
+        const isGestorVIP = localStorage.getItem('codigo_pet_vip') === 'true';
 
-        // Inicializador de Rotas (O Deep Linking)
-        async function initApp() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const artigoId = urlParams.get('artigo_id');
-
-            if (artigoId) {
-                await carregarArtigoIndividual(artigoId);
-            } else {
-                await carregarHome();
-            }
-        }
-
-        // Renderiza a Capa da Revista
-        async function carregarHome() {
-            appContainer.innerHTML = `
-                <div class="flex justify-center items-center py-20">
-                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-                </div>`;
+        // Torna a função global para os botões do menu funcionarem
+        window.carregarLista = async function(publicoAlvo) {
+            appContainer.innerHTML = '<p class="text-center text-gray-500 mt-10">Carregando artigos...</p>';
             
-            try {
-                // Busca os artigos ordenados (mais recentes primeiro)
-                const q = query(collection(db, "revista_artigos"), orderBy("data_publicacao", "desc"));
-                const querySnapshot = await getDocs(q);
-                
-                let html = '<div class="grid grid-cols-1 md:grid-cols-2 gap-8">';
-                
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    html += `
-                        <div class="bg-white rounded-xl shadow-sm hover:shadow-xl transition-shadow duration-300 overflow-hidden cursor-pointer border border-gray-100 group" onclick="window.location.href='?artigo_id=${doc.id}'">
-                            <div class="h-56 overflow-hidden relative">
-                                ${data.caderno.includes('B2B') ? '<div class="absolute top-2 right-2 bg-black text-white text-xs font-bold px-2 py-1 rounded z-10">PRO 🔒</div>' : ''}
-                                <img src="${data.imagem}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
-                            </div>
-                            <div class="p-6">
-                                <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">${data.caderno}</span>
-                                <h2 class="text-2xl font-bold mt-2 mb-3 text-gray-900 leading-tight group-hover:text-blue-600 transition-colors">${data.titulo}</h2>
-                                <p class="text-gray-600 text-sm line-clamp-3">${data.resumo}</p>
-                            </div>
+            // Busca apenas os artigos da aba clicada
+            const q = query(collection(db, "artigos"), where("publico", "==", publicoAlvo));
+            const snapshot = await getDocs(q);
+            
+            let html = `<h2 class="text-2xl font-bold mb-6 border-b pb-2 uppercase">${publicoAlvo}</h2>`;
+            html += '<div class="grid grid-cols-1 md:grid-cols-2 gap-6">';
+            
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                html += `
+                    <div class="bg-white rounded shadow cursor-pointer overflow-hidden hover:shadow-lg" onclick="abrirArtigo('${doc.id}')">
+                        <img src="${data.imagem}" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-xl font-bold mb-2">${data.titulo}</h3>
+                            <p class="text-gray-600 text-sm">${data.resumo}</p>
                         </div>
-                    `;
-                });
-                html += '</div>';
+                    </div>`;
+            });
+            html += '</div>';
+            appContainer.innerHTML = snapshot.empty ? '<p>Nenhum artigo encontrado.</p>' : html;
+        }
+
+        // Abre a matéria completa
+        window.abrirArtigo = async function(id) {
+            appContainer.innerHTML = '<p class="text-center mt-10">Abrindo...</p>';
+            const docSnap = await getDoc(doc(db, "artigos", id));
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                let conteudoHTML = data.conteudo;
                 
-                if(querySnapshot.empty) {
-                    html = '<p class="text-center text-gray-500 py-10">Nenhuma matéria publicada ainda.</p>';
+                // Regra do Paywall: Se for conteúdo de gestor e ele não for VIP
+                if (data.publico === 'gestores' && !isGestorVIP) {
+                    conteudoHTML = `<div class="blur-text">${data.conteudo}</div>`;
+                    document.getElementById('paywall-modal').classList.remove('hidden');
                 }
-                
-                appContainer.innerHTML = html;
-            } catch (error) {
-                console.error("Erro ao buscar artigos:", error);
-                appContainer.innerHTML = '<p class="text-center text-red-500 py-10">Erro ao carregar a revista. Tente recarregar a página.</p>';
+
+                appContainer.innerHTML = `
+                    <button onclick="carregarLista('${data.publico}')" class="text-blue-600 font-bold mb-4">← Voltar</button>
+                    <article class="bg-white p-8 rounded shadow">
+                        <h1 class="text-4xl font-black mb-4">${data.titulo}</h1>
+                        <img src="${data.imagem}" class="w-full h-64 object-cover rounded mb-8">
+                        <div class="prose max-w-none text-lg leading-relaxed text-gray-800">
+                            ${conteudoHTML}
+                        </div>
+                    </article>
+                `;
             }
         }
 
-        // Renderiza um Artigo (e engatilha o Paywall)
-        async function carregarArtigoIndividual(id) {
-            appContainer.innerHTML = '<p class="text-center text-gray-500 py-20">Acessando arquivo...</p>';
-            
-            try {
-                const docRef = doc(db, "revista_artigos", id);
-                const docSnap = await getDoc(docRef);
-
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    const isB2B = data.caderno.includes("B2B");
-                    
-                    let conteudoHTML = data.conteudo;
-                    let mostrarPaywall = false;
-
-                    // Lógica de Retenção: Se for PRO e não for VIP, borra o conteúdo
-                    if (isB2B && !isVip) {
-                        // Aplica a classe de blur
-                        conteudoHTML = `<div class="blur-text">${data.conteudo}</div>`;
-                        mostrarPaywall = true;
-                    }
-
-                    appContainer.innerHTML = `
-                        <button onclick="window.location.href='?'" class="flex items-center text-blue-600 font-semibold text-sm mb-6 hover:text-blue-800 transition-colors">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                            Voltar para a Capa
-                        </button>
-                        
-                        <article class="bg-white p-6 md:p-10 rounded-2xl shadow-sm border border-gray-100">
-                            <span class="inline-block bg-blue-50 text-blue-600 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-4">${data.caderno}</span>
-                            <h1 class="text-3xl md:text-5xl font-black mb-6 text-gray-900 leading-tight">${data.titulo}</h1>
-                            <p class="text-xl text-gray-500 mb-8 font-medium leading-relaxed">${data.resumo}</p>
-                            
-                            <img src="${data.imagem}" class="w-full h-[400px] object-cover rounded-xl mb-10 shadow-md">
-                            
-                            <div class="prose prose-lg max-w-none text-gray-800 leading-relaxed space-y-6">
-                                ${conteudoHTML}
-                            </div>
-                        </article>
-                    `;
-
-                    // Dispara o Modal DEPOIS de renderizar a página no fundo
-                    if (mostrarPaywall) {
-                        setTimeout(() => dispararPaywall(id, data.titulo), 800); // Aguarda menos de 1 segundo para gerar a "dor" de querer ler
-                    }
-
-                } else {
-                    appContainer.innerHTML = `
-                        <div class="text-center py-20">
-                            <h2 class="text-2xl font-bold text-gray-800 mb-2">Artigo não encontrado</h2>
-                            <button onclick="window.location.href='?'" class="text-blue-600 font-bold mt-4">Ir para a Home</button>
-                        </div>`;
-                }
-            } catch (error) {
-                 console.error("Erro:", error);
-                 appContainer.innerHTML = '<p class="text-center text-red-500">Ocorreu um erro ao carregar a matéria.</p>';
-            }
-        }
-
-        // Abre o Paywall
-        function dispararPaywall(artigoId, titulo) {
-            document.getElementById('paywall-modal').classList.remove('hidden');
-            // Dedo Duro: Salva exatamente o que ele tentou ler
-            document.getElementById('leadOrigemArtigo').value = `${titulo} (ID: ${artigoId})`;
-        }
-
-        // Submissão do Lead
+        // Sistema de Captura de Lead (Desbloqueio)
         document.getElementById('formLead').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btnDestravar');
-            btn.innerText = "Processando Autorização...";
-            btn.disabled = true;
+            btn.innerText = "Processando..."; btn.disabled = true;
 
             try {
-                // Grava na coleção 'revista_leads' do seu novo Firebase
-                await addDoc(collection(db, "revista_leads"), {
+                // Grava o Lead no Firebase
+                await addDoc(collection(db, "leads_revista"), {
                     nome: document.getElementById('leadNome').value,
-                    nomeLoja: document.getElementById('leadLoja').value,
-                    telefone: document.getElementById('leadWhats').value,
-                    interesse_inicial: document.getElementById('leadOrigemArtigo').value,
-                    status_funil: "Novo Lead - Revista",
+                    loja: document.getElementById('leadLoja').value,
+                    whatsapp: document.getElementById('leadWhats').value,
                     data_captura: serverTimestamp()
                 });
                 
-                // Marca o dispositivo como VIP (Cookie/LocalStorage)
-                localStorage.setItem('ocodigopet_vip', 'true');
+                // Grava autorização no navegador
+                localStorage.setItem('codigo_pet_vip', 'true');
                 
-                // Sucesso: Recarrega a página. Como ele agora é VIP, o texto aparecerá limpo.
+                // Recarrega a página para limpar o Blur
                 window.location.reload();
             } catch (error) {
-                console.error("Erro ao salvar lead: ", error);
-                alert("Erro de conexão. Tente novamente.");
-                btn.innerText = "Destravar Leitura Imediatamente";
-                btn.disabled = false;
+                console.error(error);
+                alert("Erro ao liberar acesso.");
+                btn.innerText = "Liberar Leitura Agora"; btn.disabled = false;
             }
         });
 
-        // Start
-        initApp();
+        // Inicia carregando os artigos de Tutores por padrão
+        carregarLista('tutores');
     </script>
 </body>
 </html>
