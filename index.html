@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Revista O Código Pet</title>
+    <title>Revista O Código Pet - Diagnóstico</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .blur-text { filter: blur(6px); pointer-events: none; user-select: none; }
@@ -24,9 +24,9 @@
     <div id="paywall-modal" class="hidden fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center p-4 z-50">
         <div class="bg-white p-8 rounded-xl max-w-md w-full text-center">
             <h2 class="text-2xl font-black mb-2 text-gray-900">Conteúdo Premium 🔒</h2>
-            <p class="text-gray-600 mb-6 text-sm">Este caderno é exclusivo para donos de Pet Shop e Clínicas. Insira seus dados para destravar o acesso.</p>
+            <p class="text-gray-600 mb-6 text-sm">Este caderno é exclusivo para donos de Pet Shop e Clínicas. Insira os seus dados para destravar o acesso.</p>
             <form id="formLead" class="space-y-3 text-left">
-                <input type="text" id="leadNome" placeholder="Seu Nome" class="w-full p-3 border rounded" required>
+                <input type="text" id="leadNome" placeholder="O seu Nome" class="w-full p-3 border rounded" required>
                 <input type="text" id="leadLoja" placeholder="Nome do seu Pet Shop" class="w-full p-3 border rounded" required>
                 <input type="tel" id="leadWhats" placeholder="WhatsApp (com DDD)" class="w-full p-3 border rounded" required>
                 <button type="submit" id="btnDestravar" class="w-full bg-yellow-500 text-gray-900 font-black py-4 rounded hover:bg-yellow-400 mt-2">
@@ -39,9 +39,9 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
-        import { getFirestore, collection, getDocs, addDoc, doc, getDoc, serverTimestamp, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, addDoc, doc, getDoc, serverTimestamp, query } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // SUA CONFIGURAÇÃO OFICIAL DO FIREBASE
+        // AS SUAS CHAVES OFICIAIS DO FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyDdbQabOOtQzgquLrDZ00GPFi0O9FIJaHc",
             authDomain: "ocodigopet.firebaseapp.com",
@@ -57,54 +57,63 @@
         const db = getFirestore(app);
         const appContainer = document.getElementById('app-container');
         
-        // Verifica se o usuário já preencheu o formulário antes
         const isGestorVIP = localStorage.getItem('codigo_pet_vip') === 'true';
 
-        // Torna a função global para os botões do menu funcionarem
+        // FUNÇÃO DE DIAGNÓSTICO: Puxa TUDO sem filtros e sem exigir Índices
         window.carregarLista = async function(publicoAlvo) {
-            appContainer.innerHTML = '<p class="text-center text-gray-500 mt-10">Carregando artigos...</p>';
+            appContainer.innerHTML = '<p class="text-center text-gray-500 mt-10">A aceder à base de dados...</p>';
             
-            // Busca apenas os artigos da aba clicada
-            const q = query(collection(db, "artigos"), where("publico", "==", publicoAlvo));
-            const snapshot = await getDocs(q);
-            
-            let html = `<h2 class="text-2xl font-bold mb-6 border-b pb-2 uppercase">${publicoAlvo}</h2>`;
-            html += '<div class="grid grid-cols-1 md:grid-cols-2 gap-6">';
-            
-            snapshot.forEach((doc) => {
-                const data = doc.data();
-                html += `
-                    <div class="bg-white rounded shadow cursor-pointer overflow-hidden hover:shadow-lg" onclick="abrirArtigo('${doc.id}')">
-                        <img src="${data.imagem}" class="w-full h-48 object-cover">
-                        <div class="p-4">
-                            <h3 class="text-xl font-bold mb-2">${data.titulo}</h3>
-                            <p class="text-gray-600 text-sm">${data.resumo}</p>
-                        </div>
-                    </div>`;
-            });
-            html += '</div>';
-            appContainer.innerHTML = snapshot.empty ? '<p class="text-center mt-10 text-gray-500">Nenhum artigo publicado neste caderno ainda.</p>' : html;
+            try {
+                // A query limpa ignora bloqueios de indexação
+                const q = query(collection(db, "artigos"));
+                const snapshot = await getDocs(q);
+                
+                let html = `<h2 class="text-2xl font-bold mb-6 border-b pb-2 uppercase text-red-600">DIAGNÓSTICO: TODOS OS ARTIGOS</h2>`;
+                html += '<div class="grid grid-cols-1 md:grid-cols-2 gap-6">';
+                
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    html += `
+                        <div class="bg-white rounded shadow cursor-pointer overflow-hidden border-2 border-red-500" onclick="abrirArtigo('${doc.id}')">
+                            <img src="${data.imagem}" class="w-full h-48 object-cover">
+                            <div class="p-4">
+                                <span class="bg-red-100 text-red-800 font-bold px-2 py-1 rounded text-xs">PÚBLICO SALVO: '${data.publico}'</span>
+                                <h3 class="text-xl font-bold mt-2 mb-2">${data.titulo}</h3>
+                                <p class="text-gray-600 text-sm">${data.resumo}</p>
+                            </div>
+                        </div>`;
+                });
+                html += '</div>';
+                
+                if(snapshot.empty) {
+                    appContainer.innerHTML = '<p class="text-center text-red-600 font-bold mt-10">A COLEÇÃO "artigos" EXISTE, MAS ESTÁ VAZIA.</p>';
+                } else {
+                    appContainer.innerHTML = html;
+                }
+            } catch (error) {
+                appContainer.innerHTML = `<p class="text-center text-red-600 font-bold mt-10">ERRO DE CONEXÃO: ${error.message}</p>`;
+            }
         }
 
         // Abre a matéria completa
         window.abrirArtigo = async function(id) {
-            appContainer.innerHTML = '<p class="text-center mt-10">Abrindo...</p>';
+            appContainer.innerHTML = '<p class="text-center mt-10">A abrir...</p>';
             const docSnap = await getDoc(doc(db, "artigos", id));
 
             if (docSnap.exists()) {
                 const data = docSnap.data();
                 let conteudoHTML = data.conteudo;
                 
-                // Regra do Paywall: Se for conteúdo de gestor e ele não for VIP
                 if (data.publico === 'gestores' && !isGestorVIP) {
                     conteudoHTML = `<div class="blur-text">${data.conteudo}</div>`;
                     document.getElementById('paywall-modal').classList.remove('hidden');
                 }
 
                 appContainer.innerHTML = `
-                    <button onclick="carregarLista('${data.publico}')" class="text-blue-600 font-bold mb-4">← Voltar</button>
+                    <button onclick="carregarLista('tutores')" class="text-blue-600 font-bold mb-4">← Voltar</button>
                     <article class="bg-white p-8 rounded shadow">
-                        <h1 class="text-4xl font-black mb-4">${data.titulo}</h1>
+                        <span class="bg-gray-200 text-gray-800 font-bold px-2 py-1 rounded text-xs uppercase">${data.publico}</span>
+                        <h1 class="text-4xl font-black mt-2 mb-4">${data.titulo}</h1>
                         <img src="${data.imagem}" class="w-full h-64 object-cover rounded mb-8">
                         <div class="prose max-w-none text-lg leading-relaxed text-gray-800">
                             ${conteudoHTML}
@@ -114,14 +123,13 @@
             }
         }
 
-        // Sistema de Captura de Lead (Desbloqueio)
+        // Sistema de Captura de Lead
         document.getElementById('formLead').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btnDestravar');
-            btn.innerText = "Processando..."; btn.disabled = true;
+            btn.innerText = "A processar..."; btn.disabled = true;
 
             try {
-                // Grava o Lead no Firebase
                 await addDoc(collection(db, "leads_revista"), {
                     nome: document.getElementById('leadNome').value,
                     loja: document.getElementById('leadLoja').value,
@@ -129,19 +137,16 @@
                     data_captura: serverTimestamp()
                 });
                 
-                // Grava autorização no navegador
                 localStorage.setItem('codigo_pet_vip', 'true');
-                
-                // Recarrega a página para limpar o Blur
                 window.location.reload();
             } catch (error) {
                 console.error(error);
-                alert("Erro ao liberar acesso.");
+                alert("Erro ao libertar o acesso.");
                 btn.innerText = "Liberar Leitura Agora"; btn.disabled = false;
             }
         });
 
-        // Inicia carregando os artigos de Tutores por padrão
+        // Inicia o Diagnóstico ao carregar
         carregarLista('tutores');
     </script>
 </body>
