@@ -3,71 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Revista O Código Pet</title>
+    <title>O Código Pet - Portal de Notícias</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .blur-text { filter: blur(8px); pointer-events: none; user-select: none; opacity: 0.4; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4; color: #333; }
         
-        /* Efeitos de Força e Degradês */
-        .gradient-text { background: linear-gradient(135deg, #ec4899 0%, #ef4444 50%, #eab308 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .gradient-tutores { background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%); }
-        .gradient-gestores { background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%); }
+        /* Estilo G1: Topo Sólido com Degradê Suave */
+        .g1-header { background: linear-gradient(to right, #004687 0%, #005aa3 100%); }
         
-        /* Sombras em Neon (Glow) */
-        .glow-tutores { box-shadow: 0 0 15px rgba(6, 182, 212, 0.4); }
-        .glow-gestores { box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
-        .glow-card:hover { box-shadow: 0 0 25px rgba(236, 72, 153, 0.3); border-color: rgba(236, 72, 153, 0.5); }
+        /* Cards com Elevação e Sombra */
+        .news-card { background: white; border-radius: 4px; transition: all 0.3s ease; border-bottom: 3px solid transparent; }
+        .news-card:hover { transform: translateY(-4px); box-shadow: 0 12px 20px rgba(0,0,0,0.1); border-bottom: 3px solid #005aa3; }
+        
+        /* Paywall Estilo Premium */
+        .blur-content { filter: blur(10px); pointer-events: none; user-select: none; }
+        .glass-modal { background: rgba(255, 255, 255, 0.95); backdrop-blur: 10px; border-top: 5px solid #005aa3; }
+        
+        /* Botões de Categoria Estilo G1 */
+        .btn-cat { border-bottom: 4px solid transparent; transition: all 0.2s; }
+        .btn-cat:hover { background-color: rgba(255,255,255,0.1); border-bottom: 4px solid #fff; }
+        .btn-active { border-bottom: 4px solid #fff; font-weight: bold; }
+
+        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-200 min-h-screen">
+<body>
 
-    <header class="bg-slate-900/80 backdrop-blur-xl border-b border-white/10 p-5 sticky top-0 z-40">
-        <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-5">
-            
-            <div class="text-center md:text-left cursor-pointer transform transition hover:scale-105" onclick="window.location.href='?'">
-                <h1 class="text-4xl font-black tracking-tighter gradient-text uppercase">O Código Pet</h1>
-                <p class="text-[11px] text-slate-400 font-bold uppercase tracking-[0.3em] mt-1">Inteligência de Mercado</p>
+    <header class="g1-header text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4 border-b border-white/10">
+                <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='?'">
+                    <span class="text-3xl font-extrabold tracking-tighter uppercase">O Código Pet</span>
+                    <span class="bg-white text-[#004687] px-2 py-0.5 rounded text-[10px] font-bold">REVISTA</span>
+                </div>
+                
+                <button onclick="forçarAtualizacao()" class="text-[10px] border border-white/30 px-3 py-1 rounded hover:bg-white/10 transition-all font-bold uppercase tracking-tighter">
+                    Atualizar Agora
+                </button>
             </div>
             
-            <button onclick="forçarAtualizacao()" class="bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                ATUALIZAR REVISTA
-            </button>
+            <nav class="flex gap-6 py-3 overflow-x-auto no-scrollbar">
+                <button onclick="carregarLista('tutores', this)" class="btn-cat btn-active pb-1 text-sm whitespace-nowrap uppercase tracking-wider">Guia do Tutor</button>
+                <button onclick="carregarLista('gestores', this)" class="btn-cat pb-1 text-sm whitespace-nowrap uppercase tracking-wider">Negócios PRO 🔒</button>
+            </nav>
         </div>
-
-        <nav class="flex justify-center gap-4 mt-6 max-w-5xl mx-auto">
-            <button onclick="carregarLista('tutores')" class="gradient-tutores glow-tutores text-white px-8 py-3 rounded-full font-black text-sm transition-transform hover:-translate-y-1 w-full md:w-auto uppercase tracking-wider">
-                Para Tutores
-            </button>
-            <button onclick="carregarLista('gestores')" class="gradient-gestores glow-gestores text-white px-8 py-3 rounded-full font-black text-sm transition-transform hover:-translate-y-1 w-full md:w-auto uppercase tracking-wider">
-                Portal PRO 🔒
-            </button>
-        </nav>
     </header>
 
-    <main id="app-container" class="max-w-5xl mx-auto p-6 mt-4"></main>
+    <main id="app-container" class="max-w-6xl mx-auto p-4 md:p-8 min-h-screen"></main>
 
-    <div id="paywall-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50 transition-all">
-        <div class="bg-slate-800 p-8 rounded-3xl max-w-md w-full text-center border border-slate-700 glow-gestores relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-2 gradient-gestores"></div>
-            
-            <div class="w-16 h-16 bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-4 border border-slate-700 shadow-lg">
-                <span class="text-3xl">🔓</span>
-            </div>
-            
-            <h2 class="text-2xl font-black mb-2 text-white uppercase">Acesso Restrito</h2>
-            <p class="text-slate-400 mb-8 text-sm">Este material é exclusivo para Gestores Pet. Insira os dados da sua loja para destravar o acervo completo.</p>
+    <div id="paywall-modal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 transition-all">
+        <div class="glass-modal p-8 rounded-lg max-w-md w-full text-center shadow-2xl">
+            <h2 class="text-2xl font-bold mb-4 text-[#004687]">CONTEÚDO EXCLUSIVO</h2>
+            <p class="text-gray-600 mb-6 text-sm leading-relaxed">Esta análise é reservada para gestores e parceiros do ecossistema PetLojas. Preencha abaixo para liberar.</p>
             
             <form id="formLead" class="space-y-4 text-left">
-                <input type="text" id="leadNome" placeholder="Seu Nome" class="w-full p-4 bg-slate-900 border border-slate-700 text-white rounded-xl focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all placeholder-slate-600" required>
-                <input type="text" id="leadLoja" placeholder="Nome do Pet Shop/Clínica" class="w-full p-4 bg-slate-900 border border-slate-700 text-white rounded-xl focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all placeholder-slate-600" required>
-                <input type="tel" id="leadWhats" placeholder="WhatsApp (com DDD)" class="w-full p-4 bg-slate-900 border border-slate-700 text-white rounded-xl focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all placeholder-slate-600" required>
-                
-                <button type="submit" id="btnDestravar" class="w-full gradient-gestores text-white font-black py-4 rounded-xl shadow-lg transition-transform transform hover:-translate-y-1 uppercase tracking-widest mt-4">
-                    Destravar Leitura
-                </button>
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 uppercase">Seu Nome</label>
+                    <input type="text" id="leadNome" class="w-full p-3 border-b-2 border-gray-200 bg-gray-50 focus:border-[#004687] outline-none" required>
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 uppercase">Nome da Loja</label>
+                    <input type="text" id="leadLoja" class="w-full p-3 border-b-2 border-gray-200 bg-gray-50 focus:border-[#004687] outline-none" required>
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 uppercase">WhatsApp</label>
+                    <input type="tel" id="leadWhats" class="w-full p-3 border-b-2 border-gray-200 bg-gray-50 focus:border-[#004687] outline-none" required>
+                </div>
+                <button type="submit" id="btnDestravar" class="w-full bg-[#004687] text-white font-bold py-4 rounded hover:bg-[#003366] transition-all shadow-lg mt-4 uppercase tracking-widest">Liberar Acesso</button>
             </form>
         </div>
     </div>
@@ -76,7 +79,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs, addDoc, doc, getDoc, serverTimestamp, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // CHAVES DO FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyDdbQabOOtQzgquLrDZ00GPFi0O9FIJaHc",
             authDomain: "ocodigopet.firebaseapp.com",
@@ -92,97 +94,74 @@
         const appContainer = document.getElementById('app-container');
         const isVip = localStorage.getItem('codigo_pet_vip') === 'true';
 
-        // LIMPEZA DE CACHE FORÇADA
         window.forçarAtualizacao = async function() {
-            if ('serviceWorker' in navigator) {
-                const registrations = await navigator.serviceWorker.getRegistrations();
-                for (let registration of registrations) { await registration.unregister(); }
-            }
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            for (let r of registrations) { await r.unregister(); }
             if ('caches' in window) {
-                const cacheNames = await caches.keys();
-                for (let name of cacheNames) { await caches.delete(name); }
+                const keys = await caches.keys();
+                for (let key of keys) { await caches.delete(key); }
             }
             window.location.reload(true);
         }
 
-        // CARREGAR LISTA COM VISUAL VIBRANTE
-        window.carregarLista = async function(publicoAlvo) {
-            appContainer.innerHTML = '<div class="flex justify-center py-20"><div class="w-10 h-10 border-4 border-pink-500 border-t-transparent rounded-full animate-spin"></div></div>';
+        window.carregarLista = async function(publicoAlvo, btn) {
+            // UI: Atualiza botões
+            document.querySelectorAll('.btn-cat').forEach(b => b.classList.remove('btn-active'));
+            if(btn) btn.classList.add('btn-active');
+
+            appContainer.innerHTML = '<div class="text-center py-20 text-gray-400 font-bold animate-pulse uppercase">Buscando informações recentes...</div>';
             
             try {
                 const q = query(collection(db, "artigos"), where("publico", "==", publicoAlvo), orderBy("data_publicacao", "desc"));
                 const snapshot = await getDocs(q);
                 
-                let html = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">`;
+                let html = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">`;
                 snapshot.forEach((doc) => {
                     const data = doc.data();
-                    const badgeClass = data.publico === 'gestores' ? 'gradient-gestores' : 'gradient-tutores';
-                    const badgeText = data.publico === 'gestores' ? 'PRO 🔒' : 'LIVRE';
-
                     html += `
-                        <div class="bg-slate-800 rounded-3xl overflow-hidden border border-slate-700 glow-card transition-all cursor-pointer group flex flex-col h-full" onclick="abrirArtigo('${doc.id}')">
-                            <div class="relative h-56 overflow-hidden">
-                                <div class="absolute top-4 right-4 ${badgeClass} text-white text-[10px] font-black px-3 py-1.5 rounded-full shadow-lg z-10 tracking-widest">${badgeText}</div>
-                                <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent z-0 opacity-80"></div>
-                                <img src="${data.imagem}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow">
-                                <h3 class="text-xl font-black text-white group-hover:text-pink-400 transition-colors line-clamp-2 mb-3 leading-tight">${data.titulo}</h3>
-                                <p class="text-slate-400 text-sm line-clamp-3 mb-4 leading-relaxed">${data.resumo}</p>
-                                <div class="mt-auto pt-4 border-t border-slate-700/50">
-                                    <span class="text-xs font-bold text-slate-500 uppercase tracking-widest group-hover:text-white transition-colors">Ler matéria ➝</span>
-                                </div>
+                        <div class="news-card border border-gray-200 overflow-hidden cursor-pointer" onclick="abrirArtigo('${doc.id}')">
+                            <img src="${data.imagem}" class="w-full h-48 object-cover">
+                            <div class="p-5">
+                                <span class="text-[#004687] text-[10px] font-bold uppercase tracking-widest mb-2 block">${data.publico}</span>
+                                <h3 class="text-xl font-bold text-gray-800 leading-tight mb-3 line-clamp-2">${data.titulo}</h3>
+                                <p class="text-gray-500 text-sm line-clamp-2">${data.resumo}</p>
                             </div>
                         </div>`;
                 });
                 html += '</div>';
-                appContainer.innerHTML = snapshot.empty ? '<p class="text-center py-20 text-slate-500 font-bold uppercase tracking-widest">Nenhuma matéria publicada ainda</p>' : html;
+                appContainer.innerHTML = snapshot.empty ? '<div class="text-center py-20">Nenhuma notícia nesta editoria.</div>' : html;
             } catch (error) { console.error(error); }
         }
 
-        // ABRIR ARTIGO E APLICAR PAYWALL
         window.abrirArtigo = async function(id) {
             window.scrollTo(0,0);
-            appContainer.innerHTML = '<div class="flex justify-center py-20"><div class="w-10 h-10 border-4 border-pink-500 border-t-transparent rounded-full animate-spin"></div></div>';
-            
+            appContainer.innerHTML = '<div class="text-center py-20">Carregando matéria completa...</div>';
             const docSnap = await getDoc(doc(db, "artigos", id));
-            
             if (docSnap.exists()) {
                 const data = docSnap.data();
                 let conteudoHTML = data.conteudo;
-                
                 if (data.publico === 'gestores' && !isVip) {
-                    conteudoHTML = `<div class="blur-text">${data.conteudo}</div>`;
-                    setTimeout(() => document.getElementById('paywall-modal').classList.remove('hidden'), 800);
+                    conteudoHTML = `<div class="blur-content">${data.conteudo}</div>`;
+                    setTimeout(() => document.getElementById('paywall-modal').classList.remove('hidden'), 500);
                 }
-                
                 appContainer.innerHTML = `
-                    <button onclick="carregarLista('${data.publico}')" class="mb-8 font-bold text-slate-400 hover:text-white flex items-center gap-2 transition-colors uppercase text-xs tracking-widest bg-slate-800 px-4 py-2 rounded-full border border-slate-700 w-max">
-                        ← Voltar
-                    </button>
-                    
-                    <article class="bg-slate-800 p-6 md:p-12 rounded-[2rem] border border-slate-700 shadow-2xl">
-                        <h1 class="text-3xl md:text-5xl font-black mb-6 leading-tight text-white">${data.titulo}</h1>
-                        <p class="text-xl text-pink-400 mb-10 font-medium leading-relaxed">${data.resumo}</p>
-                        
-                        <div class="relative rounded-[2rem] overflow-hidden mb-12 shadow-2xl border border-slate-700">
-                            <img src="${data.imagem}" class="w-full h-[300px] md:h-[500px] object-cover">
-                            <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-60"></div>
-                        </div>
-                        
-                        <div class="prose prose-invert prose-lg max-w-none text-slate-300 leading-relaxed font-light">
+                    <div class="max-w-4xl mx-auto">
+                        <button onclick="carregarLista('${data.publico}')" class="text-[#004687] font-bold text-xs mb-6 uppercase tracking-tighter hover:underline">← Voltar para ${data.publico}</button>
+                        <h1 class="text-3xl md:text-5xl font-extrabold text-gray-900 mb-4 leading-tight">${data.titulo}</h1>
+                        <p class="text-xl text-gray-500 mb-8 leading-relaxed border-l-4 border-gray-200 pl-4">${data.resumo}</p>
+                        <img src="${data.imagem}" class="w-full h-auto rounded shadow-lg mb-10">
+                        <div class="prose max-w-none text-lg leading-relaxed text-gray-800 space-y-6">
                             ${conteudoHTML.replace(/\n/g, '<br>')}
                         </div>
-                    </article>
+                    </div>
                 `;
             }
         }
 
-        // ENVIAR LEAD
         document.getElementById('formLead').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btnDestravar');
-            btn.innerText = "PROCESSANDO...";
+            btn.innerText = "LIBERANDO...";
             try {
                 await addDoc(collection(db, "leads_revista"), {
                     nome: document.getElementById('leadNome').value,
@@ -192,12 +171,10 @@
                 });
                 localStorage.setItem('codigo_pet_vip', 'true');
                 window.location.reload();
-            } catch (error) { alert("Erro de conexão"); btn.innerText = "DESTRAVAR LEITURA"; }
+            } catch (error) { alert("Erro ao processar lead"); btn.innerText = "LIBERAR ACESSO"; }
         });
 
-        // INICIA
         carregarLista('tutores');
     </script>
 </body>
 </html>
-
